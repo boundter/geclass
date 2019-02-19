@@ -1,4 +1,4 @@
-"""Factory for the portal webpage."""
+"""Factory for the EClass webpage."""
 import os
 
 from flask import Flask
