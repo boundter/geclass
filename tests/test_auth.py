@@ -2,7 +2,7 @@ import pytest
 
 from flask import g, session
 
-from e_class.db import get_db
+from e_class.db import DBConnection
 
 
 def test_register(client, app):
@@ -15,10 +15,8 @@ def test_register(client, app):
     # after successful register reroute to login
     assert 'http://localhost/auth/login' == response.headers['Location']
 
-    with app.app_context():
-        # test user a is in database
-        assert get_db().execute(
-            'SELECT * FROM user WHERE email = "a"', ).fetchone() is not None
+    with app.app_context(), DBConnection() as db:
+        assert db.select_user(email="a") is not None
 
 
 @pytest.mark.parametrize(('email', 'password', 'message'), (
@@ -58,7 +56,6 @@ def test_login_validate_input(auth, email, password, message):
 
 def test_logout(client, auth):
     auth.login()
-
     # make sure user_id is removed after logout
     with client:
         auth.logout()
