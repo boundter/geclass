@@ -20,12 +20,6 @@ class DBConnection:
     def __call__(self):
         return self.db
 
-    def close(self, e=None):
-        db = g.pop(name='db', default=None)
-        if db is not None:
-            print("db closed")
-            db.close()
-
     def execute(self, sql, parameter=None):
         return self.db.execute(sql, parameter)
 
