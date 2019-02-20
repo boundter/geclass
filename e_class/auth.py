@@ -1,7 +1,9 @@
+import functools
+
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
-from werkzeug.security import generate_password_hash, check_password_hash
 
 from e_class.db import get_db
 
@@ -23,12 +25,13 @@ def register():
         elif not password:
             error = 'Password is required.'
         elif db.execute(
-            'SELECT id FROM user WHERE email = ?', (email,)
+                'SELECT id FROM user WHERE email = ?', (email,)
         ).fetchone() is not None:
             error = 'Email adress {} is already registered.'.format(email)
 
         if error is None:
-            db.execute('INSERT INTO user (email, password) VALUES (?, ?)',
+            db.execute(
+                'INSERT INTO user (email, password) VALUES (?, ?)',
                 (email, generate_password_hash(password)))
             db.commit()
             # TODO: Send directly to landing page
