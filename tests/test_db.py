@@ -2,20 +2,19 @@
 import sqlite3
 
 import pytest
+from flask import g
 
-from e_class.db import get_db
+from e_class.db import DBConnection
 
 
 def test_get_close_db(app):
     with app.app_context():
-        db = get_db()
-        assert db is get_db()
+        db = DBConnection()
+        assert db() is g.db
 
     # after the context the db connection gets teared down
     with pytest.raises(sqlite3.ProgrammingError) as e:
         db.execute('SELECT 1')
-
-    assert 'closed' in str(e)
 
 
 def test_init_db_command(runner, monkeypatch):

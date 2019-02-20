@@ -5,7 +5,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 
-from e_class.db import get_db
+from e_class.db import DBConnection
 
 bp = Blueprint(name='auth', import_name=__name__, url_prefix='/auth')
 
@@ -16,24 +16,19 @@ def register():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        db = get_db()
         error = None
+        db = DBConnection()
 
         if not email:
             # TODO: Check for valid adress
             error = 'Email adress is required.'
         elif not password:
             error = 'Password is required.'
-        elif db.execute(
-                'SELECT id FROM user WHERE email = ?', (email,)
-        ).fetchone() is not None:
+        elif db.select_user(email=email) is not None:
             error = 'Email adress {} is already registered.'.format(email)
 
         if error is None:
-            db.execute(
-                'INSERT INTO user (email, password) VALUES (?, ?)',
-                (email, generate_password_hash(password)))
-            db.commit()
+            db.add_user(email, generate_password_hash(password))
             # TODO: Send directly to landing page
             return redirect(url_for('auth.login'))
         flash(error)
@@ -45,11 +40,9 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        db = get_db()
         error = None
-        user = db.execute(
-            'SELECT * FROM user WHERE email = ?', (email,)
-        ).fetchone()
+        db = DBConnection()
+        user = db.select_user(email=email)
 
         if user is None:
             error = 'Incorrect Email adress.'
@@ -78,9 +71,8 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone()
+        db = DBConnection()
+        g.user = db.select_user(user_id=user_id)
 
 
 def login_required(view):
