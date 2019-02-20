@@ -44,6 +44,7 @@ def test_login(client, auth):
     with client:
         client.get('/')
         assert session['user_id'] == 1
+        assert g.user['email'] == 'test1'
 
 
 @pytest.mark.parametrize(('email', 'password', 'message'), (

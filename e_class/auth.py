@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -65,3 +65,16 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('auth.register'))
+
+
+@bp.before_app_request
+def load_logged_in_user():
+    """Load the user data into g."""
+    user_id = session.get('user_id')
+
+    if user_id is None:
+        g.user = None
+    else:
+        g.user = get_db().execute(
+            'SELECT * FROM user WHERE id = ?', (user_id,)
+        ).fetchone()
