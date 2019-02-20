@@ -1,5 +1,7 @@
 import pytest
 
+from flask import g, session
+
 from e_class.db import get_db
 
 
@@ -30,3 +32,15 @@ def test_register_validate_input(client, email, password, message):
         data={'email': email, 'password': password}
     )
     assert message in response.data
+
+
+def test_login(client, auth):
+    # login is available
+    assert client.get('/auth/login').status_code == 200
+    response = auth.login()
+    assert 'http://localhost/auth/register' == response.headers['Location']
+
+    # login with user test1 leads to user_id 1
+    with client:
+        client.get('/')
+        assert session['user_id'] == 1
