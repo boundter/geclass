@@ -53,3 +53,12 @@ def test_login(client, auth):
 def test_login_validate_input(auth, email, password, message):
     response = auth.login(email, password)
     assert message in response.data
+
+
+def test_logout(client, auth):
+    auth.login()
+
+    # make sure user_id is removed after logout
+    with client:
+        auth.logout()
+        assert 'user_id' not in session
