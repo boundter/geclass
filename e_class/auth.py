@@ -17,20 +17,20 @@ def register():
         email = request.form['email']
         password = request.form['password']
         error = None
+        db = DBConnection()
 
-        with DBConnection() as db:
-            if not email:
-                # TODO: Check for valid adress
-                error = 'Email adress is required.'
-            elif not password:
-                error = 'Password is required.'
-            elif db.select_user(email=email) is not None:
-                error = 'Email adress {} is already registered.'.format(email)
+        if not email:
+            # TODO: Check for valid adress
+            error = 'Email adress is required.'
+        elif not password:
+            error = 'Password is required.'
+        elif db.select_user(email=email) is not None:
+            error = 'Email adress {} is already registered.'.format(email)
 
-            if error is None:
-                db.add_user(email, generate_password_hash(password))
-                # TODO: Send directly to landing page
-                return redirect(url_for('auth.login'))
+        if error is None:
+            db.add_user(email, generate_password_hash(password))
+            # TODO: Send directly to landing page
+            return redirect(url_for('auth.login'))
         flash(error)
     return render_template('auth/register.html')
 
@@ -41,8 +41,8 @@ def login():
         email = request.form['email']
         password = request.form['password']
         error = None
-        with DBConnection() as db:
-            user = db.select_user(email=email)
+        db = DBConnection()
+        user = db.select_user(email=email)
 
         if user is None:
             error = 'Incorrect Email adress.'
@@ -71,8 +71,8 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        with DBConnection() as db:
-            g.user = db.select_user(user_id=user_id)
+        db = DBConnection()
+        g.user = db.select_user(user_id=user_id)
 
 
 def login_required(view):

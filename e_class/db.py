@@ -8,7 +8,7 @@ from flask.cli import with_appcontext
 
 class DBConnection:
 
-    def __enter__(self):
+    def __init__(self):
         if 'db' not in g:
             g.db = sqlite3.connect(
                 database=current_app.config['DATABASE'],
@@ -16,14 +16,18 @@ class DBConnection:
             )
             g.db.row_factory = sqlite3.Row
         self.db = g.db
-        return self
-
-    def __exit__(self, exc_type=None, exc_value=None, traceback=None):
-        g.pop(name='db', default=None)
-        self.db.close()
 
     def __call__(self):
         return self.db
+
+    def close(self, e=None):
+        db = g.pop(name='db', default=None)
+        if db is not None:
+            print("db closed")
+            db.close()
+
+    def execute(self, sql, parameter=None):
+        return self.db.execute(sql, parameter)
 
     def select_user(self, user_id=None, email=None):
         if user_id is not None:
@@ -43,9 +47,9 @@ class DBConnection:
 
 def init_db():
     """Remove old database (if exists) and create new one."""
-    with DBConnection() as db:
-        with current_app.open_resource('schema.sql') as f:
-            db().executescript(f.read().decode('utf8'))
+    db = DBConnection()
+    with current_app.open_resource('schema.sql') as f:
+        db().executescript(f.read().decode('utf8'))
 
 
 @click.command('init-db')
@@ -56,6 +60,13 @@ def init_db_command():
     click.echo('Initialized the database')
 
 
+def close_db(e=None):
+    db = g.pop(name='db', default=None)
+    if db is not None:
+        db.close()
+
+
 def init_app(app):
     """Connection to factory."""
+    app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)

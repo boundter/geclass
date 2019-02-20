@@ -15,7 +15,8 @@ def test_register(client, app):
     # after successful register reroute to login
     assert 'http://localhost/auth/login' == response.headers['Location']
 
-    with app.app_context(), DBConnection() as db:
+    with app.app_context():
+        db = DBConnection()
         assert db.select_user(email="a") is not None
 
 

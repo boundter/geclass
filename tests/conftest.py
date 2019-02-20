@@ -22,8 +22,8 @@ def app():
 
     with app.app_context():
         init_db()
-        with DBConnection() as db:
-            db().executescript(DATA_SQL)
+        db = DBConnection()
+        db().executescript(DATA_SQL)
 
     yield app
 

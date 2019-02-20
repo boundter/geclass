@@ -9,12 +9,12 @@ from e_class.db import DBConnection
 
 def test_get_close_db(app):
     with app.app_context():
-        with DBConnection() as db:
-            assert db() is g.db
+        db = DBConnection()
+        assert db() is g.db
 
-        # after the context the db connection gets teared down
-        with pytest.raises(AttributeError) as e:
-            g.db.execute('SELECT 1')
+    # after the context the db connection gets teared down
+    with pytest.raises(sqlite3.ProgrammingError) as e:
+        db.execute('SELECT 1')
 
 
 def test_init_db_command(runner, monkeypatch):
