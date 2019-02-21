@@ -124,6 +124,10 @@ class DBConnection:
             (email, password))
         self.db.commit()
 
+    def get_courses(self, user_id):
+        return self.db.execute(
+            'SELECT * FROM course WHERE user_id = ?', (user_id,)).fetchall()
+
 
 def init_db():
     """Remove old database (if exists) and create new one."""
