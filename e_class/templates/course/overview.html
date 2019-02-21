@@ -6,4 +6,14 @@
 
 {% block content %}
   <h2>Your courses here</h2>
+    <table class='course'>
+      <tr>
+        <th>Identifier</th>
+      </tr>
+    {% for course in courses %}
+      <tr>
+        <th>{{ course['course_identifier'] }}</th>
+      </tr>
+    {% endfor %}
+    </table>
 {% endblock %}}
