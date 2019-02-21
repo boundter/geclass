@@ -1,4 +1,5 @@
 import functools
+import re
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import (
@@ -8,6 +9,10 @@ from flask import (
 from e_class.db import DBConnection
 
 bp = Blueprint(name='auth', import_name=__name__, url_prefix='/auth')
+
+
+def check_valid_email(email):
+    return re.match(r'[^ @]+@[^ @]+\.[^ @]+', email) is not None
 
 
 @bp.route('/register', methods=('GET', 'POST'))
@@ -20,8 +25,9 @@ def register():
         db = DBConnection()
 
         if not email:
-            # TODO: Check for valid adress
             error = 'Email adress is required.'
+        elif not check_valid_email(email):
+            error = 'Email adress does not seem to be valid.'
         elif not password:
             error = 'Password is required.'
         elif db.select_user(email=email) is not None:
