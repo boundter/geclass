@@ -128,6 +128,12 @@ class DBConnection:
         return self.db.execute(
             'SELECT * FROM course WHERE user_id = ?', (user_id,)).fetchall()
 
+    def add_course(self, user_id, course_identifier):
+        self.db.execute(
+            'INSERT INTO course (user_id, course_identifier) VALUES (?, ?)',
+            (user_id, course_identifier))
+        self.db.commit()
+
 
 def init_db():
     """Remove old database (if exists) and create new one."""
