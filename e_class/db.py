@@ -125,10 +125,46 @@ class DBConnection:
         self.db.commit()
 
     def get_courses(self, user_id):
+        """Fetch all coursed from user with given id.
+
+        Args:
+            user_id (int): The id of the owner of the courses.
+
+        Returns:
+            A list of all the sqlite3 rows of the courses.
+
+        >>> courses = get_courses(user_id=1)
+        >>> for course in courses:
+        ...     print(course['course_identifier'])
+        'uni_potsdam_biochem_2018'
+        'uni_potsdam_phys_2018'
+
+        """
         return self.db.execute(
             'SELECT * FROM course WHERE user_id = ?', (user_id,)).fetchall()
 
     def add_course(self, user_id, course_identifier):
+        """Add a new course to the database.
+
+        Args:
+            user_id (int): The id of the owner of the course.
+            course_identifier (str): Some identifier for the course. It
+                                     does not need to be unique.
+
+        >>> get_courses(user_id=1)
+        >>> for course in courses:
+        ...     print(course['course_identifier'])
+        'uni_potsdam_biochem_2018'
+        'uni_potsdam_phys_2018'
+        >>> add_course(user_id=1, course_identifier='a_new_course')
+        >>> get_courses(user_id=1)
+        >>> for course in courses:
+        ...     print(course['course_identifier'])
+        'uni_potsdam_biochem_2018'
+        'uni_potsdam_phys_2018'
+        'a_new_course'
+
+        """
         self.db.execute(
             'INSERT INTO course (user_id, course_identifier) VALUES (?, ?)',
             (user_id, course_identifier))

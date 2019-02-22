@@ -1,11 +1,10 @@
-from flask import session
-
 from e_class.db import DBConnection
+
 
 def test_only_registered(client, auth):
     # non logged in user redirected to log in
     response = client.get('/')
-    assert 'http://localhost/auth/login' == response.headers['Location']
+    assert response.headers['Location'] == 'http://localhost/auth/login'
 
     # logged in user can acces their overview
     auth.login()
@@ -23,14 +22,14 @@ def test_only_registered(client, auth):
 def test_add_new_course(client, app, auth):
     # non logged in user redirected to log in
     response = client.get('/add_course')
-    assert 'http://localhost/auth/login' == response.headers['Location']
+    assert response.headers['Location'] == 'http://localhost/auth/login'
 
     auth.login()
     response = client.post(
         '/add_course',
         data={'identifier': 'phys_test'})
     # after successfully adding course reroute to index
-    assert 'http://localhost/' == response.headers['Location']
+    assert response.headers['Location'] == 'http://localhost/'
 
     # check if new course has really been inserted
     with app.app_context():
@@ -42,5 +41,3 @@ def test_add_new_course(client, app, auth):
         '/add_course',
         data={'identifier': ''})
     assert b'Identifier is required' in response.data
-
-

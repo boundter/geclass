@@ -35,7 +35,6 @@ def register():
 
         if error is None:
             db.add_user(email, generate_password_hash(password))
-            # TODO: Send directly to landing page
             return redirect(url_for('auth.login'))
         flash(error)
     return render_template('auth/register.html')
