@@ -10,6 +10,11 @@ Welcome to EClass's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   cli/index.rst
+   module/db
+   module/auth
+
+
 
 
 Indices and tables
@@ -19,8 +24,3 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-Database Connection
-===================
-
-.. automodule:: e_class.db
-   :members:
