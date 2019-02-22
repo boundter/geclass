@@ -60,8 +60,6 @@ class DBConnection:
 
         Args:
             sql (str): The SQL query.
-
-        Kwargs:
             parameter (tuple): Replacements for the placeholders.
 
         Returns:
@@ -79,7 +77,7 @@ class DBConnection:
 
         Query the database using either the user_id or the email.
 
-        Kwargs:
+        Args:
             user_id (int): The user id to search for.
             email (string): The email of the user to search for.
 
