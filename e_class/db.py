@@ -170,6 +170,42 @@ class DBConnection:
             (user_id, course_identifier))
         self.db.commit()
 
+    def change_email(self, user_id, email):
+        """Change the email adress of a given user.
+
+        Args:
+            user_id (int): The id of the user.
+            email (str): The new email adress.
+
+        >>> select_user(user_id=1)
+        ('test1@gmail.com', 'some hash')
+        >>> change_email(user_id=1, email='ab@cd.ef')
+        >>> select_user(user_id=1)
+        ('ab@cd.ef', 'some hash')
+
+        """
+        self.db.execute(
+            'UPDATE user SET email = ? WHERE id = ?', (email, user_id))
+        self.db.commit()
+
+    def change_password(self, user_id, password):
+        """Change the password of a given user.
+
+        Args:
+            user_id (int): The id of the user.
+            password (str): The new password.
+
+        >>> select_user(user_id=1)
+        ('test1@gmail.com', 'some hash')
+        >>> change_email(user_id=1, password='new_password')
+        >>> select_user(user_id=1)
+        ('ab@cd.ef', 'a different hash')
+
+        """
+        self.db.execute(
+            'UPDATE user SET password = ? WHERE id = ?', (password, user_id))
+        self.db.commit()
+
 
 def init_db():
     """Remove old database (if exists) and create new one."""

@@ -1,6 +1,7 @@
 import pytest
 
 from flask import g, session
+from werkzeug.security import  check_password_hash
 
 from e_class.db import DBConnection
 from e_class.auth import check_valid_email
@@ -71,3 +72,39 @@ def test_logout(client, auth):
     with client:
         auth.logout()
         assert 'user_id' not in session
+
+
+def test_change_email(client, app, auth):
+    # non logged in user redirected to log in
+    response = client.get('/auth/change_data')
+    assert response.headers['Location'] == 'http://localhost/auth/login'
+
+    auth.login()
+    # need to change something
+    response = client.post(
+        '/auth/change_data', data={'email': '', 'password': ''})
+    assert b'Email adress or password is needed' in response.data
+
+    # cannot change both
+    response = client.post(
+        '/auth/change_data', data={'email': 'ab@cd.ef', 'password': 'a'})
+    assert b'Email and password cannot be' in response.data
+
+    # can change email
+    response = client.post(
+        '/auth/change_data', data={'email': 'ab@cd.ef', 'password': ''})
+    assert response.headers['Location'] == 'http://localhost/'
+    with app.app_context():
+        db = DBConnection()
+        assert db.select_user(email="ab@cd.ef") is not None
+
+    # can change password
+    response = client.post(
+        '/auth/change_data', data={'email': '', 'password': 'abc'})
+    assert response.headers['Location'] == 'http://localhost/'
+    with app.app_context():
+        db = DBConnection()
+        assert check_password_hash(
+            db.select_user(email="ab@cd.ef")['password'], 'abc')
+
+

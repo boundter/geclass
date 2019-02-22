@@ -1,3 +1,6 @@
+"""Create pages to login, register and change user data."""
+# TODO: Check if email already registered
+
 import functools
 import re
 
@@ -88,3 +91,34 @@ def login_required(view):
             return redirect(url_for('auth.login'))
         return view(**kwargs)
     return wrapped_view
+
+
+@bp.route('/change_data', methods=('GET', 'POST'))
+@login_required
+def change_data():
+    if request.method == 'POST':
+        # TODO: Reenter password
+        email = request.form['email']
+        password = request.form['password']
+        error = None
+
+        if not (email or password):
+            error = 'Email adress or password is needed.'
+        elif email and password:
+            error = 'The Email and password cannot be ' + \
+                    'changed at the same time.'
+        elif email:
+            if not check_valid_email(email):
+                error = 'Email adress does not seem to be valid.'
+
+        if error is None:
+            db = DBConnection()
+            if email:
+                db.change_email(user_id=session['user_id'], email=email)
+            else:
+                db.change_password(
+                    user_id=session['user_id'],
+                    password=generate_password_hash(password))
+            return redirect(url_for('index'))
+        flash(error)
+    return render_template('auth/change_data.html')
