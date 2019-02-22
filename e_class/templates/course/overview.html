@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Courses{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <table class='course'>
+      <caption>Your courses here</caption>
+      <tr>
+        <th>Identifier</th>
+      </tr>
+    {% for course in courses %}
+      <tr>
+        <th>{{ course['course_identifier'] }}</th>
+      </tr>
+    {% endfor %}
+    </table>
+{% endblock %}}

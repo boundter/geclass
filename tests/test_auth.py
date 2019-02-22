@@ -47,7 +47,7 @@ def test_login(client, auth):
     # login is available
     assert client.get('/auth/login').status_code == 200
     response = auth.login()
-    assert 'http://localhost/auth/register' == response.headers['Location']
+    assert 'http://localhost/' == response.headers['Location']
 
     # login with user test1 leads to user_id 1
     with client:
