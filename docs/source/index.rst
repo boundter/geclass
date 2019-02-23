@@ -10,6 +10,8 @@ Welcome to EClass's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   prep/index.rst
+   database/index.rst
    cli/index.rst
    module/db
    module/auth
