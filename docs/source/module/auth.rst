@@ -2,4 +2,5 @@ Authentication
 ==============
 
 .. automodule:: e_class.auth
-   :members:
+.. autofunction:: check_valid_email(email)
+.. autofunction:: login_required(view)

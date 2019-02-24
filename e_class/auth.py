@@ -1,4 +1,9 @@
-"""Create pages to login, register and change user data."""
+"""Create pages to login, register and change user data.
+
+Aside from the pages there are also some utility functions. The most
+important one checks, if the current user is logged in and redirects
+to the log-in page if needed.
+"""
 # TODO: Check if email already registered
 
 import functools
@@ -15,6 +20,14 @@ bp = Blueprint(name='auth', import_name=__name__, url_prefix='/auth')
 
 
 def check_valid_email(email):
+    """Check if the given email has a valid form.
+
+    Args:
+        email (str): The email adress to check.
+
+    Returns:
+        A bool containing the validity.
+    """
     return re.match(r'[^ @]+@[^ @]+\.[^ @]+', email) is not None
 
 
@@ -84,7 +97,19 @@ def load_logged_in_user():
 
 
 def login_required(view):
-    """Redirect to login page if not in active session."""
+    """Redirect to login page, if not logged in.
+
+    This can be used as a decorator, to only allow logged in users
+    to access a page.
+
+    ::
+
+        @bp.route('/test')
+        @login_required
+        def test_page():
+            return rendender_template('/test.html')
+
+    """
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:

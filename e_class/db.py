@@ -5,10 +5,7 @@ execute queries and close the connection. Additionally there is a tool
 to create the database.
 
 Closing the database is done in the context of the flask app, as well
-as the creation. To create a new database there is the following
-command:
-
-    $ flask init-db
+as the creation.
 
 """
 
@@ -206,7 +203,7 @@ class DBConnection:
 
 
 def init_db():
-    """Remove old database (if exists) and create new one."""
+    """Remove old database (if it exists) and create a new one."""
     db = DBConnection()
     with current_app.open_resource('schema.sql') as f:
         db().executescript(f.read().decode('utf8'))
@@ -215,12 +212,18 @@ def init_db():
 @click.command('init-db')
 @with_appcontext
 def init_db_command():
-    """Remove old database (if exists) and create new one."""
+    """Create CLI for creating a new database with `flask init-db`.
+
+    **Careful: This will overwite the current one and all data will
+    be lost.**
+
+    """
     init_db()
     click.echo('Initialized the database')
 
 
 def close_db(e=None):
+    """Close the database. Needed for the teardown."""
     db = g.pop(name='db', default=None)
     if db is not None:
         db.close()
