@@ -159,6 +159,12 @@ def change_data():
 @click.argument('new_password')
 @with_appcontext
 def change_pwd_command(email, new_password):
+    """Create CLI to change the password of a user.
+
+    Sometime a user may loose their password. It can be set to a given
+    value by calling `flask change-pwd email new_password`.
+
+    """
     db = DBConnection()
     user = db.select_user(email=email)
     logging.info(
