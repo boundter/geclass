@@ -25,6 +25,7 @@ def create_app(test_config=None):
 
     from . import auth
     app.register_blueprint(auth.bp)
+    auth.change_pwd(app)
 
     from . import course
     app.register_blueprint(course.bp)

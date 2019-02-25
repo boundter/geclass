@@ -8,13 +8,18 @@ to the log-in page if needed.
 
 import functools
 import re
+import logging
 
+import click
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+from flask.cli import with_appcontext
 
 from e_class.db import DBConnection
+
+logging.basicConfig(level=logging.DEBUG)
 
 bp = Blueprint(name='auth', import_name=__name__, url_prefix='/auth')
 
@@ -147,3 +152,22 @@ def change_data():
             return redirect(url_for('index'))
         flash(error)
     return render_template('auth/change_data.html')
+
+
+@click.command('change-pwd')
+@click.argument('email')
+@click.argument('new_password')
+@with_appcontext
+def change_pwd_command(email, new_password):
+    db = DBConnection()
+    user = db.select_user(email=email)
+    logging.info(
+        'Change password for user {} with id {}'
+        ''.format(user['email'], user['id']))
+    db.change_password(
+        user_id=user['id'], password=generate_password_hash(new_password))
+
+
+def change_pwd(app):
+    app.cli.add_command(change_pwd_command)
+

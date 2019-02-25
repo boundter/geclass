@@ -108,3 +108,17 @@ def test_change_email(client, app, auth):
             db.select_user(email="ab@cd.ef")['password'], 'abc')
 
 
+def test_change_pwd_command(auth, runner, client):
+    # make sure password is set
+    auth.login(email='test2@web.de', password='foo')
+    response = client.get('/')
+    assert 'Location' not in response.headers
+    auth.logout()
+
+    runner.invoke(args=['change-pwd', 'test2@web.de', 'bar'])
+    auth.login(email='test2@web.de', password='bar')
+    response = client.get('/')
+    assert 'Location' not in response.headers
+
+
+
