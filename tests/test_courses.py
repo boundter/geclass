@@ -11,7 +11,7 @@ def test_only_registered(client, auth):
     response = client.get('/')
     print(response.data)
     print(response.headers)
-    assert b'Your courses' in response.data
+    assert b'Current Courses' in response.data
 
     # only own courses appear
     assert b'uni_potsdam_biochem_2018' in response.data

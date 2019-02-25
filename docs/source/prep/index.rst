@@ -35,6 +35,6 @@ connection to be interactive and a terminal. Finally to change the environment,
 the `-e` flag can be passed. For example to init the database (**Careful: This
 deletes the current database.**) the command is ::
 
-  $ docker run --rm -v ${PWD}:/app -p 80:80 -e 'FLASKAPP=e_class' flasker flask init-db
+  $ docker run --rm -v ${PWD}:/app -p 80:80 -e 'FLASK_APP=e_class' flasker flask init-db
 
 

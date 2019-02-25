@@ -6,13 +6,13 @@
 
 {% block content %}
     <table class='course'>
-      <caption>Your courses here</caption>
+      <caption>Current Courses</caption>
       <tr>
         <th>Identifier</th>
       </tr>
     {% for course in courses %}
       <tr>
-        <th>{{ course['course_identifier'] }}</th>
+        <td>{{ course['course_identifier'] }}</td>
       </tr>
     {% endfor %}
     </table>
