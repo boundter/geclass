@@ -9,8 +9,6 @@ def test_only_registered(client, auth):
     # logged in user can acces their overview
     auth.login()
     response = client.get('/')
-    print(response.data)
-    print(response.headers)
     assert b'Current Courses' in response.data
 
     # only own courses appear
