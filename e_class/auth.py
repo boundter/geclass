@@ -19,7 +19,7 @@ from flask.cli import with_appcontext
 
 from e_class.db import DBConnection
 
-logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger(__name__)
 
 bp = Blueprint(name='auth', import_name=__name__, url_prefix='/auth')
 
@@ -57,6 +57,7 @@ def register():
         if error is None:
             db.add_user(email, generate_password_hash(password))
             return redirect(url_for('auth.login'))
+        log.info('Invalid registration with email {}'.format(email))
         flash(error)
     return render_template('auth/register.html')
 
@@ -74,10 +75,13 @@ def login():
             error = 'Incorrect Email adress.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
+            log.info(
+                'Incorrect password entry by user {}'.format(user['id']))
 
         if error is None:
             session.clear()
             session['user_id'] = user['id']
+            logging.info('User {} logged in'.format(user['id']))
             return redirect(url_for('index'))
         flash(error)
     return render_template('auth/login.html')
@@ -167,9 +171,9 @@ def change_pwd_command(email, new_password):
     """
     db = DBConnection()
     user = db.select_user(email=email)
-    logging.info(
-        'Change password for user {} with id {}'
-        ''.format(user['email'], user['id']))
+    log.info(
+        'Force password change for user {} with email {}'
+        ''.format(user['id'], user['email']))
     db.change_password(
         user_id=user['id'], password=generate_password_hash(new_password))
 

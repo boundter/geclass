@@ -10,10 +10,13 @@ as the creation.
 """
 
 import sqlite3
+import logging
 
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
+
+log = logging.getLogger(__name__)
 
 
 class DBConnection:
@@ -37,6 +40,7 @@ class DBConnection:
 
         """
         if 'db' not in g:
+            log.debug('Create new db-connection')
             g.db = sqlite3.connect(
                 database=current_app.config['DATABASE'],
                 detect_types=sqlite3.PARSE_DECLTYPES
@@ -67,6 +71,8 @@ class DBConnection:
         (3, 'test@abc.de', 'password')
 
         """
+        log.info(
+            'Execute query {} with parameters {}'.format(sql, parameter))
         return self.db.execute(sql, parameter)
 
     def select_user(self, user_id=None, email=None):
@@ -114,6 +120,7 @@ class DBConnection:
         (4, 'hello@abc.de', 'foo')
 
         """
+        logging.info('Added new user with email {}'.format(email))
         self.db.execute(
             'INSERT INTO user (email, password) VALUES (?, ?)',
             (email, password))
@@ -160,6 +167,9 @@ class DBConnection:
         'a_new_course'
 
         """
+        log.info(
+            'Added new course {} for user {}'
+            ''.format(course_identifier, user_id))
         self.db.execute(
             'INSERT INTO course (user_id, course_identifier) VALUES (?, ?)',
             (user_id, course_identifier))
@@ -179,6 +189,7 @@ class DBConnection:
         ('ab@cd.ef', 'some hash')
 
         """
+        log.info('User {} changed email to {}'.format(user_id, email))
         self.db.execute(
             'UPDATE user SET email = ? WHERE id = ?', (email, user_id))
         self.db.commit()
@@ -197,6 +208,7 @@ class DBConnection:
         ('ab@cd.ef', 'a different hash')
 
         """
+        log.info('User {} changed password'.format(user_id))
         self.db.execute(
             'UPDATE user SET password = ? WHERE id = ?', (password, user_id))
         self.db.commit()
@@ -204,6 +216,7 @@ class DBConnection:
 
 def init_db():
     """Remove old database (if it exists) and create a new one."""
+    log.info('Create a new database')
     db = DBConnection()
     with current_app.open_resource('schema.sql') as f:
         db().executescript(f.read().decode('utf8'))
