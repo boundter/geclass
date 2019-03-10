@@ -8,11 +8,11 @@
     <table class='course'>
       <caption>Current Courses</caption>
       <tr>
-        <th>Identifier</th>
+        <th>Name</th>
       </tr>
     {% for course in courses %}
       <tr>
-        <td>{{ course['course_identifier'] }}</td>
+        <td>{{ course['name'] }}</td>
       </tr>
     {% endfor %}
     </table>

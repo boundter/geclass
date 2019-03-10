@@ -25,15 +25,15 @@ def overview():
 @login_required
 def add_course():
     if request.method == 'POST':
-        identifier = request.form['identifier']
+        name = request.form['name']
         error = None
 
-        if not identifier:
-            error = 'Identifier is required.'
+        if not name:
+            error = 'Name is required.'
 
         if error is None:
             db = DBConnection()
-            db.add_course(session['user_id'], identifier)
+            db.add_course(session['user_id'], name)
             return redirect(url_for('index'))
         flash(error)
     return render_template('course/add_course.html')

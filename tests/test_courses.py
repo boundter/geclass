@@ -12,9 +12,9 @@ def test_only_registered(client, auth):
     assert b'Current Courses' in response.data
 
     # only own courses appear
-    assert b'uni_potsdam_biochem_2018' in response.data
-    assert b'uni_potsdam_phys_2018' in response.data
-    assert b'uni_hamburg_phys_2018' not in response.data
+    assert b'Bachelor Physiker' in response.data
+    assert b'Master Physiker Projekt' in response.data
+    assert b'Nebenfach Grundpraktikum' not in response.data
 
 
 def test_add_new_course(client, app, auth):
@@ -25,7 +25,7 @@ def test_add_new_course(client, app, auth):
     auth.login()
     response = client.post(
         '/add_course',
-        data={'identifier': 'phys_test'})
+        data={'name': 'phys_test'})
     # after successfully adding course reroute to index
     assert response.headers['Location'] == 'http://localhost/'
 
@@ -37,5 +37,5 @@ def test_add_new_course(client, app, auth):
     # no empty identifiers allowed
     response = client.post(
         '/add_course',
-        data={'identifier': ''})
-    assert b'Identifier is required' in response.data
+        data={'name': ''})
+    assert b'Name is required' in response.data
