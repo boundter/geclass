@@ -1,5 +1,15 @@
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS course;
+DROP TABLE IF EXISTS program;
+DROP TABLE IF EXISTS course_type;
+DROP TABLE IF EXISTS focus;
+DROP TABLE IF EXISTS traditional;
+DROP TABLE IF EXISTS equipment;
+DROP TABLE IF EXISTS experience;
+DROP TABLE IF EXISTS university;
+DROP TABLE IF EXISTS notes;
+
+PRAGMA encoding='UTF-8';
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +43,7 @@ CREATE TABLE course (
   FOREIGN KEY (traditional_id) REFERENCES traditional (id),
   FOREIGN KEY (equipment_id) REFERENCES equipment (id),
   FOREIGN KEY (experience_id) REFERENCES experience (id),
-  FOREIGN KEY (university_id) REFERENCES univeristy (id),
+  FOREIGN KEY (university_id) REFERENCES university (id),
   FOREIGN KEY (notes_id) REFERENCES notes (id)
 );
 

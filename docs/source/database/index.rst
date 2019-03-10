@@ -43,7 +43,7 @@ There are two tables:
   * id - the primary key (autoincrement)
   * program_name - name of the program
 
-* couse_type
+* course_type
 
   * id - the primary key (autoincrement)
   * course_type_name - name of the type of course (GP/FP)
