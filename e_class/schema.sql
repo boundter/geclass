@@ -10,6 +10,70 @@ CREATE TABLE user (
 CREATE TABLE course (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
-  course_identifier TEXT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES user (id)
+  program_id INTEGER NOT NULL,
+  course_type_id INTEGER NOT NULL,
+  focus_id INTEGER NOT NULL,
+  traditional_id INTEGER NOT NULL,
+  equipment_id INTEGER NOT NULL,
+  experience_id INTEGER NOT NULL,
+  university_id INTEGER NOT NULL,
+  notes_id INTEGER NOT NULL,
+  number_students INTEGER NOT NULL,
+  students_per_instructor REAL NOT NULL,
+  lab_per_lecture REAL NOT NULL,
+  number_experiments INTEGER,
+  number_projects INTEGER,
+  start_date_pre TEXT NOT NULL,
+  start_date_post TEXT NOT NULL,
+  name TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user (id),
+  FOREIGN KEY (program_id) REFERENCES program (id),
+  FOREIGN KEY (course_type_id) REFERENCES course_type (id),
+  FOREIGN KEY (focus_id) REFERENCES focus (id),
+  FOREIGN KEY (traditional_id) REFERENCES traditional (id),
+  FOREIGN KEY (equipment_id) REFERENCES equipment (id),
+  FOREIGN KEY (experience_id) REFERENCES experience (id),
+  FOREIGN KEY (university_id) REFERENCES univeristy (id),
+  FOREIGN KEY (notes_id) REFERENCES notes (id)
 );
+
+CREATE TABLE program (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  program_name TEXT NOT NULL
+);
+
+CREATE TABLE course_type (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  course_type_name TEXT NOT NULL
+);
+
+CREATE TABLE focus (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  focus_name TEXT NOT NULL
+);
+
+CREATE TABLE traditional (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  traditional_name TEXT NOT NULL
+);
+
+CREATE TABLE equipment (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  equipment_type TEXT NOT NULL
+);
+
+CREATE TABLE experience (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  experience_level TEXT NOT NULL
+);
+
+CREATE TABLE university (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  university_name TEXT NOT NULL
+);
+
+CREATE TABLE notes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  notes_text TEXT NOT NULL
+);
+
