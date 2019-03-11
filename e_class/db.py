@@ -73,9 +73,15 @@ class DBConnection:
         """
         return self.db.execute(sql, parameters)
 
-    def select_one(self, table, field, value):
+    def _select(self, table, field, value):
         sql = 'SELECT * FROM {} WHERE {} = ?'.format(table, field)
-        return self.execute(sql, (value,)).fetchone()
+        return self.execute(sql, (value,))
+
+    def select_one(self, table, field, value):
+        return self._select(table, field, value).fetchone()
+
+    def select_all(self, table, field, value):
+        return self._select(table, field, value).fetchall()
 
     def add(self, table, field, values):
         value_string = ', '.join(['?']*len(values))
@@ -86,59 +92,9 @@ class DBConnection:
         self.db.commit()
 
     def update_one(self, table, condition, new_value):
-
         sql = 'UPDATE {} SET {} = ? WHERE {} = ?'.format(table, new_value[0],
             condition[0])
         self.execute(sql, (new_value[1], condition[1]))
-        self.db.commit()
-
-    def get_courses(self, user_id):
-        """Fetch all coursed from user with given id.
-
-        Args:
-            user_id (int): The id of the owner of the courses.
-
-        Returns:
-            A list of all the sqlite3 rows of the courses.
-
-        >>> courses = get_courses(user_id=1)
-        >>> for course in courses:
-        ...     print(course['course_identifier'])
-        'uni_potsdam_biochem_2018'
-        'uni_potsdam_phys_2018'
-
-        """
-        return self.db.execute(
-            'SELECT * FROM course WHERE user_id = ?', (user_id,)).fetchall()
-
-    def add_course(self, user_id, course_name):
-        """Add a new course to the database.
-
-        Args:
-            user_id (int): The id of the owner of the course.
-            course_name (str): Some name for the course. It
-                               does not need to be unique.
-
-        >>> get_courses(user_id=1)
-        >>> for course in courses:
-        ...     print(course['name'])
-        'uni_potsdam_biochem_2018'
-        'uni_potsdam_phys_2018'
-        >>> add_course(user_id=1, name='a_new_name')
-        >>> get_courses(user_id=1)
-        >>> for course in courses:
-        ...     print(course['name'])
-        'uni_potsdam_biochem_2018'
-        'uni_potsdam_phys_2018'
-        'a_new_name'
-
-        """
-        log.info(
-            'Added new course {} for user {}'
-            ''.format(course_name, user_id))
-        self.db.execute(
-            'INSERT INTO course (user_id, name) VALUES (?, ?)',
-            (user_id, course_name))
         self.db.commit()
 
 

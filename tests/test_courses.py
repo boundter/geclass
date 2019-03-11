@@ -1,4 +1,4 @@
-from e_class.db import DBConnection
+from e_class.course_db import CourseDB
 
 
 def test_only_registered(client, auth):
@@ -31,8 +31,8 @@ def test_add_new_course(client, app, auth):
 
     # check if new course has really been inserted
     with app.app_context():
-        db = DBConnection()
-        assert 'phys_test' in db.get_courses(user_id=1)[2]
+        course_db = CourseDB()
+        assert 'phys_test' in course_db.get_courses(user_id=1)[2]
 
     # no empty identifiers allowed
     response = client.post(
