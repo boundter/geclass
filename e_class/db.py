@@ -52,7 +52,7 @@ class DBConnection:
         """Return the database connection object."""
         return self.db
 
-    def execute(self, sql, parameter=None):
+    def execute(self, sql, parameters=None):
         """Execute a SQL query.
 
         The SQL statement should have ? placeholders for sanitation.
@@ -71,59 +71,25 @@ class DBConnection:
         (3, 'test@abc.de', 'password')
 
         """
-        log.info(
-            'Execute query {} with parameters {}'.format(sql, parameter))
-        return self.db.execute(sql, parameter)
+        return self.db.execute(sql, parameters)
 
-    def select_user(self, user_id=None, email=None):
-        """Get all info about a specific user.
+    def select_one(self, table, field, value):
+        sql = 'SELECT * FROM {} WHERE {} = ?'.format(table, field)
+        return self.execute(sql, (value,)).fetchone()
 
-        Query the database using either the user_id or the email.
+    def add(self, table, field, values):
+        value_string = ', '.join(['?']*len(values))
+        field_string = ', '.join(field)
+        sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table,
+            field_string, value_string)
+        self.execute(sql, values)
+        self.db.commit()
 
-        Args:
-            user_id (int): The user id to search for.
-            email (string): The email of the user to search for.
+    def update_one(self, table, condition, new_value):
 
-        Returns:
-            A tuple of form (user_id, email, password_hash) for the
-            given parameters. If there is no match None will be
-            returned.
-
-        >>> select_user(user_id=3)
-        (3, 'test@abc.de', 'password')
-        >>> select_user(email='test@abc.de')
-        (3, 'test@abc.de', 'password')
-
-        """
-        if user_id is not None:
-            return self.db.execute(
-                'SELECT * FROM user WHERE id = ?', (user_id,)).fetchone()
-        if email is not None:
-            return self.db.execute(
-                'SELECT * FROM user WHERE email = ?', (email,)).fetchone()
-        return None
-
-    def add_user(self, email, password):
-        """Add a new user to the database.
-
-        There is no check, if the user already exists. Also the
-        password will not be hashed, but written as it is given.
-
-        Args:
-            email (str): The email of the new user.
-            password (str): The hash of the password of the new user.
-
-        >>> select_user(user_id=4)
-        None
-        >>> add_user(email='hello@abc.de', password='foo')
-        >>> select_user(user_id=4)
-        (4, 'hello@abc.de', 'foo')
-
-        """
-        logging.info('Added new user with email {}'.format(email))
-        self.db.execute(
-            'INSERT INTO user (email, password) VALUES (?, ?)',
-            (email, password))
+        sql = 'UPDATE {} SET {} = ? WHERE {} = ?'.format(table, new_value[0],
+            condition[0])
+        self.execute(sql, (new_value[1], condition[1]))
         self.db.commit()
 
     def get_courses(self, user_id):
@@ -173,44 +139,6 @@ class DBConnection:
         self.db.execute(
             'INSERT INTO course (user_id, name) VALUES (?, ?)',
             (user_id, course_name))
-        self.db.commit()
-
-    def change_email(self, user_id, email):
-        """Change the email adress of a given user.
-
-        Args:
-            user_id (int): The id of the user.
-            email (str): The new email adress.
-
-        >>> select_user(user_id=1)
-        ('test1@gmail.com', 'some hash')
-        >>> change_email(user_id=1, email='ab@cd.ef')
-        >>> select_user(user_id=1)
-        ('ab@cd.ef', 'some hash')
-
-        """
-        log.info('User {} changed email to {}'.format(user_id, email))
-        self.db.execute(
-            'UPDATE user SET email = ? WHERE id = ?', (email, user_id))
-        self.db.commit()
-
-    def change_password(self, user_id, password):
-        """Change the password of a given user.
-
-        Args:
-            user_id (int): The id of the user.
-            password (str): The new password.
-
-        >>> select_user(user_id=1)
-        ('test1@gmail.com', 'some hash')
-        >>> change_email(user_id=1, password='new_password')
-        >>> select_user(user_id=1)
-        ('ab@cd.ef', 'a different hash')
-
-        """
-        log.info('User {} changed password'.format(user_id))
-        self.db.execute(
-            'UPDATE user SET password = ? WHERE id = ?', (password, user_id))
         self.db.commit()
 
 

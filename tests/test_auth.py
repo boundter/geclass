@@ -4,6 +4,7 @@ from flask import g, session
 from werkzeug.security import  check_password_hash
 
 from e_class.db import DBConnection
+from e_class.user_db import UserDB
 from e_class.auth import check_valid_email
 
 
@@ -26,8 +27,8 @@ def test_register(client, app):
     assert 'http://localhost/auth/login' == response.headers['Location']
 
     with app.app_context():
-        db = DBConnection()
-        assert db.select_user(email="abc@def.gh") is not None
+        user_db = UserDB()
+        assert user_db.select_user(email="abc@def.gh") is not None
 
 
 @pytest.mark.parametrize(('email', 'password', 'message'), (
@@ -95,17 +96,17 @@ def test_change_email(client, app, auth):
         '/auth/change_data', data={'email': 'ab@cd.ef', 'password': ''})
     assert response.headers['Location'] == 'http://localhost/'
     with app.app_context():
-        db = DBConnection()
-        assert db.select_user(email="ab@cd.ef") is not None
+        user_db = UserDB()
+        assert user_db.select_user(email="ab@cd.ef") is not None
 
     # can change password
     response = client.post(
         '/auth/change_data', data={'email': '', 'password': 'abc'})
     assert response.headers['Location'] == 'http://localhost/'
     with app.app_context():
-        db = DBConnection()
+        user_db = UserDB()
         assert check_password_hash(
-            db.select_user(email="ab@cd.ef")['password'], 'abc')
+            user_db.select_user(email="ab@cd.ef")['password'], 'abc')
 
 
 def test_change_pwd_command(auth, runner, client):

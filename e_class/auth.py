@@ -17,7 +17,7 @@ from flask import (
 )
 from flask.cli import with_appcontext
 
-from e_class.db import DBConnection
+from e_class.user_db import UserDB
 
 log = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ def register():
         email = request.form['email']
         password = request.form['password']
         error = None
-        db = DBConnection()
+        user_db = UserDB()
 
         if not email:
             error = 'Email adress is required.'
@@ -51,11 +51,11 @@ def register():
             error = 'Email adress does not seem to be valid.'
         elif not password:
             error = 'Password is required.'
-        elif db.select_user(email=email) is not None:
+        elif user_db.select_user(email=email) is not None:
             error = 'Email adress {} is already registered.'.format(email)
 
         if error is None:
-            db.add_user(email, generate_password_hash(password))
+            user_db.add_user(email, generate_password_hash(password))
             return redirect(url_for('auth.login'))
         log.info('Invalid registration with email {}'.format(email))
         flash(error)
@@ -68,8 +68,8 @@ def login():
         email = request.form['email']
         password = request.form['password']
         error = None
-        db = DBConnection()
-        user = db.select_user(email=email)
+        user_db = UserDB()
+        user = user_db.select_user(email=email)
 
         if user is None:
             error = 'Incorrect Email adress.'
@@ -101,8 +101,8 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        db = DBConnection()
-        g.user = db.select_user(user_id=user_id)
+        user_db = UserDB()
+        g.user = user_db.select_user(user_id=user_id)
 
 
 def login_required(view):
@@ -146,13 +146,14 @@ def change_data():
                 error = 'Email adress does not seem to be valid.'
 
         if error is None:
-            db = DBConnection()
+            user_db = UserDB()
             if email:
-                db.change_email(user_id=session['user_id'], email=email)
+                user_db.change_email(
+                    user_id=session['user_id'], new_email=email)
             else:
-                db.change_password(
+                user_db.change_password(
                     user_id=session['user_id'],
-                    password=generate_password_hash(password))
+                    new_password=generate_password_hash(password))
             return redirect(url_for('index'))
         flash(error)
     return render_template('auth/change_data.html')
@@ -169,13 +170,13 @@ def change_pwd_command(email, new_password):
     value by calling `flask change-pwd email new_password`.
 
     """
-    db = DBConnection()
-    user = db.select_user(email=email)
+    user_db = UserDB()
+    user = user_db.select_user(email=email)
     log.info(
         'Force password change for user {} with email {}'
         ''.format(user['id'], user['email']))
-    db.change_password(
-        user_id=user['id'], password=generate_password_hash(new_password))
+    user_db.change_password(
+        user_id=user['id'], new_password=generate_password_hash(new_password))
 
 
 def change_pwd(app):
