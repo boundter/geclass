@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 
 class DBConnection:
-    """Connection handler for the EClass website.
+    """Connection handler for the GEclass website.
 
     This class picks up (or creates, if none is available) a database
     connection from the current user session. The closing of the

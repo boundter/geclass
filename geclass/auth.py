@@ -17,7 +17,7 @@ from flask import (
 )
 from flask.cli import with_appcontext
 
-from e_class.user_db import UserDB
+from geclass.user_db import UserDB
 
 log = logging.getLogger(__name__)
 

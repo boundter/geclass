@@ -1,4 +1,4 @@
-"""Factory for the EClass webpage."""
+"""Factory for the GEclass webpage."""
 import os
 import logging
 
@@ -10,7 +10,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'e_class.sqlite')
+        DATABASE=os.path.join(app.instance_path, 'geclass.sqlite')
     )
     if test_config is None:
         app.config.from_pyfile('config.py', silent=True)

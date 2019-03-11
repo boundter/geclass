@@ -4,8 +4,8 @@ import tempfile
 
 import pytest
 
-from e_class import create_app
-from e_class.db import DBConnection, init_db
+from geclass import create_app
+from geclass.db import DBConnection, init_db
 
 with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
     DATA_SQL = f.read().decode('utf8')

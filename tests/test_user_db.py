@@ -1,4 +1,4 @@
-from e_class.user_db import UserDB
+from geclass.user_db import UserDB
 
 
 def test_select_user(app):

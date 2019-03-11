@@ -1,7 +1,7 @@
 Database Connection
 ===================
 
-.. automodule:: e_class.db
+.. automodule:: geclass.db
 .. autoclass:: DBConnection
    :members:
 .. autofunction:: init_db_command()

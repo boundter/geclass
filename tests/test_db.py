@@ -1,10 +1,10 @@
-"""Test the db functionality for the EClass."""
+"""Test the db functionality for the GEclass."""
 import sqlite3
 
 import pytest
 from flask import g
 
-from e_class.db import DBConnection
+from geclass.db import DBConnection
 
 
 def test_get_close_db(app):
@@ -23,7 +23,7 @@ def test_init_db_command(runner, monkeypatch):
     def fake_init_db():
         init['called'] = True
 
-    monkeypatch.setattr('e_class.db.init_db', fake_init_db)
+    monkeypatch.setattr('geclass.db.init_db', fake_init_db)
     result = runner.invoke(args=['init-db'])
     assert 'Initialized' in result.output
     assert init['called']

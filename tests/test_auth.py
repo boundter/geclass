@@ -3,9 +3,9 @@ import pytest
 from flask import g, session
 from werkzeug.security import  check_password_hash
 
-from e_class.db import DBConnection
-from e_class.user_db import UserDB
-from e_class.auth import check_valid_email
+from geclass.db import DBConnection
+from geclass.user_db import UserDB
+from geclass.auth import check_valid_email
 
 
 def test_validate_email():

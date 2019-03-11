@@ -1,4 +1,4 @@
-from e_class.course_db import CourseDB
+from geclass.course_db import CourseDB
 
 
 def test_select_all_courses(app):

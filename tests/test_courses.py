@@ -1,4 +1,4 @@
-from e_class.course_db import CourseDB
+from geclass.course_db import CourseDB
 
 
 def test_only_registered(client, auth):

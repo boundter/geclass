@@ -1,6 +1,6 @@
 import logging
 
-from e_class.db import DBConnection
+from geclass.db import DBConnection
 
 log = logging.getLogger(__name__)
 

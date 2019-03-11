@@ -5,8 +5,8 @@ from flask import (
     Blueprint, flash, redirect, render_template, request, session, url_for
 )
 
-from e_class.auth import login_required
-from e_class.course_db import CourseDB
+from geclass.auth import login_required
+from geclass.course_db import CourseDB
 
 log = logging.getLogger(__name__)
 
