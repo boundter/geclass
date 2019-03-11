@@ -32,6 +32,7 @@ def check_valid_email(email):
 
     Returns:
         A bool containing the validity.
+
     """
     return re.match(r'[^ @]+@[^ @]+\.[^ @]+', email) is not None
 
@@ -57,7 +58,7 @@ def register():
         if error is None:
             user_db.add_user(email, generate_password_hash(password))
             return redirect(url_for('auth.login'))
-        log.info('Invalid registration with email {}'.format(email))
+        log.info('Invalid registration with email %s', email)
         flash(error)
     return render_template('auth/register.html')
 
@@ -75,13 +76,12 @@ def login():
             error = 'Incorrect Email adress.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
-            log.info(
-                'Incorrect password entry by user {}'.format(user['id']))
+            log.info('Incorrect password entry by user %s', user['id'])
 
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            logging.info('User {} logged in'.format(user['id']))
+            log.info('User %s logged in', user['id'])
             return redirect(url_for('index'))
         flash(error)
     return render_template('auth/login.html')
@@ -173,12 +173,11 @@ def change_pwd_command(email, new_password):
     user_db = UserDB()
     user = user_db.select_user(email=email)
     log.info(
-        'Force password change for user {} with email {}'
-        ''.format(user['id'], user['email']))
+        'Force password change for user %s with email %s',
+        user['id'], user['email'])
     user_db.change_password(
         user_id=user['id'], new_password=generate_password_hash(new_password))
 
 
 def change_pwd(app):
     app.cli.add_command(change_pwd_command)
-

@@ -1,3 +1,4 @@
+"""A class to handle the course management."""
 import logging
 
 from geclass.db import DBConnection
@@ -6,6 +7,7 @@ log = logging.getLogger(__name__)
 
 
 class CourseDB(DBConnection):
+    """Handle the course  management."""
 
     def get_courses(self, user_id):
         """Fetch all coursed from user with given id.
@@ -23,7 +25,7 @@ class CourseDB(DBConnection):
         'uni_potsdam_phys_2018'
 
         """
-        return self.select_all(table='course', field='user_id', value=user_id)
+        return self.select_all(table='course', column='user_id', value=user_id)
 
     def add_course(self, user_id, course_name):
         """Add a new course to the database.
@@ -47,10 +49,8 @@ class CourseDB(DBConnection):
         'a_new_name'
 
         """
-        log.info(
-            'Added new course {} for user {}'
-            ''.format(course_name, user_id))
+        log.info('Added new course %s for user %s', course_name, user_id)
         self.add(
             table='course',
-            field=('user_id', 'name'),
+            columns=('user_id', 'name'),
             values=(user_id, course_name))
