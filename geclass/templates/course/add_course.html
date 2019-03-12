@@ -5,9 +5,12 @@
 {% endblock %}
 
 {% block content %}
-  <form method="post">
-    <label for="name">name</label>
-    <input name="name" id="name" required>
+  <form method="post" id="add_course">
+
+  {% for question in questions %}
+    {{ question|safe }}
+  {% endfor %}
+
     <input type="submit" value="Register">
   </form>
 {% endblock %}
