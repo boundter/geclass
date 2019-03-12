@@ -7,6 +7,7 @@ from flask import (
 
 from geclass.auth import login_required
 from geclass.course_db import CourseDB
+from geclass.course_question import QuestionText, QuestionNumber, QuestionDropdown, QuestionDropdownWithText
 
 log = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ def overview():
 def add_course():
     if request.method == 'POST':
         name = request.form['name']
+        number_experiments = request.form['nr_experiments']
         error = None
 
         if not name:
@@ -36,4 +38,14 @@ def add_course():
             course_db.add_course(session['user_id'], name)
             return redirect(url_for('index'))
         flash(error)
-    return render_template('course/add_course.html')
+    course_db = CourseDB()
+    courses = course_db.execute('SELECT id, name FROM course WHERE user_id = ?', (session['user_id'], )).fetchall()
+    questions = (
+        QuestionText('name', 'Name', 'Choose a name for your course.'),
+        QuestionNumber('nr_exp', 'Number of Experiments',
+            'How many experiments are part of the course?', default=0,
+            value_range=(0, 100)),
+        QuestionDropdown('uni', 'University', 'Where is the course?', courses),
+        QuestionDropdownWithText('uni', 'University', 'Where is the course?', courses, 'Other')
+            )
+    return render_template('course/add_course.html', questions=questions)
