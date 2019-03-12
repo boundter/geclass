@@ -1,7 +1,3 @@
-import logging
-
-log = logging.getLogger(__name__)
-
 class CourseQuestion:
 
     def __init__(self, name, title, text):
@@ -9,7 +5,7 @@ class CourseQuestion:
         self.title = title
         self.text = text
 
-    def __call__(self):
+    def __repr__(self):
         div_begin = '<div class="course_question">\n'
         header = '<h3>{}</h3>\n'.format(self.title)
         label = '<label for="{}">{}</label>\n'.format(self.name, self.text)
@@ -87,8 +83,3 @@ class QuestionDropdownWithText(QuestionDropdown):
             self.name)
         inp = dropdown + '</br>' + label + text
         return inp
-
-
-if __name__ == '__main__':
-    course = QuestionNumber('bla', 'Name', 'this is whatever', value_range=(-1, 10), default=0, step=0.1)
-    print(course())
