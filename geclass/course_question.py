@@ -44,11 +44,20 @@ class QuestionText(CourseQuestion):
         title (str): The header of the question.
         text (str): The label of the input, it acts as an
             explanation.
+        max_length (int): The max length of the input.
     """
 
+    def __init__(self, name, title, text, max_length=None):
+        self.max_length = max_length
+        super(QuestionText, self).__init__(name, title, text)
+
     def _input(self):
-        inp = '<input name="{}" type="text" value="" required>\n'.format(
-            self.name)
+        if self.max_length:
+            length = 'maxlength="{}" '.format(self.max_length)
+        else:
+            length = ''
+        inp = '<input name="{}" type="text" value="" {}required>\n'.format(
+            self.name, length)
         return inp
 
 
@@ -153,3 +162,33 @@ class QuestionDropdownWithText(QuestionDropdown):
             self.name)
         inp = dropdown + '</br>' + label + text
         return inp
+
+
+questions = (
+    QuestionText('name', 'Name', 'Choose a name for your course.'),
+    # start and end date
+    # university
+    # program
+    # experience of the students
+    # course_type
+    # traditional
+    # focus
+    QuestionNumber('nr_students', 'Number of Students',
+        'How many students are going to be in the course? (Approximately)',
+        default=0, value_range=(0, 1000)),
+    QuestionNumber('students_instructors', 'Ratio of Students to Instructors',
+        'How many students are there per instructor?', default=0,
+        value_range=(0, 100)),
+    QuestionNumber('nr_experiments', 'Number of Experiments',
+        'How many experiments does each student need to complete?',
+        default=0, value_range=(0, 1000)),
+    QuestionNumber('nr_projects', 'Number of Projects',
+        'How many projects does each student need to complete?',
+        default=0, value_range=(0, 1000)),
+    QuestionNumber('lab_lecture', 'Ratio of Lab to Lecture',
+        'What is the ratio of lab to lecture in the course?',
+        default=0, value_range=(0, 1), step=0.1),
+    # equipment
+    QuestionText('note', 'Notes',
+        'Is there anything else, you want to tell us? Max 255 characters.',
+        max_length=255))
