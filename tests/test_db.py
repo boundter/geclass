@@ -13,7 +13,7 @@ def test_get_close_db(app):
         assert db() is g.db
 
     # after the context the db connection gets teared down
-    with pytest.raises(sqlite3.ProgrammingError) as e:
+    with pytest.raises(sqlite3.ProgrammingError):
         db.execute('SELECT 1')
 
 

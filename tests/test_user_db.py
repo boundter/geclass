@@ -26,7 +26,6 @@ def test_change_email(app):
     with app.app_context():
         user_db = UserDB()
         new_email = 'gp@uni-potsdam.de'
-        user_id = 1
         user = user_db.select_user(user_id=1)
         assert user['email'] != new_email
         user_db.change_email(user_id=1, new_email=new_email)
@@ -38,7 +37,6 @@ def test_change_password(app):
     with app.app_context():
         user_db = UserDB()
         new_password = 'abc'
-        user_id = 1
         user = user_db.select_user(user_id=1)
         assert user['password'] != new_password
         user_db.change_password(user_id=1, new_password=new_password)

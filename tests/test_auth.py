@@ -1,9 +1,8 @@
 import pytest
 
+from werkzeug.security import check_password_hash
 from flask import g, session
-from werkzeug.security import  check_password_hash
 
-from geclass.db import DBConnection
 from geclass.user_db import UserDB
 from geclass.auth import check_valid_email
 
@@ -24,7 +23,7 @@ def test_register(client, app):
         data={'email': 'abc@def.gh', 'password': 'a'}
     )
     # after successful register reroute to login
-    assert 'http://localhost/auth/login' == response.headers['Location']
+    assert response.headers['Location'] == 'http://localhost/auth/login'
 
     with app.app_context():
         user_db = UserDB()
@@ -49,7 +48,7 @@ def test_login(client, auth):
     # login is available
     assert client.get('/auth/login').status_code == 200
     response = auth.login()
-    assert 'http://localhost/' == response.headers['Location']
+    assert response.headers['Location'] == 'http://localhost/'
 
     # login with user test1 leads to user_id 1
     with client:
@@ -120,6 +119,3 @@ def test_change_pwd_command(auth, runner, client):
     auth.login(email='test2@web.de', password='bar')
     response = client.get('/')
     assert 'Location' not in response.headers
-
-
-
