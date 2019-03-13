@@ -137,6 +137,10 @@ class DBConnection:
         """
         return self._select(table, column, value).fetchall()
 
+    def select_all_entries(self, table):
+        sql = 'SELECT * FROM {}'.format(table)
+        return self.db.execute(sql).fetchall()
+
     def add(self, table, columns, values):
         """Add a new row to the database.
 

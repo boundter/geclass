@@ -7,7 +7,7 @@ from flask import (
 
 from geclass.auth import login_required
 from geclass.course_db import CourseDB
-from geclass.course_question import QuestionText, QuestionNumber, QuestionDropdown, QuestionDropdownWithText, questions
+from geclass.course_question import CreateQuestions
 
 log = logging.getLogger(__name__)
 
@@ -38,4 +38,5 @@ def add_course():
             course_db.add_course(session['user_id'], name)
             return redirect(url_for('index'))
         flash(error)
+    questions = CreateQuestions()
     return render_template('course/add_course.html', questions=questions)

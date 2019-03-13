@@ -1,5 +1,11 @@
 """Container to generate html-expressions for adding courses."""
 
+import logging
+
+from geclass.course_db import CourseDB
+
+log = logging.getLogger(__name__)
+
 
 class CourseQuestion:
     """Base class of the questions.
@@ -58,6 +64,25 @@ class QuestionText(CourseQuestion):
             length = ''
         inp = '<input name="{}" type="text" value="" {}required>\n'.format(
             self.name, length)
+        return inp
+
+
+class QuestionDate(CourseQuestion):
+    """Create a question with a date.
+
+    Args:
+        name (str): The html identifier for the input.
+        title (str): The header of the question.
+        text (str): The label of the input, it acts as an
+            explanation.
+    """
+
+    def __init__(self, name, title, text):
+        super(QuestionDate, self).__init__(name, title, text)
+
+    def _input(self):
+        inp = '<input name="{}" type="date" value=""required>\n'.format(
+            self.name)
         return inp
 
 
@@ -125,7 +150,7 @@ class QuestionDropdown(CourseQuestion):
         options = ''
         for values in self.pairs:
             options += '<option value={}>{}</option>\n'.format(*values)
-        inp = ('<select name="{}" onchange="{}.submit()"\n'
+        inp = ('<select name="{}" onchange="{}.submit()">\n'
                ''.format(self.name, self.name) + options + '</select>\n')
         return inp
 
@@ -164,31 +189,71 @@ class QuestionDropdownWithText(QuestionDropdown):
         return inp
 
 
-questions = (
-    QuestionText('name', 'Name', 'Choose a name for your course.'),
-    # start and end date
-    # university
-    # program
-    # experience of the students
-    # course_type
-    # traditional
-    # focus
-    QuestionNumber('nr_students', 'Number of Students',
-        'How many students are going to be in the course? (Approximately)',
-        default=0, value_range=(0, 1000)),
-    QuestionNumber('students_instructors', 'Ratio of Students to Instructors',
-        'How many students are there per instructor?', default=0,
-        value_range=(0, 100)),
-    QuestionNumber('nr_experiments', 'Number of Experiments',
-        'How many experiments does each student need to complete?',
-        default=0, value_range=(0, 1000)),
-    QuestionNumber('nr_projects', 'Number of Projects',
-        'How many projects does each student need to complete?',
-        default=0, value_range=(0, 1000)),
-    QuestionNumber('lab_lecture', 'Ratio of Lab to Lecture',
-        'What is the ratio of lab to lecture in the course?',
-        default=0, value_range=(0, 1), step=0.1),
-    # equipment
-    QuestionText('note', 'Notes',
-        'Is there anything else, you want to tell us? Max 255 characters.',
-        max_length=255))
+class CreateQuestions:
+
+    def __init__(self):
+        self.db = CourseDB()
+        self.questions = [
+            QuestionText('name', 'Name', 'Choose a name for your course.'),
+            QuestionDate(
+                'start_pre', 'Start Date Pre',
+                'The start date of the first questionaire.'),
+            QuestionDate(
+                'start_post', 'Start Date Post',
+                'The start date of the second questionaire.'),
+            QuestionDropdownWithText(
+                'university', 'University', 'Where is the course?',
+                self.db.select_all_entries('university'), 'Other'),
+            QuestionDropdown(
+                'program', 'Program', 'What program are the students in?',
+                self.db.select_all_entries('program')),
+            QuestionDropdown(
+                'experience', 'Experience Level of the Students',
+                'How experienced are the students?',
+                self.db.select_all_entries('experience')),
+            QuestionDropdown(
+                'course_type', 'Type of Course',
+                'What type of course is it?',
+                self.db.select_all_entries('course_type')),
+            QuestionDropdown(
+                'traditional', 'Traditional',
+                'Is the course traditional or non-traditional?',
+                self.db.select_all_entries('traditional')),
+            QuestionDropdown(
+                'focus', 'Focus',
+                'What is the focus of the course?',
+                self.db.select_all_entries('focus')),
+            QuestionNumber(
+                'nr_students', 'Number of Students',
+                'How many students are going to be in the course? (Approximately)',
+                default=0, value_range=(0, 1000)),
+            QuestionNumber(
+                'students_instructors', 'Ratio of Students to Instructors',
+                'How many students are there per instructor?', default=0,
+                value_range=(0, 100)),
+            QuestionNumber(
+                'nr_experiments', 'Number of Experiments',
+                'How many experiments does each student need to complete?',
+                default=0, value_range=(0, 1000)),
+            QuestionNumber(
+                'nr_projects', 'Number of Projects',
+                'How many projects does each student need to complete?',
+                default=0, value_range=(0, 1000)),
+            QuestionNumber(
+                'lab_lecture', 'Ratio of Lab to Lecture',
+                'What is the ratio of lab to lecture in the course?',
+                default=0, value_range=(0, 1), step=0.1),
+            QuestionDropdownWithText(
+                'equipment', 'Equipment',
+                'What type of equipments is mainly used?',
+                self.db.select_all_entries('equipment'), 'Other'),
+            QuestionText(
+                'note', 'Notes',
+                'Is there anything else, you want to tell us? Max 255 characters.',
+                max_length=255)
+            ]
+
+    def __iter__(self):
+        for question in self.questions:
+            yield question
+
