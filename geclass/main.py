@@ -4,7 +4,7 @@ import logging
 
 from flask import Flask
 
-logging.basicConfig(level=logging.CRITICAL)
+logging.basicConfig(level=logging.DEBUG)
 
 
 def create_app(test_config=None):

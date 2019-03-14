@@ -9,10 +9,18 @@
       <caption>Current Courses</caption>
       <tr>
         <th>Name</th>
+        <th>University</th>
+        <th>Program</th>
+        <th>Experience</th>
+        <th>Number Students</th>
+        <th>Start Date Pre</th>
+        <th>Start Date Post</th>
       </tr>
     {% for course in courses %}
       <tr>
-        <td>{{ course['name'] }}</td>
+        {% for field in course %}
+          <td>{{ field }}</td>
+        {% endfor %}
       </tr>
     {% endfor %}
     </table>

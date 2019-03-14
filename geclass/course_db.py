@@ -54,3 +54,21 @@ class CourseDB(DBConnection):
             table='course',
             columns=('user_id', 'name'),
             values=(user_id, course_name))
+
+    def get_overview(self, user_id):
+        sql = """
+            SELECT
+              course.name,
+              university.university_name,
+              program.program_name,
+              experience.experience_level,
+              number_students,
+              strftime('%d.%m.%Y', start_date_pre, 'unixepoch'),
+              strftime('%d.%m.%Y', start_date_post, 'unixepoch')
+            FROM course, university, program, experience
+            WHERE course.user_id = ?
+              AND university.id = course.university_id
+              AND program.id = course.program_id
+              AND experience.id = course.experience_id"""
+        return self.execute(sql, (user_id,)).fetchall()
+
