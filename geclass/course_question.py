@@ -43,6 +43,13 @@ class CourseQuestion:
     def _input(self):
         return ''
 
+    def parse(self, form):
+        log.debug('%s: %s', self.name, form[self.name])
+        if not form[self.name]:
+            raise KeyError('{} is required.'.format(self.title))
+        else:
+            return (self.name, form[self.name])
+
 
 class QuestionText(CourseQuestion):
     """Create a question with a free text field.
@@ -53,9 +60,10 @@ class QuestionText(CourseQuestion):
         text (str): The label of the input, it acts as an
             explanation.
         max_length (int): The max length of the input.
+
     """
 
-    def __init__(self, name, title, text, max_length=None, required=False):
+    def __init__(self, name, title, text, max_length=None, required=True):
         self.max_length = max_length
         self.required = required
         super(QuestionText, self).__init__(name, title, text)
@@ -72,6 +80,13 @@ class QuestionText(CourseQuestion):
         inp = '<input name="{}" type="text" value=""{}{}>\n'.format(
             self.name, length, req)
         return inp
+
+    def parse(self, form):
+        if self.required:
+            return super(QuestionText, self).parse(form)
+        else:
+            if form[self.name]:
+                return (self.name, form[self.name])
 
 
 class QuestionDate(CourseQuestion):
@@ -91,6 +106,15 @@ class QuestionDate(CourseQuestion):
         inp = '<input name="{}" type="date" value=""required>\n'.format(
             self.name)
         return inp
+
+    def parse(self, form):
+        if not form[self.name]:
+            raise KeyError('{} is required.'.format(self.title))
+        else:
+            day = date(*map(int, form[self.name].split('-')))
+            timestamp = str(int(time.mktime(day.timetuple())))
+            return (self.name, timestamp)
+
 
 
 class QuestionNumber(CourseQuestion):
@@ -161,6 +185,12 @@ class QuestionDropdown(CourseQuestion):
                ''.format(self.name, self.name) + options + '</select>\n')
         return inp
 
+    def parse(self, form):
+        if not form[self.name]:
+            raise KeyError('{} is required.'.format(self.title))
+        else:
+            return (self.name + '_id', form[self.name])
+
 
 class QuestionDropdownWithText(QuestionDropdown):
     """Create a question with a dropdown menu and a free text field.
@@ -195,11 +225,26 @@ class QuestionDropdownWithText(QuestionDropdown):
         inp = dropdown + '</br>' + label + text
         return inp
 
+    def parse(self, form):
+        free_text = form[self.name + '_free'].strip()
+        if not free_text:
+            return super(QuestionDropdownWithText, self).parse(form)
+        else:
+            db = CourseDB()
+            add_new_value = {
+                'university': db.add_and_get_id_university,
+                'equipment': db.add_and_get_id_equipment}
+            new_id = add_new_value[self.name](free_text)
+            return (self.name + '_id', new_id)
 
-class CreateQuestions:
+
+
+
+class HandleCourseQuestions:
 
     def __init__(self):
         self.db = CourseDB()
+        self.values = {}
         self.questions = [
             QuestionText('name', 'Name', 'Choose a name for your course.'),
             QuestionDate(
@@ -264,61 +309,32 @@ class CreateQuestions:
         for question in self.questions:
             yield question
 
+    def parse(self, form):
+        errors = []
+        for question in self.questions:
+            try:
+                parsed_data = question.parse(form)
+                log.debug('data for %s: %s', question.name, parsed_data)
+                if parsed_data:
+                    self.values[parsed_data[0]] = parsed_data[1]
+            except KeyError as e:
+                errors.append(e)
+        errors.extend(self._sanity_check())
+        return errors
 
-class QuestionParser:
-
-    def __init__(self, form):
-        self.db = CourseDB()
-        self.form = form
-        self.field = {}
-        self.errors = []
-        self.free_field = {
-            'university': self.db.add_and_get_id_university,
-            'equipment': self.db.add_and_get_id_equipment}
-
-        self._parse_simple('name', 'Name')
-        self._parse_simple('start_date_pre', 'Start Date Pre')
-        self._parse_simple('start_date_post', 'Start Date Post')
-        self._parse_simple('program', 'Program', id_field=True)
-        self._parse_simple('experience', 'Experience Level', id_field=True)
-        self._parse_simple('course_type', 'Type of Course', id_field=True)
-        self._parse_simple('traditional', 'Traditional', id_field=True)
-        self._parse_simple('focus', 'Focus', id_field=True)
-        self._parse_simple('number_students', 'Number of Students')
-        self._parse_simple('students_per_instructor', 'Ratio of Students to Instructors')
-        self._parse_simple('number_experiments', 'Number of Experiments')
-        self._parse_simple('number_projects', 'Number of Projects')
-        self._parse_simple('lab_per_lecture', 'Ration of Lab to Lecture')
-        # parse notes
-        self._parse_complex('university', 'University')
-        self._parse_complex('equipment', 'Equipment')
-
-    def _parse_simple(self, name, field_name, id_field=False):
-        if not self.form[name]:
-            self.errors.append('{} is required.'.format(field_name))
-        else:
-            if id_field:
-                self.field[name + '_id'] = self.form[name]
-            else:
-                self.field[name] = self.form[name]
-
-    def _parse_complex(self, name, field_name):
-        free = self.form[name + '_free'].strip()
-        if not free:
-            self._parse_simple(name, field_name, id_field=True)
-        else:
-            new_id = self.free_field[name](free)
-            self.field[name + '_id'] = new_id
+    def _sanity_check(self):
+        errors = []
+        # all dates in future
+        if not (
+            (date.fromtimestamp(int(self.values['start_date_pre']))
+                > date.today())
+            & (date.fromtimestamp(int(self.values['start_date_post']))
+                > date.today())):
+            errors.append('Start dates must be in the future.')
+        # post is after pre
+        if not self.values['start_date_pre'] < self.values['start_date_post']:
+            errors.append('Start date post must be after start date pre.')
+        return errors
 
     def write(self, user_id):
-        for key in ['start_date_pre', 'start_date_post']:
-            day = date(*map(int, self.field[key].split('-')))
-            timestamp = str(int(time.mktime(day.timetuple())))
-            self.field[key] = timestamp
-        log.debug('fields = %s', self.field)
-        self.db.add_course(user_id, self.field)
-
-
-
-
-
+        self.db.add_course(user_id, self.values)
