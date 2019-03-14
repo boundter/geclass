@@ -7,9 +7,6 @@ import pytest
 from geclass import create_app
 from geclass.db import DBConnection, init_db
 
-with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
-    DATA_SQL = f.read().decode('utf8')
-
 
 @pytest.fixture
 def app():
@@ -22,8 +19,6 @@ def app():
 
     with app.app_context():
         init_db()
-        db = DBConnection()
-        db().executescript(DATA_SQL)
 
     yield app
 

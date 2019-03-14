@@ -27,7 +27,7 @@ CREATE TABLE course (
   equipment_id INTEGER NOT NULL DEFAULT 1,
   experience_id INTEGER NOT NULL DEFAULT 1,
   university_id INTEGER NOT NULL DEFAULT 1,
-  notes_id INTEGER NOT NULL DEFAULT 1,
+  notes_id INTEGER,
   number_students INTEGER NOT NULL DEFAULT 1,
   students_per_instructor REAL NOT NULL DEFAULT 1,
   lab_per_lecture REAL NOT NULL DEFAULT 1,
