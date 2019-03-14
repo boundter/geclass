@@ -27,7 +27,7 @@ class CourseDB(DBConnection):
         """
         return self.select_all(table='course', column='user_id', value=user_id)
 
-    def add_course(self, user_id, course_name):
+    def add_course(self, user_id, fields):
         """Add a new course to the database.
 
         Args:
@@ -49,11 +49,15 @@ class CourseDB(DBConnection):
         'a_new_name'
 
         """
-        log.info('Added new course %s for user %s', course_name, user_id)
+        log.info('Added new course %s for user %s', fields['name'], user_id)
+        columns, values = [], []
+        for key in fields:
+            columns.append(key)
+            values.append(fields[key])
         self.add(
             table='course',
-            columns=('user_id', 'name'),
-            values=(user_id, course_name))
+            columns=columns,
+            values=values)
 
     def get_overview(self, user_id):
         sql = """
@@ -71,4 +75,18 @@ class CourseDB(DBConnection):
               AND program.id = course.program_id
               AND experience.id = course.experience_id"""
         return self.execute(sql, (user_id,)).fetchall()
+
+    def _add_and_get_new_id(self, table, column, value):
+        log.info('Add new value %s to table %s', value, table)
+        self.add(table, (column,), (value,))
+        new_entry = self.select_one(table, column, value)
+        return new_entry['id']
+
+    def add_and_get_id_university(self, value):
+        return self._add_and_get_new_id('university', 'university_name', value)
+
+    def add_and_get_id_equipment(self, value):
+        return self._add_and_get_new_id('equipment', 'equipment_type', value)
+
+
 

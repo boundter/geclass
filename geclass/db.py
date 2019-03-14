@@ -71,6 +71,7 @@ class DBConnection:
         (3, 'test@abc.de', 'password')
 
         """
+        log.debug('query = %s, params = %s', sql, parameters)
         return self.db.execute(sql, parameters)
 
     def _select(self, table, column, value):

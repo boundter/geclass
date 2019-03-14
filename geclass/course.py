@@ -8,7 +8,7 @@ from flask import (
 
 from geclass.auth import login_required
 from geclass.course_db import CourseDB
-from geclass.course_question import CreateQuestions
+from geclass.course_question import CreateQuestions, QuestionParser
 
 log = logging.getLogger(__name__)
 
@@ -28,17 +28,15 @@ def overview():
 @login_required
 def add_course():
     if request.method == 'POST':
-        name = request.form['name']
-        number_experiments = request.form['nr_experiments']
-        error = None
+        log.debug(request.form)
 
-        if not name:
-            error = 'Name is required.'
+        parser = QuestionParser(request.form)
 
-        if error is None:
-            course_db = CourseDB()
-            course_db.add_course(session['user_id'], name)
+        if not parser.errors:
+            parser.write(session['user_id'])
             return redirect(url_for('index'))
-        flash(error)
+
+        for error in parser.errors:
+            flash(error)
     questions = CreateQuestions()
     return render_template('course/add_course.html', questions=questions)

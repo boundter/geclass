@@ -1,5 +1,7 @@
 """Container to generate html-expressions for adding courses."""
 
+import time
+from datetime import date
 import logging
 
 from geclass.course_db import CourseDB
@@ -53,17 +55,22 @@ class QuestionText(CourseQuestion):
         max_length (int): The max length of the input.
     """
 
-    def __init__(self, name, title, text, max_length=None):
+    def __init__(self, name, title, text, max_length=None, required=False):
         self.max_length = max_length
+        self.required = required
         super(QuestionText, self).__init__(name, title, text)
 
     def _input(self):
         if self.max_length:
-            length = 'maxlength="{}" '.format(self.max_length)
+            length = ' maxlength="{}"'.format(self.max_length)
         else:
             length = ''
-        inp = '<input name="{}" type="text" value="" {}required>\n'.format(
-            self.name, length)
+        if self.required:
+            req = ' required'
+        else:
+            req = ''
+        inp = '<input name="{}" type="text" value=""{}{}>\n'.format(
+            self.name, length, req)
         return inp
 
 
@@ -196,10 +203,10 @@ class CreateQuestions:
         self.questions = [
             QuestionText('name', 'Name', 'Choose a name for your course.'),
             QuestionDate(
-                'start_pre', 'Start Date Pre',
+                'start_date_pre', 'Start Date Pre',
                 'The start date of the first questionaire.'),
             QuestionDate(
-                'start_post', 'Start Date Post',
+                'start_date_post', 'Start Date Post',
                 'The start date of the second questionaire.'),
             QuestionDropdownWithText(
                 'university', 'University', 'Where is the course?',
@@ -224,23 +231,23 @@ class CreateQuestions:
                 'What is the focus of the course?',
                 self.db.select_all_entries('focus')),
             QuestionNumber(
-                'nr_students', 'Number of Students',
+                'number_students', 'Number of Students',
                 'How many students are going to be in the course? (Approximately)',
                 default=0, value_range=(0, 1000)),
             QuestionNumber(
-                'students_instructors', 'Ratio of Students to Instructors',
+                'students_per_instructor', 'Ratio of Students to Instructors',
                 'How many students are there per instructor?', default=0,
                 value_range=(0, 100)),
             QuestionNumber(
-                'nr_experiments', 'Number of Experiments',
+                'number_experiments', 'Number of Experiments',
                 'How many experiments does each student need to complete?',
                 default=0, value_range=(0, 1000)),
             QuestionNumber(
-                'nr_projects', 'Number of Projects',
+                'number_projects', 'Number of Projects',
                 'How many projects does each student need to complete?',
                 default=0, value_range=(0, 1000)),
             QuestionNumber(
-                'lab_lecture', 'Ratio of Lab to Lecture',
+                'lab_per_lecture', 'Ratio of Lab to Lecture',
                 'What is the ratio of lab to lecture in the course?',
                 default=0, value_range=(0, 1), step=0.1),
             QuestionDropdownWithText(
@@ -248,12 +255,70 @@ class CreateQuestions:
                 'What type of equipments is mainly used?',
                 self.db.select_all_entries('equipment'), 'Other'),
             QuestionText(
-                'note', 'Notes',
+                'notes', 'Notes',
                 'Is there anything else, you want to tell us? Max 255 characters.',
-                max_length=255)
+                max_length=255, required=False)
             ]
 
     def __iter__(self):
         for question in self.questions:
             yield question
+
+
+class QuestionParser:
+
+    def __init__(self, form):
+        self.db = CourseDB()
+        self.form = form
+        self.field = {}
+        self.errors = []
+        self.free_field = {
+            'university': self.db.add_and_get_id_university,
+            'equipment': self.db.add_and_get_id_equipment}
+
+        self._parse_simple('name', 'Name')
+        self._parse_simple('start_date_pre', 'Start Date Pre')
+        self._parse_simple('start_date_post', 'Start Date Post')
+        self._parse_simple('program', 'Program', id_field=True)
+        self._parse_simple('experience', 'Experience Level', id_field=True)
+        self._parse_simple('course_type', 'Type of Course', id_field=True)
+        self._parse_simple('traditional', 'Traditional', id_field=True)
+        self._parse_simple('focus', 'Focus', id_field=True)
+        self._parse_simple('number_students', 'Number of Students')
+        self._parse_simple('students_per_instructor', 'Ratio of Students to Instructors')
+        self._parse_simple('number_experiments', 'Number of Experiments')
+        self._parse_simple('number_projects', 'Number of Projects')
+        self._parse_simple('lab_per_lecture', 'Ration of Lab to Lecture')
+        # parse notes
+        self._parse_complex('university', 'University')
+        self._parse_complex('equipment', 'Equipment')
+
+    def _parse_simple(self, name, field_name, id_field=False):
+        if not self.form[name]:
+            self.errors.append('{} is required.'.format(field_name))
+        else:
+            if id_field:
+                self.field[name + '_id'] = self.form[name]
+            else:
+                self.field[name] = self.form[name]
+
+    def _parse_complex(self, name, field_name):
+        free = self.form[name + '_free'].strip()
+        if not free:
+            self._parse_simple(name, field_name, id_field=True)
+        else:
+            new_id = self.free_field[name](free)
+            self.field[name + '_id'] = new_id
+
+    def write(self, user_id):
+        for key in ['start_date_pre', 'start_date_post']:
+            day = date(*map(int, self.field[key].split('-')))
+            timestamp = str(int(time.mktime(day.timetuple())))
+            self.field[key] = timestamp
+        log.debug('fields = %s', self.field)
+        self.db.add_course(user_id, self.field)
+
+
+
+
 
