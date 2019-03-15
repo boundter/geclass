@@ -77,19 +77,48 @@ class CourseDB(DBConnection):
         return self.execute(sql, (user_id,)).fetchall()
 
     def _add_and_get_new_id(self, table, column, value):
+        """Add a new entry to the given table.
+
+        Careful: `table` and `column`are not sqnitized.
+
+        """
         log.info('Add new value %s to table %s', value, table)
         self.add(table, (column,), (value,))
         new_entry = self.select_one(table, column, value)
         return new_entry['id']
 
     def add_and_get_id_university(self, value):
+        """Add a new entry to the university table and get its id.
+
+        Args:
+            value (str): The new value to add to the table.
+
+        >>> add_and_get_id_university("Uni München")
+        3
+
+        """
         return self._add_and_get_new_id('university', 'university_name', value)
 
     def add_and_get_id_equipment(self, value):
+        """Add a new entry to the equipment table and get its id.
+
+        Args:
+            value (str): The new value to add to the table.
+
+        >>> add_and_get_id_equipment("Leitz")
+        3
+
+        """
         return self._add_and_get_new_id('equipment', 'equipment_type', value)
 
     def add_and_get_id_note(self, value):
+        """Add a new entry to the notes table and get its id.
+
+        Args:
+            value (str): The new value to add to the table.
+
+        >>> add_and_get_id_note("This is a new note")
+        3
+
+        """
         return self._add_and_get_new_id('notes', 'notes_text', value)
-
-
-

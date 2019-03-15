@@ -1,5 +1,4 @@
 """Create pages to view and add courses."""
-from datetime import date
 import logging
 
 from flask import (

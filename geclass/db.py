@@ -139,6 +139,21 @@ class DBConnection:
         return self._select(table, column, value).fetchall()
 
     def select_all_entries(self, table):
+        """Get all entries from a specific table.
+
+        Careful: `table` is not sanitized.
+
+        Agrs:
+            table (str): The table to get the entries from.
+
+        Returns:
+            A list with all the rows in the table.
+
+        >>> select_all_entries('user')
+        ((1, 'test1@gmail.com', 'some hash'),
+         (2, 'test2@web.de', 'a different hash'))
+
+        """
         sql = 'SELECT * FROM {}'.format(table)
         return self.db.execute(sql).fetchall()
 

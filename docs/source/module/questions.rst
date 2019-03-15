@@ -16,3 +16,9 @@ Questions about the Course
 
 .. autoclass:: QuestionDropdownWithText
    :members:
+
+Handler
+-------
+
+.. autoclass:: HandleCourseQuestions
+   :members:

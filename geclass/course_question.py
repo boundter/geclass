@@ -12,7 +12,7 @@ class CourseQuestion:
     All questions should inherit from CourseQuestions. The
     html-expression can be accessed by calling __repr__. Children
     need to implement the _input(self) function to generate the
-    specific html for the type of question.
+    specific html for the type of question, as well as the parse method.
 
     Args:
         name (str): The html identifier for the input.
@@ -41,6 +41,19 @@ class CourseQuestion:
         return ''
 
     def parse(self, form):
+        """Parse the form to find the corresponfing value from the form.
+
+        Args:
+            form (dict(str: str)): The form returned from the webpage.
+
+        Returns:
+            A tuple of the name of the column in the table course as
+            well as its value.
+
+        >>> parse(form) // for the field "name"
+        ("name", "a new course name")
+
+        """
         if not form[self.name]:
             raise KeyError('{} is required.'.format(self.title))
         else:
@@ -77,8 +90,7 @@ class QuestionNote(QuestionText):
 
     def _input(self):
         inp = ('<textarea rows="5" cols="51" name="{}" onchange="{}.submit()">'
-               ''.format(self.name, self.name)
-               + '</textarea>')
+               ''.format(self.name, self.name) + '</textarea>')
         return inp
 
     def parse(self, form):
@@ -86,6 +98,7 @@ class QuestionNote(QuestionText):
             db = CourseDB()
             new_id = db.add_and_get_id_note(form[self.name])
             return (self.name + '_id', new_id)
+        return None
 
 
 class QuestionDate(CourseQuestion):
@@ -97,9 +110,6 @@ class QuestionDate(CourseQuestion):
         text (str): The label of the input, it acts as an
             explanation.
     """
-
-    def __init__(self, name, title, text):
-        super(QuestionDate, self).__init__(name, title, text)
 
     def _input(self):
         inp = '<input name="{}" type="date" value=""required>\n'.format(
@@ -113,7 +123,6 @@ class QuestionDate(CourseQuestion):
             day = date(*map(int, form[self.name].split('-')))
             timestamp = str(int(time.mktime(day.timetuple())))
             return (self.name, timestamp)
-
 
 
 class QuestionNumber(CourseQuestion):
@@ -228,18 +237,20 @@ class QuestionDropdownWithText(QuestionDropdown):
         free_text = form[self.name + '_free'].strip()
         if not free_text:
             return super(QuestionDropdownWithText, self).parse(form)
-        else:
-            db = CourseDB()
-            add_new_value = {
-                'university': db.add_and_get_id_university,
-                'equipment': db.add_and_get_id_equipment}
-            new_id = add_new_value[self.name](free_text)
-            return (self.name + '_id', new_id)
-
-
+        db = CourseDB()
+        add_new_value = {
+            'university': db.add_and_get_id_university,
+            'equipment': db.add_and_get_id_equipment}
+        new_id = add_new_value[self.name](free_text)
+        return (self.name + '_id', new_id)
 
 
 class HandleCourseQuestions:
+    """Handler for the questions about a new course.
+
+    The member self.question contains all CourseQuestion objects.
+
+    """
 
     def __init__(self):
         self.db = CourseDB()
@@ -248,10 +259,12 @@ class HandleCourseQuestions:
             QuestionText('name', 'Name', 'Choose a name for your course.'),
             QuestionDate(
                 'start_date_pre', 'Start Date Pre',
-                'The start date of the first questionaire.'),
+                'The start date of the first questionaire. ' +
+                'Dates should be in the form 2019-03-16 for Safari users.'),
             QuestionDate(
                 'start_date_post', 'Start Date Post',
-                'The start date of the second questionaire.'),
+                'The start date of the second questionaire.' +
+                'Dates should be in the form 2019-03-16 for Safri users.'),
             QuestionDropdownWithText(
                 'university', 'University', 'Where is the course?',
                 self.db.select_all_entries('university'), 'Other'),
@@ -276,8 +289,8 @@ class HandleCourseQuestions:
                 self.db.select_all_entries('focus')),
             QuestionNumber(
                 'number_students', 'Number of Students',
-                'How many students are going to be in the course? (Approximately)',
-                default=0, value_range=(0, 1000)),
+                ('How many students are going to be in the course? ' +
+                 '(Approximately)'), default=0, value_range=(0, 1000)),
             QuestionNumber(
                 'students_per_instructor', 'Ratio of Students to Instructors',
                 'How many students are there per instructor?', default=0,
@@ -300,14 +313,27 @@ class HandleCourseQuestions:
                 self.db.select_all_entries('equipment'), 'Other'),
             QuestionNote(
                 'notes', 'Notes',
-                'Is there anything else, you want to tell us? Max 255 characters.')
-            ]
+                ('Is there anything else, you want to tell us? ' +
+                 'Max 255 characters.'))
+        ]
 
     def __iter__(self):
         for question in self.questions:
             yield question
 
     def parse(self, form):
+        """Parse a given form for the values for the new course.
+
+        Args:
+            form (dict(str: str)): The form returned from the webpage.
+
+        Returns:
+            A list of all the errors it encountered while parsing.
+
+        >>> parse({"name": ""})
+        ["Name is required."]
+
+        """
         errors = []
         for question in self.questions:
             try:
@@ -323,10 +349,10 @@ class HandleCourseQuestions:
         errors = []
         # all dates in future
         if not (
-            (date.fromtimestamp(int(self.values['start_date_pre']))
-                > date.today())
-            & (date.fromtimestamp(int(self.values['start_date_post']))
-                > date.today())):
+                (date.fromtimestamp(int(self.values['start_date_pre'])) >
+                 date.today()) &
+                (date.fromtimestamp(int(self.values['start_date_post'])) >
+                 date.today())):
             errors.append('Start dates must be in the future.')
         # post is after pre
         if not self.values['start_date_pre'] < self.values['start_date_post']:
@@ -334,4 +360,9 @@ class HandleCourseQuestions:
         return errors
 
     def write(self, user_id):
+        """Write the parsed values to the database.
+
+        Args:
+            user_id (str): The id of the owner of the new course.
+        """
         self.db.add_course(user_id, self.values)
