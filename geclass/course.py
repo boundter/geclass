@@ -20,7 +20,6 @@ bp = Blueprint(name='course', import_name=__name__)
 def overview():
     course_db = CourseDB()
     courses = course_db.get_overview(session['user_id'])
-    log.debug('course = %s', courses)
     return render_template('course/overview.html', courses=courses)
 
 
@@ -29,7 +28,7 @@ def overview():
 def add_course():
     questions = HandleCourseQuestions()
     if request.method == 'POST':
-        log.debug(request.form)
+        log.debug('Add new course with form: %s', request.form)
 
         errors = questions.parse(request.form)
 
