@@ -2,11 +2,8 @@
 
 import time
 from datetime import date
-import logging
 
 from geclass.course_db import CourseDB
-
-log = logging.getLogger(__name__)
 
 
 class CourseQuestion:
@@ -44,7 +41,6 @@ class CourseQuestion:
         return ''
 
     def parse(self, form):
-        log.debug('%s: %s', self.name, form[self.name])
         if not form[self.name]:
             raise KeyError('{} is required.'.format(self.title))
         else:
@@ -63,9 +59,8 @@ class QuestionText(CourseQuestion):
 
     """
 
-    def __init__(self, name, title, text, max_length=None, required=True):
+    def __init__(self, name, title, text, max_length=255):
         self.max_length = max_length
-        self.required = required
         super(QuestionText, self).__init__(name, title, text)
 
     def _input(self):
@@ -73,20 +68,24 @@ class QuestionText(CourseQuestion):
             length = ' maxlength="{}"'.format(self.max_length)
         else:
             length = ''
-        if self.required:
-            req = ' required'
-        else:
-            req = ''
-        inp = '<input name="{}" type="text" value=""{}{}>\n'.format(
-            self.name, length, req)
+        inp = '<input name="{}" type="text" value="" {}required>\n'.format(
+            self.name, length)
+        return inp
+
+
+class QuestionNote(QuestionText):
+
+    def _input(self):
+        inp = ('<textarea rows="5" cols="51" name="{}" onchange="{}.submit()">'
+               ''.format(self.name, self.name)
+               + '</textarea>')
         return inp
 
     def parse(self, form):
-        if self.required:
-            return super(QuestionText, self).parse(form)
-        else:
-            if form[self.name]:
-                return (self.name, form[self.name])
+        if form[self.name]:
+            db = CourseDB()
+            new_id = db.add_and_get_id_note(form[self.name])
+            return (self.name + '_id', new_id)
 
 
 class QuestionDate(CourseQuestion):
@@ -299,10 +298,9 @@ class HandleCourseQuestions:
                 'equipment', 'Equipment',
                 'What type of equipments is mainly used?',
                 self.db.select_all_entries('equipment'), 'Other'),
-            QuestionText(
+            QuestionNote(
                 'notes', 'Notes',
-                'Is there anything else, you want to tell us? Max 255 characters.',
-                max_length=255, required=False)
+                'Is there anything else, you want to tell us? Max 255 characters.')
             ]
 
     def __iter__(self):
@@ -314,7 +312,6 @@ class HandleCourseQuestions:
         for question in self.questions:
             try:
                 parsed_data = question.parse(form)
-                log.debug('data for %s: %s', question.name, parsed_data)
                 if parsed_data:
                     self.values[parsed_data[0]] = parsed_data[1]
             except KeyError as e:

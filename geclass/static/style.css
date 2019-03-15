@@ -140,3 +140,11 @@ table.course caption {
   display: block;
   font-weight: normal;
 }
+
+.course_question input[type=text] {
+  width: 30em;
+}
+
+.course_question input[name=notes] {
+  width: 40em;
+}

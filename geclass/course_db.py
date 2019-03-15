@@ -88,5 +88,8 @@ class CourseDB(DBConnection):
     def add_and_get_id_equipment(self, value):
         return self._add_and_get_new_id('equipment', 'equipment_type', value)
 
+    def add_and_get_id_note(self, value):
+        return self._add_and_get_new_id('notes', 'notes_text', value)
+
 
 
