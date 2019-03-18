@@ -50,7 +50,7 @@ class CourseDB(DBConnection):
 
         """
         log.info('Added new course %s for user %s', fields['name'], user_id)
-        columns, values = [], []
+        columns, values = ['user_id'], [str(user_id)]
         for key in fields:
             columns.append(key)
             values.append(fields[key])
