@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Add New Course{% endblock %}</h1>
+  <h1>{% block title %}Neuen Kurs Anlegen{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -11,6 +11,6 @@
     {{ question|safe }}
   {% endfor %}
 
-    <input type="submit" value="Register">
+    <input type="submit" value="Kurs anlegen">
   </form>
 {% endblock %}

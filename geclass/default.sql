@@ -1,5 +1,6 @@
 INSERT INTO user (email, password)
 VALUES
+  ('admin', 'pbkdf2:sha256:50000$3DuknOd6$bb5e82c10ab92c0750bb6c012c1ba5957d647823e4799500d57202930e11f6f8'),
   ('test1@gmail.com', 'pbkdf2:sha256:50000$b3I4RIgB$1db4c82583dd102b5141b2d7eb1777d034bf315dabafa19a987c203fc0e2ec3d'),
   ('test2@web.de', 'pbkdf2:sha256:50000$ZpAT7tJG$bee562ed5dfeee0ee6784b841e73024620d667c350597272e99bcd608d593b19');
 
@@ -47,9 +48,9 @@ VALUES
    students_per_instructor, lab_per_lecture, number_experiments,
    number_projects, start_date_pre, start_date_post, name)
 VALUES
-  (1, 1, 1, 1, 1, 1, 1, 1, 32, 8, 0.5, 10, 0, '123456789', '123456989',
+  (2, 1, 1, 1, 1, 1, 1, 1, 32, 8, 0.5, 10, 0, '123456789', '123456989',
     'Bachelor Physiker'),
-  (1, 2, 2, 2, 2, 2, 2, 2, 16, 8, 0.5, 0, 2, '123456789', '123456989',
+  (2, 2, 2, 2, 2, 2, 2, 2, 16, 8, 0.5, 0, 2, '123456789', '123456989',
     'Master Physiker Projekt'),
-  (2, 3, 1, 2, 2, 1, 2, 1, 25, 3, 0.5, 5, 1, '123456889', '123456999',
+  (3, 3, 1, 2, 2, 1, 2, 1, 25, 3, 0.5, 5, 1, '123456889', '123456999',
     'Nebenfach Grundpraktikum');

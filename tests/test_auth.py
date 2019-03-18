@@ -31,10 +31,10 @@ def test_register(client, app):
 
 
 @pytest.mark.parametrize(('email', 'password', 'message'), (
-    ('', '', b'Email adress is required.'),
-    ('abc@de', '', b'does not seem to be valid.'),
-    ('abc@def.gh', '', b'Password is required.'),
-    ('test1@gmail.com', 'test', b'already registered.')
+    ('', '', b'Eine E-Mail Adresse wird ben\xc3\xb6tigt.'),
+    ('abc@de', '', b'Die E-Mail Adresse scheint nicht korrekt zu sein.'),
+    ('abc@def.gh', '', b'Ein Passwort wird ben\xc3\xb6tigt.'),
+    ('test1@gmail.com', 'test', b'schon registriert.')
 ))
 def test_register_validate_input(client, email, password, message):
     response = client.post(
@@ -53,13 +53,13 @@ def test_login(client, auth):
     # login with user test1 leads to user_id 1
     with client:
         client.get('/')
-        assert session['user_id'] == 1
+        assert session['user_id'] == 2
         assert g.user['email'] == 'test1@gmail.com'
 
 
 @pytest.mark.parametrize(('email', 'password', 'message'), (
-    ('a@bc.de', 'bar', b'Incorrect Email adress.'),
-    ('test1@gmail.com', 'a', b'Incorrect password.')
+    ('a@bc.de', 'bar', b'E-Mail Adresse oder Passwort sind falsch.'),
+    ('test1@gmail.com', 'a', b'E-Mail Adresse oder Passwort sind falsch.')
 ))
 def test_login_validate_input(auth, email, password, message):
     response = auth.login(email, password)
@@ -83,12 +83,12 @@ def test_change_email(client, app, auth):
     # need to change something
     response = client.post(
         '/auth/change_data', data={'email': '', 'password': ''})
-    assert b'Email adress or password is needed' in response.data
+    assert b'Entweder eine neue E-Mail Adresse oder ein ' in response.data
 
     # cannot change both
     response = client.post(
         '/auth/change_data', data={'email': 'ab@cd.ef', 'password': 'a'})
-    assert b'Email and password cannot be' in response.data
+    assert b'Die E-Mail Adresse und das Passwort k\xc3\xb6nn' in response.data
 
     # can change email
     response = client.post(

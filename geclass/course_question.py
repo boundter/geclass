@@ -55,7 +55,7 @@ class CourseQuestion:
 
         """
         if not form[self.name]:
-            raise KeyError('{} is required.'.format(self.title))
+            raise KeyError('Feld {} wird benötigt.'.format(self.title))
         else:
             return (self.name, form[self.name])
 
@@ -118,7 +118,7 @@ class QuestionDate(CourseQuestion):
 
     def parse(self, form):
         if not form[self.name]:
-            raise KeyError('{} is required.'.format(self.title))
+            raise KeyError('Feld {} wird benötigt.'.format(self.title))
         else:
             day = date(*map(int, form[self.name].split('-')))
             timestamp = str(int(time.mktime(day.timetuple())))
@@ -195,7 +195,7 @@ class QuestionDropdown(CourseQuestion):
 
     def parse(self, form):
         if not form[self.name]:
-            raise KeyError('{} is required.'.format(self.title))
+            raise KeyError('Feld {} wird benötigt.'.format(self.title))
         else:
             return (self.name + '_id', form[self.name])
 
@@ -256,65 +256,68 @@ class HandleCourseQuestions:
         self.db = CourseDB()
         self.values = {}
         self.questions = [
-            QuestionText('name', 'Name', 'Choose a name for your course.'),
+            QuestionText(
+                'name', 'Name', 'Wählen Sie einen Namen für den Kurs aus.'),
             QuestionDate(
-                'start_date_pre', 'Start Date Pre',
-                'The start date of the first questionaire. ' +
-                'Dates should be in the form 2019-03-16 for Safari users.'),
+                'start_date_pre', 'Start Pre-Befragung',
+                'Start der Befragung vor dem Kurs. ' +
+                'Safari-Nutzer: Bitte in der Form 2019-03-16 angeben.'),
             QuestionDate(
-                'start_date_post', 'Start Date Post',
-                'The start date of the second questionaire.' +
-                'Dates should be in the form 2019-03-16 for Safri users.'),
+                'start_date_post', 'Start Post-Befragung',
+                'Start der Befragung nach dem Kurs. ' +
+                'Safari-Nutzer: Bitte in der Form 2019-03-16 angeben.'),
             QuestionDropdownWithText(
-                'university', 'University', 'Where is the course?',
-                self.db.select_all_entries('university'), 'Other'),
+                'university', 'Einrichtung',
+                'An welcher Einrichtung findet der Kurs statt?',
+                self.db.select_all_entries('university'), 'Andere'),
             QuestionDropdown(
-                'program', 'Program', 'What program are the students in?',
+                'program', 'Studiengang',
+                'Zu welchen Studiengang gehört der Kurs?',
                 self.db.select_all_entries('program')),
             QuestionDropdown(
-                'experience', 'Experience Level of the Students',
-                'How experienced are the students?',
+                'experience', 'Jahrgang',
+                'In welchem Jahrgang sind die Studenten?',
                 self.db.select_all_entries('experience')),
             QuestionDropdown(
-                'course_type', 'Type of Course',
-                'What type of course is it?',
+                'course_type', 'Art des Kurses',
+                'Was für eine Art von Kurs ist es?',
                 self.db.select_all_entries('course_type')),
             QuestionDropdown(
-                'traditional', 'Traditional',
-                'Is the course traditional or non-traditional?',
+                'traditional', 'Traditionell',
+                'Ist der Kurs traditionell?',
                 self.db.select_all_entries('traditional')),
             QuestionDropdown(
-                'focus', 'Focus',
-                'What is the focus of the course?',
+                'focus', 'Schwerpunkt',
+                'Worauf liegt der Schwerpunkt des Kurses?',
                 self.db.select_all_entries('focus')),
             QuestionNumber(
-                'number_students', 'Number of Students',
-                ('How many students are going to be in the course? ' +
-                 '(Approximately)'), default=0, value_range=(0, 1000)),
+                'number_students', 'Anzahl an Studenten',
+                ('Wieviele Studenten werden vorraussichtlich an dem Kurs ' +
+                 'teilnehmen?'), default=0, value_range=(0, 1000)),
             QuestionNumber(
-                'students_per_instructor', 'Ratio of Students to Instructors',
-                'How many students are there per instructor?', default=0,
-                value_range=(0, 100)),
+                'students_per_instructor', 'Verhältnis Studenten/Betreuer',
+                'Wieviele Studenten kommen in etwa auf einen Betreuer?',
+                default=0, value_range=(0, 100)),
             QuestionNumber(
-                'number_experiments', 'Number of Experiments',
-                'How many experiments does each student need to complete?',
+                'number_experiments', 'Nummer von Experimenten',
+                'Wieviele Experimente muss jeder Student durchführen?',
                 default=0, value_range=(0, 1000)),
             QuestionNumber(
-                'number_projects', 'Number of Projects',
-                'How many projects does each student need to complete?',
+                'number_projects', 'Nummer von Projekten',
+                'Wieviele Projekte muss jeder Student durchführen?',
                 default=0, value_range=(0, 1000)),
             QuestionNumber(
-                'lab_per_lecture', 'Ratio of Lab to Lecture',
-                'What is the ratio of lab to lecture in the course?',
+                'lab_per_lecture', 'Verhältnis Praktikum/Vorlesung',
+                'Wie ist das Verhältnis von Praktikum zu Vorlesung?',
                 default=0, value_range=(0, 1), step=0.1),
             QuestionDropdownWithText(
-                'equipment', 'Equipment',
-                'What type of equipments is mainly used?',
-                self.db.select_all_entries('equipment'), 'Other'),
+                'equipment', 'Geräte',
+                'Was für eine Art von Geräten wird hauptsächlich verwendet?',
+                self.db.select_all_entries('equipment'), 'Andere'),
             QuestionNote(
-                'notes', 'Notes',
-                ('Is there anything else, you want to tell us? ' +
-                 'Max 255 characters.'))
+                'notes', 'Notizen',
+                ('Gibt es noch etwas, dass Sie uns sagen wollen? ' +
+                 'Max. 255 Zeichen.'))
         ]
 
     def __iter__(self):
@@ -356,10 +359,10 @@ class HandleCourseQuestions:
                  date.today()) &
                 (date.fromtimestamp(int(self.values['start_date_post'])) >
                  date.today())):
-            errors.append('Start dates must be in the future.')
+            errors.append('Das Anfangsdatum muss in der Zukunft liegen.')
         # post is after pre
         if not self.values['start_date_pre'] < self.values['start_date_post']:
-            errors.append('Start date post must be after start date pre.')
+            errors.append('Start Post-Befragung muss nach der Pre-Befragung sein.')
         return errors
 
     def write(self, user_id):

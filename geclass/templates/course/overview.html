@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Courses{% endblock %}</h1>
+  <h1>{% block title %}Kursübersicht{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
     </br>
     <table class='course'>
-      <caption>Current Courses</caption>
+      <caption>Aktuelle Kurse</caption>
       <tr>
         <th>Name</th>
-        <th>University</th>
-        <th>Program</th>
-        <th>Experience</th>
-        <th>Number Students</th>
-        <th>Start Date Pre</th>
-        <th>Start Date Post</th>
+        <th>Einrichtung</th>
+        <th>Studiengang</th>
+        <th>Jahrgang</th>
+        <th>Studenten</th>
+        <th>Start Pre-Befragung</th>
+        <th>Start Post-Befragung</th>
       </tr>
     {% for course in current_courses %}
       <tr>
@@ -27,15 +27,15 @@
     </table>
     </br>
     <table class='course'>
-      <caption>Past Courses</caption>
+      <caption>Abgeschlossene Kurse</caption>
       <tr>
         <th>Name</th>
-        <th>University</th>
-        <th>Program</th>
-        <th>Experience</th>
-        <th>Number Students</th>
-        <th>Start Date Pre</th>
-        <th>Start Date Post</th>
+        <th>Einrichtung</th>
+        <th>Studiengang</th>
+        <th>Jahrgang</th>
+        <th>Nummer Studenten</th>
+        <th>Start Pre-Befragung</th>
+        <th>Start Post-Befragung</th>
       </tr>
     {% for course in past_courses %}
       <tr>

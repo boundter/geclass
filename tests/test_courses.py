@@ -52,7 +52,7 @@ def test_add_new_course(client, app, auth):
     # check if new course has really been inserted
     with app.app_context():
         course_db = CourseDB()
-        assert 'phys_test' in course_db.get_courses(user_id=1)[2]
+        assert 'phys_test' in course_db.get_courses(user_id=2)[2]
 
 
 @pytest.mark.parametrize(

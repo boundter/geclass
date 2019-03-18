@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Change Data{% endblock %}</h1>
+  <h1>{% block title %}Kontaktdaten Ändern{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
   <form method="post">
-    <label for="email">Email</label>
+    <label for="email">E-Mail</label>
     <input name="email" id="email">
-    <label for="password">Password</label>
+    <label for="password">Passwort</label>
     <input type="password" name="password" id="password">
-    <input type="submit" value="Change Data">
+    <input type="submit" value="Daten abschicken">
   </form>
 {% endblock %}
