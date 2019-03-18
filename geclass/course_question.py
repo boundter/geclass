@@ -342,7 +342,10 @@ class HandleCourseQuestions:
                     self.values[parsed_data[0]] = parsed_data[1]
             except KeyError as e:
                 errors.append(e)
-        errors.extend(self._sanity_check())
+        try:
+            errors.extend(self._sanity_check())
+        except KeyError as e:
+            pass
         return errors
 
     def _sanity_check(self):
