@@ -54,13 +54,6 @@ def test_add_new_course(client, app, auth):
         course_db = CourseDB()
         assert 'phys_test' in course_db.get_courses(user_id=1)[2]
 
-    # no empty identifiers allowed
-    """
-    response = client.post(
-        '/add_course',
-        data={'name': ''})
-    assert b'Name is required' in response.data
-    """
 
 @pytest.mark.parametrize(
     ('field', 'value', 'error'),
