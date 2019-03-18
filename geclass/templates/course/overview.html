@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+    </br>
     <table class='course'>
       <caption>Current Courses</caption>
       <tr>
@@ -16,7 +17,7 @@
         <th>Start Date Pre</th>
         <th>Start Date Post</th>
       </tr>
-    {% for course in courses %}
+    {% for course in current_courses %}
       <tr>
         {% for field in course %}
           <td>{{ field }}</td>
@@ -24,4 +25,25 @@
       </tr>
     {% endfor %}
     </table>
+    </br>
+    <table class='course'>
+      <caption>Past Courses</caption>
+      <tr>
+        <th>Name</th>
+        <th>University</th>
+        <th>Program</th>
+        <th>Experience</th>
+        <th>Number Students</th>
+        <th>Start Date Pre</th>
+        <th>Start Date Post</th>
+      </tr>
+    {% for course in past_courses %}
+      <tr>
+        {% for field in course %}
+          <td>{{ field }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </table>
+
 {% endblock %}}

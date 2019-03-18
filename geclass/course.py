@@ -1,4 +1,5 @@
 """Create pages to view and add courses."""
+from datetime import date, datetime
 import logging
 
 from flask import (
@@ -19,7 +20,17 @@ bp = Blueprint(name='course', import_name=__name__)
 def overview():
     course_db = CourseDB()
     courses = course_db.get_overview(session['user_id'])
-    return render_template('course/overview.html', courses=courses)
+    past_courses = []
+    current_courses = []
+    for course in courses:
+        course_post = datetime.strptime(course[6], '%d.%m.%Y').date()
+        if course_post < date.today():
+            past_courses.append(course)
+        else:
+            current_courses.append(course)
+    return render_template(
+        'course/overview.html', current_courses=current_courses,
+        past_courses=past_courses)
 
 
 @bp.route('/add_course', methods=('GET', 'POST'))
