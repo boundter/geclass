@@ -10,7 +10,7 @@ def test_only_registered(client, auth):
     # logged in user can acces their overview
     auth.login()
     response = client.get('/')
-    assert b'Current Courses' in response.data
+    assert b'Aktuelle Kurse' in response.data
 
     # only own courses appear
     assert b'Bachelor Physiker' in response.data
@@ -58,27 +58,27 @@ def test_add_new_course(client, app, auth):
 @pytest.mark.parametrize(
     ('field', 'value', 'error'),
     (
-        ('name', '', b'Name is required.'),
-        ('university', '', b'University is required.'),
-        ('program', '', b'Program is required.'),
-        ('experience', '', b'Experience Level of the Students is required.'),
-        ('course_type', '', b'Type of Course is required.'),
-        ('traditional', '', b'Traditional is required.'),
-        ('focus', '', b'Focus is required.'),
-        ('number_students', '', b'Number of Students is required.'),
+        ('name', '', b'Name wird ben\xc3\xb6tigt.'),
+        ('university', '', b'Einrichtung wird ben\xc3\xb6tigt.'),
+        ('program', '', b'Studiengang wird ben\xc3\xb6tigt.'),
+        ('experience', '', b'Jahrgang wird ben\xc3\xb6tigt.'),
+        ('course_type', '', b'Art des Kurses wird ben\xc3\xb6tigt.'),
+        ('traditional', '', b'Traditionell wird ben\xc3\xb6tigt.'),
+        ('focus', '', b'Schwerpunkt wird ben\xc3\xb6tigt.'),
+        ('number_students', '', b'Anzahl an Studenten wird ben\xc3\xb6tigt.'),
         ('students_per_instructor', '',
-            b'Ratio of Students to Instructors is required.'),
-        ('number_experiments', '', b'Number of Experiments is required.'),
-        ('number_projects', '', b'Number of Projects is required.'),
-        ('equipment', '', b'Equipment is required.'),
-        ('start_date_pre', '', b'Start Date Pre is required.'),
-        ('start_date_post', '', b'Start Date Post is required.'),
+            b'Verh\xc3\xa4ltnis Studenten/Betreuer wird ben\xc3\xb6tigt.'),
+        ('number_experiments', '', b'Nummer von Experimenten wird ben\xc3\xb6tigt.'),
+        ('number_projects', '', b'Nummer von Projekten wird ben\xc3\xb6tigt.'),
+        ('equipment', '', b'Ger\xc3\xa4te wird ben\xc3\xb6tigt.'),
+        ('start_date_pre', '', b'Start Pre-Befragung wird ben\xc3\xb6tigt.'),
+        ('start_date_post', '', b'Start Post-Befragung wird ben\xc3\xb6tigt.'),
         ('start_date_pre', '2010-09-09',
-            b'Start dates must be in the future.'),
+            b'Das Anfangsdatum muss in der Zukunft liegen.'),
         ('start_date_post', '2010-09-09',
-            b'Start dates must be in the future.'),
+            b'Das Anfangsdatum muss in der Zukunft liegen.'),
         ('start_date_post', '2030-03-15',
-            b'Start date post must be after start date pre.')
+            b'Start Post-Befragung muss nach der Pre-Befragung sein.')
     )
 )
 def test_add_new_course_missing_value(client, auth, field, value, error):
