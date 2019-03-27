@@ -15,6 +15,7 @@ import logging
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
+import numpy as np
 
 log = logging.getLogger(__name__)
 
@@ -233,6 +234,37 @@ def QuestionnaireDBConnection():
         """Return the database connection object."""
         return self.db
 
+    def add_student(self, course_id, anwers, marks, metadata):
+
+        def create_sql_string(table, table_string, table_length, value_length):
+            sql = 'INSERT INTO {} ('
+            for i in range(1, table_length):
+                sql += table_string.format(i)
+            sql_answer = sql_answer[:-2] + ') VALUES (' + '?, '*value_length
+            sql_answer = sql_answer[:-2] + ')'
+
+        sql_answers = create_sql_string(
+            'answers_1', 'question_{0}_you, question_{0}_expert, ', 30, 60)
+        indx = sql_answers.find('(')
+        sql_answers = sql_answers[:index+1] + 'course_id, ' + sql_answers[index+1:]
+        sql_answers = sql_answers[:-1] + ', ?)'
+        sql_marks = create_sql_string(
+            'answers_2', 'question_{0}_you, ', 27, 27)
+        indx = sql_marks.find('(')
+        sql_marks = sql_marks[:index+1] + 'course_id, ' + sql_marks[index+1:]
+        sql_marks = sql_marks[:-1] + ', ?)'
+        self.db.execute(sql_answers, tuple(answers))
+        self.db.execute(sql_marks, tuple(marks))
+        self.db.commit()
+
+    def _generate_test_data(self):
+        SAMPLES = 50
+
+        for _ in range(SAMPLES):
+            sample_answers = np.random.randint(1, 6, 60)
+            sample_marks = np.random.randint(1, 6, 27)
+            self.add_student(1, sample_answers, sample_marks, None)
+
 
 def init_db():
     """Remove old database (if it exists) and create a new one."""
@@ -245,7 +277,7 @@ def init_db():
 
 
 def init_questionnaire_db():
-    log.infor('Create a new questionnaire database')
+    log.info('Create a new questionnaire database')
     db = QuestionnaireDBConnection()
     with current_app.open_resource('questionnaire_schema.sql') as f:
         db().executescript(f.read().decode('utf8'))
@@ -263,8 +295,21 @@ def init_db_command():
     init_db()
     click.echo('Initialized the database')
 
+@click.command('init-questionnaire-db')
+@with_appcontext
+def init_questionnaire_db_command():
+    init_questionnaire_db()
+    click.echo('Initialized the questionnaire database')
+
 
 def close_db(e=None):
+    """Close the database. Needed for the teardown."""
+    db = g.pop(name='db', default=None)
+    if db is not None:
+        db.close()
+
+
+def close_questionnaire_db(e=None):
     """Close the database. Needed for the teardown."""
     db = g.pop(name='db', default=None)
     if db is not None:

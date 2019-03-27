@@ -7,6 +7,7 @@ PRAGMA encoding='UTF-8'
 CREATE TABLE answers_1 (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   meta_data_id INTEGER,
+  course_id INTEGER NOT NULL,
   question_1_you INTEGER,
   question_1_expert INTEGER,
   question_2_you INTEGER,
@@ -73,6 +74,7 @@ CREATE TABLE answers_1 (
 CREATE TABLE answers_2 (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   meta_data_id INTEGER,
+  course_id INTEGER NOT NULL,
   question_1 INTEGER,
   question_2 INTEGER,
   question_3 INTEGER,
