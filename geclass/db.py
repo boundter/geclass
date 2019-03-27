@@ -212,6 +212,28 @@ class DBConnection:
         self.db.commit()
 
 
+def QuestionnaireDBConnection():
+    def __init__(self):
+        """Pick up the connection to the database.
+
+        If none exists in the current session it will create a new
+        connection.
+
+        """
+        if 'db' not in g:
+            log.debug('Create new questionnaire_db-connection')
+            g.db = sqlite3.connect(
+                database=current_app.config['QUESTIONNAIRE_DATABASE'],
+                detect_types=sqlite3.PARSE_DECLTYPES
+            )
+            g.db.row_factory = sqlite3.Row
+        self.db = g.db
+
+    def __call__(self):
+        """Return the database connection object."""
+        return self.db
+
+
 def init_db():
     """Remove old database (if it exists) and create a new one."""
     log.info('Create a new database')
@@ -219,6 +241,13 @@ def init_db():
     with current_app.open_resource('schema.sql') as f:
         db().executescript(f.read().decode('utf8'))
     with current_app.open_resource('default.sql') as f:
+        db().executescript(f.read().decode('utf8'))
+
+
+def init_questionnaire_db():
+    log.infor('Create a new questionnaire database')
+    db = QuestionnaireDBConnection()
+    with current_app.open_resource('questionnaire_schema.sql') as f:
         db().executescript(f.read().decode('utf8'))
 
 
