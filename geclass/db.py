@@ -71,29 +71,143 @@ class DBConnection:
         (3, 'test@abc.de', 'password')
 
         """
+        log.debug('query "%s" with parameters %s', sql, parameters)
         return self.db.execute(sql, parameters)
 
-    def _select(self, table, field, value):
-        sql = 'SELECT * FROM {} WHERE {} = ?'.format(table, field)
+    def _select(self, table, column, value):
+        """Select entries from a table.
+
+        Careful: The inputs `table` and `column` are not sanitized.
+        The selected entries are not fetched yet, so a .fetchone()
+        or .fetchall() is needed.
+
+        Args:
+            table (str): The table to fetch from.
+            column (str): The column to search.
+            value (str or int or float): The value to search for.
+
+        Returns:
+            The query result.
+
+        >>> query = _select('user', 'email', 'test1@gmail.com')
+        >>> query.fetchone()
+        (1, 'test1@gmail.com', 'some_password_hash')
+
+        """
+        sql = 'SELECT * FROM {} WHERE {} = ?'.format(table, column)
         return self.execute(sql, (value,))
 
-    def select_one(self, table, field, value):
-        return self._select(table, field, value).fetchone()
+    def select_one(self, table, column, value):
+        """Select the first entry of a query.
 
-    def select_all(self, table, field, value):
-        return self._select(table, field, value).fetchall()
+        Careful: The inputs `table` and `column` are not sanitized.
 
-    def add(self, table, field, values):
-        value_string = ', '.join(['?']*len(values))
-        field_string = ', '.join(field)
-        sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table,
-            field_string, value_string)
+        Args:
+            table (str): The table to fetch from.
+            column (str): The column to search.
+            value (str or int or float): The value to search for.
+
+        Returns:
+            The first result of the query.
+
+
+        >>> select_one('user', 'email', 'test1@gmail.com')
+        (1, 'test1@gmail.com', 'some_password_hash')
+
+        """
+        return self._select(table, column, value).fetchone()
+
+    def select_all(self, table, column, value):
+        """Select the all entries of a query.
+
+        Careful: The inputs `table` and `column` are not sanitized.
+
+        Args:
+            table (str): The table to fetch from.
+            column (str): The column to search.
+            value (str or int or float): The value to search for.
+
+        Returns:
+            The all results of the query.
+
+
+        >>> select_all('course', 'user_id', '1')
+        (1, ...)
+        (2, ...)
+
+        """
+        return self._select(table, column, value).fetchall()
+
+    def select_all_entries(self, table):
+        """Get all entries from a specific table.
+
+        Careful: `table` is not sanitized.
+
+        Agrs:
+            table (str): The table to get the entries from.
+
+        Returns:
+            A list with all the rows in the table.
+
+        >>> select_all_entries('user')
+        ((1, 'test1@gmail.com', 'some hash'),
+         (2, 'test2@web.de', 'a different hash'))
+
+        """
+        sql = 'SELECT * FROM {}'.format(table)
+        return self.db.execute(sql).fetchall()
+
+    def add(self, table, columns, values):
+        """Add a new row to the database.
+
+        Careful: The inputs `table` and `columns` are not sanitized.
+
+        Args:
+            table (str): The table to add the row to.
+            columns (list(str)): The columns in which to add data.
+            values (list(str or int or float)): The values to add in the
+                                            fields.
+
+        >>> select_one('user', 'email', 'gp@uni-potsdam.de')
+        None
+        >>> add('user', ('email', 'password'), ('gp@uni-potsdam.de', 'a'))
+        >>> select_one('user', 'email', 'gp@uni-potsdam.de')
+        (3, 'gp@uni-potsdam.de', 'a')
+
+        """
+        value_string = ', '.join(['?'] * len(values))
+        column_string = ', '.join(columns)
+        sql = 'INSERT INTO {} ({}) VALUES ({})'\
+            ''.format(table, column_string, value_string)
         self.execute(sql, values)
         self.db.commit()
 
     def update_one(self, table, condition, new_value):
-        sql = 'UPDATE {} SET {} = ? WHERE {} = ?'.format(table, new_value[0],
-            condition[0])
+        """Update fields in the database.
+
+        Careful: The inputs `table` and `condition[0]` and
+        `new_value[0]` are not sanitized.
+
+        The condition and new values are in the form
+        condition=(column_name, value) and new_value
+        equivalently.
+
+        Args:
+            table (str): The table to change the values in.
+            condition (list(str, (str, or int or float))): The equality
+                                                      to fulfill.
+            new_value (list(str, (str or int or float))): The new value
+                                                      to set.
+
+        >>> select_one('user', 'id', '1')
+        (1, 'test1@gmail.com', 'some_password_hash')
+        >>> update_one('user', ('id', 1), ('email', 'new@web.de'))
+        >>> select_one('user', 'id', '1')
+        (1, 'new@web.de', 'some_password_hash')
+
+        """
+        sql = 'UPDATE {} SET {} = ? WHERE {} = ?'\
+            ''.format(table, new_value[0], condition[0])
         self.execute(sql, (new_value[1], condition[1]))
         self.db.commit()
 
@@ -103,6 +217,8 @@ def init_db():
     log.info('Create a new database')
     db = DBConnection()
     with current_app.open_resource('schema.sql') as f:
+        db().executescript(f.read().decode('utf8'))
+    with current_app.open_resource('default.sql') as f:
         db().executescript(f.read().decode('utf8'))
 
 

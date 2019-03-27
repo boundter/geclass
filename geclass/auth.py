@@ -32,6 +32,7 @@ def check_valid_email(email):
 
     Returns:
         A bool containing the validity.
+
     """
     return re.match(r'[^ @]+@[^ @]+\.[^ @]+', email) is not None
 
@@ -46,18 +47,18 @@ def register():
         user_db = UserDB()
 
         if not email:
-            error = 'Email adress is required.'
+            error = 'Eine E-Mail Adresse wird benötigt.'
         elif not check_valid_email(email):
-            error = 'Email adress does not seem to be valid.'
+            error = 'Die E-Mail Adresse scheint nicht korrekt zu sein.'
         elif not password:
-            error = 'Password is required.'
+            error = 'Ein Passwort wird benötigt.'
         elif user_db.select_user(email=email) is not None:
-            error = 'Email adress {} is already registered.'.format(email)
+            error = 'Die E-Mail Adresse {} ist schon registriert.'.format(email)
 
         if error is None:
             user_db.add_user(email, generate_password_hash(password))
             return redirect(url_for('auth.login'))
-        log.info('Invalid registration with email {}'.format(email))
+        log.info('Invalid registration with email %s', email)
         flash(error)
     return render_template('auth/register.html')
 
@@ -72,16 +73,15 @@ def login():
         user = user_db.select_user(email=email)
 
         if user is None:
-            error = 'Incorrect Email adress.'
+            error = 'E-Mail Adresse oder Passwort sind falsch.'
         elif not check_password_hash(user['password'], password):
-            error = 'Incorrect password.'
-            log.info(
-                'Incorrect password entry by user {}'.format(user['id']))
+            error = 'E-Mail Adresse oder Passwort sind falsch.'
+            log.info('Incorrect password entry by user %s', user['id'])
 
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            logging.info('User {} logged in'.format(user['id']))
+            log.info('User %s logged in', user['id'])
             return redirect(url_for('index'))
         flash(error)
     return render_template('auth/login.html')
@@ -137,13 +137,14 @@ def change_data():
         error = None
 
         if not (email or password):
-            error = 'Email adress or password is needed.'
+            error = 'Entweder eine neue E-Mail Adresse oder ein neues ' + \
+                    'Passwort müssen geetzt werden.'
         elif email and password:
-            error = 'The Email and password cannot be ' + \
-                    'changed at the same time.'
+            error = 'Die E-Mail Adresse und das Passwort können nicht ' + \
+                    'zur selben Zeit geändert werden.'
         elif email:
             if not check_valid_email(email):
-                error = 'Email adress does not seem to be valid.'
+                error = 'Die E-Mail Adresse scheint nicht korrekt zu sein.'
 
         if error is None:
             user_db = UserDB()
@@ -173,12 +174,11 @@ def change_pwd_command(email, new_password):
     user_db = UserDB()
     user = user_db.select_user(email=email)
     log.info(
-        'Force password change for user {} with email {}'
-        ''.format(user['id'], user['email']))
+        'Force password change for user %s with email %s',
+        user['id'], user['email'])
     user_db.change_password(
         user_id=user['id'], new_password=generate_password_hash(new_password))
 
 
 def change_pwd(app):
     app.cli.add_command(change_pwd_command)
-

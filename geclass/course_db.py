@@ -1,3 +1,4 @@
+"""A class to handle the course management."""
 import logging
 
 from geclass.db import DBConnection
@@ -6,6 +7,7 @@ log = logging.getLogger(__name__)
 
 
 class CourseDB(DBConnection):
+    """Handle the course  management."""
 
     def get_courses(self, user_id):
         """Fetch all coursed from user with given id.
@@ -23,9 +25,9 @@ class CourseDB(DBConnection):
         'uni_potsdam_phys_2018'
 
         """
-        return self.select_all(table='course', field='user_id', value=user_id)
+        return self.select_all(table='course', column='user_id', value=user_id)
 
-    def add_course(self, user_id, course_name):
+    def add_course(self, user_id, fields):
         """Add a new course to the database.
 
         Args:
@@ -47,10 +49,76 @@ class CourseDB(DBConnection):
         'a_new_name'
 
         """
-        log.info(
-            'Added new course {} for user {}'
-            ''.format(course_name, user_id))
+        log.info('Added new course %s for user %s', fields['name'], user_id)
+        columns, values = ['user_id'], [str(user_id)]
+        for key in fields:
+            columns.append(key)
+            values.append(fields[key])
         self.add(
             table='course',
-            field=('user_id', 'name'),
-            values=(user_id, course_name))
+            columns=columns,
+            values=values)
+
+    def get_overview(self, user_id):
+        sql = """
+            SELECT
+              course.name,
+              university.university_name,
+              program.program_name,
+              experience.experience_level,
+              number_students,
+              strftime('%d.%m.%Y', start_date_pre, 'unixepoch'),
+              strftime('%d.%m.%Y', start_date_post, 'unixepoch')
+            FROM course, university, program, experience
+            WHERE course.user_id = ?
+              AND university.id = course.university_id
+              AND program.id = course.program_id
+              AND experience.id = course.experience_id"""
+        return self.execute(sql, (user_id,)).fetchall()
+
+    def _add_and_get_new_id(self, table, column, value):
+        """Add a new entry to the given table.
+
+        Careful: `table` and `column`are not sqnitized.
+
+        """
+        log.info('Add new value %s to table %s', value, table)
+        self.add(table, (column,), (value,))
+        new_entry = self.select_one(table, column, value)
+        return new_entry['id']
+
+    def add_and_get_id_university(self, value):
+        """Add a new entry to the university table and get its id.
+
+        Args:
+            value (str): The new value to add to the table.
+
+        >>> add_and_get_id_university("Uni München")
+        3
+
+        """
+        return self._add_and_get_new_id('university', 'university_name', value)
+
+    def add_and_get_id_equipment(self, value):
+        """Add a new entry to the equipment table and get its id.
+
+        Args:
+            value (str): The new value to add to the table.
+
+        >>> add_and_get_id_equipment("Leitz")
+        3
+
+        """
+        return self._add_and_get_new_id('equipment', 'equipment_type', value)
+
+    def add_and_get_id_note(self, value):
+        """Add a new entry to the notes table and get its id.
+
+        Args:
+            value (str): The new value to add to the table.
+
+        >>> add_and_get_id_note("This is a new note")
+        3
+
+        """
+        return self._add_and_get_new_id('notes', 'notes_text', value)

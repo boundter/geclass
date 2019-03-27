@@ -1,10 +1,14 @@
+"""A class to handle the user management."""
 import logging
 
 from geclass.db import DBConnection
 
 log = logging.getLogger(__name__)
 
+
 class UserDB(DBConnection):
+    """Handle the user management."""
+
     table = 'user'
 
     def select_user(self, user_id=None, email=None):
@@ -51,6 +55,7 @@ class UserDB(DBConnection):
         (4, 'hello@abc.de', 'foo')
 
         """
+        log.info('Added a new user %s', email)
         self.add(
             self.table, ('email', 'password'), (email, encrypted_password))
 
@@ -68,7 +73,7 @@ class UserDB(DBConnection):
         ('ab@cd.ef', 'some hash')
 
         """
-        log.info('User {} changed email to {}'.format(user_id, new_email))
+        log.info('User %s changed email to %s', user_id, new_email)
         self.update_one(
             table=self.table,
             condition=('id', user_id),
@@ -88,7 +93,7 @@ class UserDB(DBConnection):
         ('ab@cd.ef', 'a different hash')
 
         """
-        log.info('User {} changed password'.format(user_id))
+        log.info('User %s changed passwords', user_id)
         self.update_one(
             table=self.table,
             condition=('id', user_id),

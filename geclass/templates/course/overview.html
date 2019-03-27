@@ -1,19 +1,49 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Courses{% endblock %}</h1>
+  <h1>{% block title %}Kursübersicht{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
+    </br>
     <table class='course'>
-      <caption>Current Courses</caption>
+      <caption>Aktuelle Kurse</caption>
       <tr>
         <th>Name</th>
+        <th>Einrichtung</th>
+        <th>Studiengang</th>
+        <th>Jahrgang</th>
+        <th>Studenten</th>
+        <th>Start Pre-Befragung</th>
+        <th>Start Post-Befragung</th>
       </tr>
-    {% for course in courses %}
+    {% for course in current_courses %}
       <tr>
-        <td>{{ course['name'] }}</td>
+        {% for field in course %}
+          <td>{{ field }}</td>
+        {% endfor %}
       </tr>
     {% endfor %}
     </table>
+    </br>
+    <table class='course'>
+      <caption>Abgeschlossene Kurse</caption>
+      <tr>
+        <th>Name</th>
+        <th>Einrichtung</th>
+        <th>Studiengang</th>
+        <th>Jahrgang</th>
+        <th>Studenten</th>
+        <th>Start Pre-Befragung</th>
+        <th>Start Post-Befragung</th>
+      </tr>
+    {% for course in past_courses %}
+      <tr>
+        {% for field in course %}
+          <td>{{ field }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </table>
+
 {% endblock %}}
