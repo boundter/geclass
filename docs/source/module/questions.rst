@@ -20,5 +20,6 @@ Questions about the Course
 Handler
 -------
 
+.. automodule:: geclass.handle_course_questions
 .. autoclass:: HandleCourseQuestions
    :members:

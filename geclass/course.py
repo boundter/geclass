@@ -8,7 +8,7 @@ from flask import (
 
 from geclass.auth import login_required
 from geclass.course_db import CourseDB
-from geclass.course_question import HandleCourseQuestions
+from geclass.handle_course_questions import HandleCourseQuestions
 
 log = logging.getLogger(__name__)
 
