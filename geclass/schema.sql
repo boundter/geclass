@@ -87,3 +87,8 @@ CREATE TABLE notes (
   notes_text TEXT NOT NULL
 );
 
+CREATE TABLE university_type (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  university_type_name TEXT NOT NULL
+);
+

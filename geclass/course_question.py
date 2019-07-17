@@ -266,6 +266,10 @@ class HandleCourseQuestions:
                 'start_date_post', 'Start Post-Befragung',
                 'Start der Befragung nach dem Kurs. ' +
                 'Safari-Nutzer: Bitte in der Form 2019-03-16 angeben.'),
+            QuestionDropdown(
+                'university_type', 'Art der Einrichtung',
+                'An welcher Art von Einrichtung findet der Kurs statt?',
+                self.db.select_all_entries('university_type')),
             QuestionDropdownWithText(
                 'university', 'Einrichtung',
                 'An welcher Einrichtung findet der Kurs statt?',

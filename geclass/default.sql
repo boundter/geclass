@@ -8,29 +8,36 @@ INSERT INTO program (program_name)
 VALUES
   ('Bachelor Physik'),
   ('Master Physik'),
-  ('Bachelor Nebenfach');
+  ('Bachelor Nebenfach'),
+  ('Master Nebenfach'),
+  ('Medizinpraktikum');
 
 INSERT INTO course_type (course_type_name)
 VALUES
   ('Grundpraktikum'),
-  ('Fortgeschritenen Praktikum');
+  ('Fortgeschritenen Praktikum'),
+  ('Projektpraktikum');
 
 INSERT INTO focus (focus_name)
 VALUES
-  ('Konzepte'),
-  ('Fähigkeiten'),
-  ('Konzepte & Fähigkeiten');
+  ('Kompetenzen'),
+  ('Forschendes Lernen'),
+  ('Physikalische Konzeptvermittlung');
 
 INSERT INTO traditional (traditional_name)
 VALUES
-  ('Traditionelles Praktikum'),
+  ('Geführtes Praktikum'),
   ('Nicht-Traditionelles Praktikum');
 
 
 INSERT INTO equipment (equipment_type)
 VALUES
-  ('Generisch'),
-  ('PHYWE');
+  ('Leybold LD'),
+  ('Pasco'),
+  ('PHYWE'),
+  ('Selbstgebaut'),
+  ('Thorlabs'),
+  ('Andere');
 
 INSERT INTO experience (experience_level)
 VALUES
@@ -42,7 +49,13 @@ VALUES
   ('Universität Potsdam'),
   ('Humboldt Universität Berlin');
 
-  INSERT INTO course
+INSERT INTO university_type (university_type_name)
+VALUES
+  ('Universität'),
+  ('Fachhochschule'),
+  ('Andere');
+
+INSERT INTO course
   (user_id, program_id, course_type_id, focus_id, traditional_id, equipment_id,
    experience_id, university_id, number_students,
    students_per_instructor, lab_per_lecture, number_experiments,
