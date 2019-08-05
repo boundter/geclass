@@ -99,11 +99,11 @@ class QuestionFrequency():
         for n, t in self.fields.items():
             question.append(
                     '''<tr>
-                        <th>{}</th>
-                        <th><input type="radio" name="{}" value="3" required></th>
-                        <th><input type="radio" name="{}" value="2"></th>
-                        <th><input type="radio" name="{}" value="1"></th>
-                        <th><input type="radio" name="{}" value="0"></th>
+                        <td>{}</td>
+                        <td><input type="radio" name="{}" value="3" required></td>
+                        <td><input type="radio" name="{}" value="2"></td>
+                        <td><input type="radio" name="{}" value="1"></td>
+                        <td><input type="radio" name="{}" value="0"></td>
                        </tr>\n'''.format(t, n, n, n, n))
         table = '''<table>
             <tr>

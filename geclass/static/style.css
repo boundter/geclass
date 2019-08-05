@@ -131,6 +131,19 @@ table.course caption {
   color: #377ba8
 }
 
+table.course_question tr, td {
+  text-align: left;
+}
+
+table.course_question tr, td + td {
+  text-align: center;
+}
+
+table.course_question tr, th {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 .course_question {
   padding: 5px;
   border-bottom: 1px solid gray;
