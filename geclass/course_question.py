@@ -86,6 +86,52 @@ class QuestionText(CourseQuestion):
         return inp
 
 
+class QuestionFrequency():
+
+    def __init__(self, fields, title):
+        self.fields = fields
+        self.title = title
+
+    def __repr__(self):
+        div_begin = '<div class="course_question">\n'
+        header = '<h3>{}</h3>\n'.format(self.title)
+        question = []
+        for n, t in self.fields.items():
+            question.append(
+                    '''<tr>
+                        <th>{}</th>
+                        <th><input type="radio" name="{}" value="3" required></th>
+                        <th><input type="radio" name="{}" value="2"></th>
+                        <th><input type="radio" name="{}" value="1"></th>
+                        <th><input type="radio" name="{}" value="0"></th>
+                       </tr>\n'''.format(t, n, n, n, n))
+        table = '''<table>
+            <tr>
+                <th></th>
+                <th>Immer</th>
+                <th>Oft</th>
+                <th>Selten</th>
+                <th>Nie</th>
+            </tr>\n'''
+        for q in question:
+            table += q
+        table += '</table>\n'
+        div_end = '</div>\n'
+        html = div_begin + header + table + div_end
+        return html
+
+    def parse(self, form):
+        keys = []
+        for name in self.fields:
+            if not form[name]:
+                raise KeyError('Feld {} wird benötigt.'.format(self.fields[name]))
+            else:
+                keys.append((name, form[name]))
+        return keys
+
+
+
+
 class QuestionNote(QuestionText):
 
     def _input(self):
@@ -314,10 +360,55 @@ class HandleCourseQuestions:
                 'lab_per_lecture', 'Verhältnis Praktikum/Vorlesung',
                 'Wie ist das Verhältnis von Praktikum zu Vorlesung?',
                 default=0, value_range=(0, 1), step=0.1),
+            QuestionNumber(
+                'hours_per_lab', 'Länge eines Termins',
+                'Wieviele Stunden dauert ein Termin?',
+                default=0, value_range=(0, 24), step=0.01),
+            QuestionNumber(
+                'number_labs', 'Anzahl Termine',
+                'Wieviele Termine gibt es?',
+                default=0, value_range=(0, 1000)),
+            QuestionNumber(
+                'week_guided', 'Geführte Wochen',
+                'Wieviel Wochen sind die Experiment geführt?',
+                default=0, value_range=(0, 1000)),
             QuestionDropdownWithText(
                 'equipment', 'Geräte',
                 'Was für eine Art von Geräten wird hauptsächlich verwendet?',
                 self.db.select_all_entries('equipment'), 'Andere'),
+            QuestionFrequency(
+                {'frequency_phys_principle': 'Verifizieren physikalischer Prinzipien',
+                 'frequency_known_principle': 'Bekannte physikalische Prinzipien entdecken',
+                 'frequency_unknown_principle': 'Unbekannte physikalische Prinzipien entdecken'},
+                'Frequenz'),
+            QuestionFrequency(
+                {'students_questions': 'der Fragestellungen',
+                 'students_design': 'dem Design des Experiment',
+                 'students_apparatus': 'dem Bau der Geräte',
+                 'students_analysis': 'der Ausarbeitung der Auswertung',
+                 'students_troubleshoot': 'der Fehlersuche',
+                 'students_groups': 'Gruppenarbeit'},
+                'Studenten arbeiten selbstständig an ...'),
+            QuestionFrequency(
+                {'modeling_mathematics': 'mathematische Modelle',
+                 'modeling_model': 'Entwicklung der Modelle',
+                 'modeling_tools': 'Modelierung des Aufbaus',
+                 'modeling_measurement': 'Modelierung der Messgeräte',
+                 'modeling_predictions': 'Vorhersagen',
+                 'modeling_uncertainty': 'Reduktion der Unsicherheiten',
+                 'modeling_calibrate': 'kalibrieren der Geräte'},
+                'Studenten modelieren selbsständig durch ...'),
+            QuestionFrequency(
+                {'analysis_uncertainty': 'Bestimmung der Unsicherheiten',
+                 'analysis_calculate': 'Berechnung der Ergebnisse',
+                 'analysis_computer': 'Berechnung/Visualisierung am Computer'},
+                'Studenten führen selbsständig die Auswertung durch mit ...'),
+            QuestionFrequency(
+                {'communication_oral': 'einer mündlichen Präsentation/Testat',
+                 'communication_written': 'einer schriftlichen Präsentation',
+                 'communication_lab': 'einem Laborbuch',
+                 'communication_journal': 'Journalartikeln'},
+                'Studenten kommunizieren ihre Ergbenisse mit ...'),
             QuestionNote(
                 'notes', 'Notizen',
                 ('Gibt es noch etwas, dass Sie uns sagen wollen? ' +
@@ -346,8 +437,12 @@ class HandleCourseQuestions:
             try:
                 parsed_data = question.parse(form)
                 if parsed_data:
-                    self.values[parsed_data[0]] = parsed_data[1]
-            except KeyError as e:
+                    if len(parsed_data) >= 2 and len(parsed_data[0]) == 2:
+                        for data in parsed_data:
+                            self.values[data[0]] = data[1]
+                    else:
+                        self.values[parsed_data[0]] = parsed_data[1]
+            except Exception as e:
                 errors.append(e)
         try:
             errors.extend(self._sanity_check())

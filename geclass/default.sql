@@ -57,13 +57,18 @@ VALUES
 
 INSERT INTO course
   (user_id, program_id, course_type_id, focus_id, traditional_id, equipment_id,
-   experience_id, university_id, number_students,
-   students_per_instructor, lab_per_lecture, number_experiments,
-   number_projects, start_date_pre, start_date_post, name)
+   experience_id, university_id, university_type_id, number_students,
+   students_per_instructor, hours_per_lab, lab_per_lecture, number_labs, number_experiments,
+   number_projects, start_date_pre, start_date_post, name,
+  frequency_phys_principle, frequency_known_principle, frequency_unknown_principle,
+  students_questions, students_design, students_apparatus, students_analysis, students_troubleshoot, students_groups,
+  modeling_mathematics, modeling_model, modeling_tools, modeling_measurement, modeling_predictions, modeling_uncertainty, modeling_calibrate,
+  analysis_uncertainty, analysis_calculate, analysis_computer,
+  communication_oral, communication_written, communication_lab, communication_journal)
 VALUES
-  (2, 1, 1, 1, 1, 1, 1, 1, 32, 8, 0.5, 10, 0, '123456789', '123456989',
-    'Bachelor Physiker'),
-  (2, 2, 2, 2, 2, 2, 2, 2, 16, 8, 0.5, 0, 2, '123456789', '123456989',
-    'Master Physiker Projekt'),
-  (3, 3, 1, 2, 2, 1, 2, 1, 25, 3, 0.5, 5, 1, '123456889', '123456999',
-    'Nebenfach Grundpraktikum');
+  (2, 1, 1, 1, 1, 1, 1, 1, 1, 32, 8, 2.5, 0.5, 0, 10, 0, '123456789', '123456989',
+    'Bachelor Physiker', 0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+  (2, 2, 2, 2, 2, 2, 2, 2, 1, 16, 8, 1.5, 0.5, 5, 0, 2, '123456789', '123456989',
+    'Master Physiker Projekt', 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+  (3, 3, 1, 2, 2, 1, 2, 1, 2, 25, 3, 3.0, 0.5, 3, 5, 1, '123456889', '123456999',
+    'Nebenfach Grundpraktikum', 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
