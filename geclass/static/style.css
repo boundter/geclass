@@ -161,3 +161,11 @@ table.course_question tr, th {
 .course_question input[name=notes] {
   width: 40em;
 }
+
+input.invalid {
+  background-color: #ffdddd;
+}
+
+.tab {
+  display: none;
+}

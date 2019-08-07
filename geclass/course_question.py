@@ -5,6 +5,23 @@ from datetime import date
 
 from geclass.course_db import CourseDB
 
+class StartTab:
+
+    def __repr__(self):
+        return '<div class="tab">\n'
+
+    def parse(self, form):
+        return None
+
+
+class EndTab:
+
+    def __repr__(self):
+        return '</div>\n'
+
+    def parse(self, form):
+        return None
+
 
 class CourseQuestion:
     """Base class of the questions.
@@ -302,6 +319,7 @@ class HandleCourseQuestions:
         self.db = CourseDB()
         self.values = {}
         self.questions = [
+            StartTab(),
             QuestionText(
                 'name', 'Name', 'Wählen Sie einen Namen für den Kurs aus.'),
             QuestionDate(
@@ -376,6 +394,8 @@ class HandleCourseQuestions:
                 'equipment', 'Geräte',
                 'Was für eine Art von Geräten wird hauptsächlich verwendet?',
                 self.db.select_all_entries('equipment'), 'Andere'),
+            EndTab(),
+            StartTab(),
             QuestionFrequency(
                 {'frequency_phys_principle': 'Verifizieren physikalischer Prinzipien',
                  'frequency_known_principle': 'Bekannte physikalische Prinzipien entdecken',
@@ -412,7 +432,8 @@ class HandleCourseQuestions:
             QuestionNote(
                 'notes', 'Notizen',
                 ('Gibt es noch etwas, dass Sie uns sagen wollen? ' +
-                 'Max. 255 Zeichen.'))
+                 'Max. 255 Zeichen.')),
+            EndTab()
         ]
 
     def __iter__(self):
