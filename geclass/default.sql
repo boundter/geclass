@@ -15,19 +15,20 @@ VALUES
 INSERT INTO course_type (course_type_name)
 VALUES
   ('Grundpraktikum'),
-  ('Fortgeschritenen Praktikum'),
+  ('Fortgeschrittenen Praktikum'),
   ('Projektpraktikum');
 
 INSERT INTO focus (focus_name)
 VALUES
-  ('Kompetenzen'),
-  ('Forschendes Lernen'),
-  ('Physikalische Konzeptvermittlung');
+  ('Experimentierkompetenzen'),
+  ('Physikalische Konzeptvermittlung'),
+  ('Beides');
 
 INSERT INTO traditional (traditional_name)
 VALUES
-  ('Geführtes Praktikum'),
-  ('Nicht-Traditionelles Praktikum');
+  ('Folgen einer detaillierten Anleitung'),
+  ('Offene Gestaltung mit Anleitung'),
+  ('Offene Gestaltung ohne Anleitung');
 
 
 INSERT INTO equipment (equipment_type)
@@ -64,11 +65,11 @@ INSERT INTO course
   students_questions, students_design, students_apparatus, students_analysis, students_troubleshoot, students_groups,
   modeling_mathematics, modeling_model, modeling_tools, modeling_measurement, modeling_predictions, modeling_uncertainty, modeling_calibrate,
   analysis_uncertainty, analysis_calculate, analysis_computer,
-  communication_oral, communication_written, communication_lab, communication_journal)
+  communication_oral, communication_written, communication_lab, communication_journal, communication_test)
 VALUES
   (2, 1, 1, 1, 1, 1, 1, 1, 1, 32, 8, 2.5, 0.5, 0, 10, 0, '123456789', '123456989',
-    'Bachelor Physiker', 0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    'Bachelor Physiker', 0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
   (2, 2, 2, 2, 2, 2, 2, 2, 1, 16, 8, 1.5, 0.5, 5, 0, 2, '123456789', '123456989',
-    'Master Physiker Projekt', 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    'Master Physiker Projekt', 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
   (3, 3, 1, 2, 2, 1, 2, 1, 2, 25, 3, 3.0, 0.5, 3, 5, 1, '123456889', '123456999',
-    'Nebenfach Grundpraktikum', 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    'Nebenfach Grundpraktikum', 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);

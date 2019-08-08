@@ -57,7 +57,8 @@ def test_add_course(app):
             'communication_oral' : '0',
             'communication_written' : '0',
             'communication_lab' : '0',
-            'communication_journal' : '0'
+            'communication_journal' : '0',
+            'communication_test': '0'
             }
         course_db.add_course(user_id=2, fields=fields)
         courses = course_db.get_courses(user_id=2)

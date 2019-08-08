@@ -321,22 +321,22 @@ class HandleCourseQuestions:
         self.questions = [
             StartTab(),
             QuestionText(
-                'name', 'Name', 'Wählen Sie einen Namen für den Kurs aus.'),
+                'name', 'Name', 'Wählen Sie einen beliebigen Namen für den Kurs aus.'),
             QuestionDate(
-                'start_date_pre', 'Start Pre-Befragung',
-                'Start der Befragung vor dem Kurs. ' +
+                'start_date_pre', 'Start Prä-Befragung',
+                'Start der Befragung vor dem Kurs. Die Befragung ist 14 Tage aktiv.' +
                 'Safari-Nutzer: Bitte in der Form 2019-03-16 angeben.'),
             QuestionDate(
                 'start_date_post', 'Start Post-Befragung',
-                'Start der Befragung nach dem Kurs. ' +
+                'Start der Befragung nach dem Kurs. Die Befragung ist 14 Tage aktiv.' +
                 'Safari-Nutzer: Bitte in der Form 2019-03-16 angeben.'),
             QuestionDropdown(
-                'university_type', 'Art der Einrichtung',
-                'An welcher Art von Einrichtung findet der Kurs statt?',
+                'university_type', 'Art der Hochschule',
+                'An welcher Art von Hochschule findet der Kurs statt?',
                 self.db.select_all_entries('university_type')),
             QuestionDropdownWithText(
-                'university', 'Einrichtung',
-                'An welcher Einrichtung findet der Kurs statt?',
+                'university', 'Hochschule',
+                'An welcher Hochschule findet der Kurs statt?',
                 self.db.select_all_entries('university'), 'Andere'),
             QuestionDropdown(
                 'program', 'Studiengang',
@@ -351,8 +351,8 @@ class HandleCourseQuestions:
                 'Was für eine Art von Kurs ist es?',
                 self.db.select_all_entries('course_type')),
             QuestionDropdown(
-                'traditional', 'Traditionell',
-                'Ist der Kurs traditionell?',
+                'traditional', 'Didaktische Methoden',
+                'Welche didaktischen Methoden benutzt der Kurs?',
                 self.db.select_all_entries('traditional')),
             QuestionDropdown(
                 'focus', 'Schwerpunkt',
@@ -360,7 +360,7 @@ class HandleCourseQuestions:
                 self.db.select_all_entries('focus')),
             QuestionNumber(
                 'number_students', 'Anzahl an Studenten',
-                ('Wieviele Studenten werden vorraussichtlich an dem Kurs ' +
+                ('Wieviele Studenten werden voraussichtlich an dem Kurs ' +
                  'teilnehmen?'), default=0, value_range=(0, 1000)),
             QuestionNumber(
                 'students_per_instructor', 'Verhältnis Studenten/Betreuer',
@@ -376,8 +376,8 @@ class HandleCourseQuestions:
                 default=0, value_range=(0, 1000)),
             QuestionNumber(
                 'lab_per_lecture', 'Verhältnis Praktikum/Vorlesung',
-                'Wie ist das Verhältnis von Praktikum zu Vorlesung?',
-                default=0, value_range=(0, 1), step=0.1),
+                'Wie ist das Verhältnis von Praktikum zu Vorlesung? (Angabe als z.B. 0.5)',
+                default=0, value_range=(0, 100), step=0.1),
             QuestionNumber(
                 'hours_per_lab', 'Länge eines Termins',
                 'Wieviele Stunden dauert ein Termin?',
@@ -397,38 +397,39 @@ class HandleCourseQuestions:
             EndTab(),
             StartTab(),
             QuestionFrequency(
-                {'frequency_phys_principle': 'Verifizieren physikalischer Prinzipien',
-                 'frequency_known_principle': 'Bekannte physikalische Prinzipien entdecken',
-                 'frequency_unknown_principle': 'Unbekannte physikalische Prinzipien entdecken'},
-                'Frequenz'),
+                {'frequency_phys_principle': 'physikalische Prinzipien verifiziert?',
+                 'frequency_known_principle': 'bekannte physikalische Prinzipien entdeckt?',
+                 'frequency_unknown_principle': 'unbekannte physikalische Prinzipien entdeckt?'},
+                'Wie oft werden ...'),
             QuestionFrequency(
-                {'students_questions': 'der Fragestellungen',
-                 'students_design': 'dem Design des Experiment',
+                {'students_questions': 'der Fragestellung',
+                 'students_design': 'dem Design des Experiments',
                  'students_apparatus': 'dem Bau der Geräte',
                  'students_analysis': 'der Ausarbeitung der Auswertung',
-                 'students_troubleshoot': 'der Fehlersuche',
-                 'students_groups': 'Gruppenarbeit'},
+                 'students_troubleshoot': 'dem Troubleshooting',
+                 'students_groups': 'der Gruppenarbeit'},
                 'Studenten arbeiten selbstständig an ...'),
             QuestionFrequency(
-                {'modeling_mathematics': 'mathematische Modelle',
-                 'modeling_model': 'Entwicklung der Modelle',
-                 'modeling_tools': 'Modelierung des Aufbaus',
-                 'modeling_measurement': 'Modelierung der Messgeräte',
-                 'modeling_predictions': 'Vorhersagen',
+                {'modeling_mathematics': 'die mathematische Modellierung',
+                 'modeling_model': 'Entwicklung der physikalischen Modelle',
+                 'modeling_tools': 'Modellierung des Aufbaus',
+                 'modeling_measurement': 'Modellierung der Messgeräte',
+                 'modeling_predictions': 'Angabe von Vorhersagen',
                  'modeling_uncertainty': 'Reduktion der Unsicherheiten',
-                 'modeling_calibrate': 'kalibrieren der Geräte'},
-                'Studenten modelieren selbsständig durch ...'),
+                 'modeling_calibrate': 'Kalibrierung der Geräte'},
+                'Studenten modellieren selbstständig durch ...'),
             QuestionFrequency(
                 {'analysis_uncertainty': 'Bestimmung der Unsicherheiten',
                  'analysis_calculate': 'Berechnung der Ergebnisse',
                  'analysis_computer': 'Berechnung/Visualisierung am Computer'},
-                'Studenten führen selbsständig die Auswertung durch mit ...'),
+                'Studenten führen selbstständig die Auswertung durch mit ...'),
             QuestionFrequency(
-                {'communication_oral': 'einer mündlichen Präsentation/Testat',
-                 'communication_written': 'einer schriftlichen Präsentation',
-                 'communication_lab': 'einem Laborbuch',
-                 'communication_journal': 'Journalartikeln'},
-                'Studenten kommunizieren ihre Ergbenisse mit ...'),
+                {'communication_oral': 'die Ergebnisse in einer mündlichen Präsentation',
+                 'communication_written': 'die Ergebnisse in einer schriftlichen Präsentation/Bericht',
+                 'communication_journal': 'die Ergebnisse in Form eines Journalartikels',
+                 'communication_lab': 'den Versuchsablauf in einem Laborbuch',
+                 'communication_test': 'die Vorbereitung mit einem Testat'},
+                'Studenten kommunizieren  ...'),
             QuestionNote(
                 'notes', 'Notizen',
                 ('Gibt es noch etwas, dass Sie uns sagen wollen? ' +

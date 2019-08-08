@@ -64,6 +64,7 @@ CREATE TABLE course (
   communication_written INTEGER NOT NULL,
   communication_lab INTEGER NOT NULL,
   communication_journal INTEGER NOT NULL,
+  communication_test INTEGER NOT NULL,
   FOREIGN KEY (user_id) REFERENCES user (id),
   FOREIGN KEY (program_id) REFERENCES program (id),
   FOREIGN KEY (course_type_id) REFERENCES course_type (id),
