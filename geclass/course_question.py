@@ -6,6 +6,7 @@ from datetime import date
 from geclass.course_db import CourseDB
 
 class StartTab:
+    """Start a new tab in the questionnaire."""
 
     def __repr__(self):
         return '<div class="tab">\n'
@@ -15,6 +16,7 @@ class StartTab:
 
 
 class EndTab:
+    """End the current tab in the questionnaire."""
 
     def __repr__(self):
         return '</div>\n'
@@ -104,6 +106,14 @@ class QuestionText(CourseQuestion):
 
 
 class QuestionFrequency():
+    """Create multiple questions with four radio buttons.
+
+    Args:
+        fields (dicy(str, str)): A dict consisting of the id of the
+                                 field and its text.
+        title (str): The title of the questions.
+
+    """
 
     def __init__(self, fields, title):
         self.fields = fields

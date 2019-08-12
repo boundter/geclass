@@ -8,6 +8,9 @@ Questions about the Course
 .. autoclass:: QuestionText
    :members:
 
+.. autoclass:: QuestionDate
+   :members:
+
 .. autoclass:: QuestionNumber
    :members:
 
@@ -16,6 +19,15 @@ Questions about the Course
 
 .. autoclass:: QuestionDropdownWithText
    :members:
+
+.. autoclass:: QuestionFrequency
+   :members:
+
+.. autoclass:: QuestionNote
+   :members:
+
+.. autoclass:: StartTab
+.. autoclass:: EndTab
 
 Handler
 -------
