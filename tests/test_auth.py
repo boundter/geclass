@@ -20,7 +20,7 @@ def test_register(client, app):
     assert client.get('/auth/register').status_code == 200
     response = client.post(
         '/auth/register',
-        data={'email': 'abc@def.gh', 'password': 'a'}
+        data={'email': 'abc@def.gh', 'password': 'a', 'password_re': 'a'}
     )
     # after successful register reroute to login
     assert response.headers['Location'] == 'http://localhost/auth/login'
@@ -30,16 +30,17 @@ def test_register(client, app):
         assert user_db.select_user(email="abc@def.gh") is not None
 
 
-@pytest.mark.parametrize(('email', 'password', 'message'), (
-    ('', '', b'Eine E-Mail Adresse wird ben\xc3\xb6tigt.'),
-    ('abc@de', '', b'Die E-Mail Adresse scheint nicht korrekt zu sein.'),
-    ('abc@def.gh', '', b'Ein Passwort wird ben\xc3\xb6tigt.'),
-    ('test1@gmail.com', 'test', b'schon registriert.')
+@pytest.mark.parametrize(('email', 'password', 'password_re', 'message'), (
+    ('', '', '', b'Eine E-Mail Adresse wird ben\xc3\xb6tigt.'),
+    ('abc@de', '', '', b'Die E-Mail Adresse scheint nicht korrekt zu sein.'),
+    ('abc@def.gh', '', '', b'Ein Passwort wird ben\xc3\xb6tigt.'),
+    ('test1@gmail.com', 'test', 'test', b'schon registriert.'),
+    ('abc@def.gh', 'a', 'b', b'Passw\xc3\xb6rter stimmen nicht')
 ))
-def test_register_validate_input(client, email, password, message):
+def test_register_validate_input(client, email, password, password_re,  message):
     response = client.post(
         '/auth/register',
-        data={'email': email, 'password': password}
+        data={'email': email, 'password': password, 'password_re': password_re}
     )
     assert message in response.data
 
