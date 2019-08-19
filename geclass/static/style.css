@@ -102,6 +102,10 @@ nav ul li a, nav ul li span, header .action {
   resize: vertical;
 }
 
+.contact {
+  font-weight: bold;
+}
+
 input.danger {
   color: #cc2f2e;
 }
