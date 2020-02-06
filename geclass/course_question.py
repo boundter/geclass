@@ -1,6 +1,7 @@
 """Container to generate html-expressions for adding courses."""
 
 import time
+import re
 from datetime import date
 
 from geclass.course_db import CourseDB
@@ -104,6 +105,14 @@ class QuestionText(CourseQuestion):
 
 
 class QuestionFrequency():
+    """Create a question with four radio buttons for frequency.
+
+    Args:
+        fields (dict(str, str)): The questions to ask in the form
+            {html identifier: text}.
+        title (str): The header of the question.
+
+    """
 
     def __init__(self, fields, title):
         self.fields = fields
@@ -486,6 +495,13 @@ class HandleCourseQuestions:
         # post is after pre
         if not self.values['start_date_pre'] < self.values['start_date_post']:
             errors.append('Start Post-Befragung muss nach der Pre-Befragung sein.')
+        frequency_questions = [
+                'frequency_*', 'students_*^(?!_)', 'modeling_*', 'analysis_*',
+                'communication_*']
+        for key in self.values:
+            if any(re.match(expr, key) for expr in frequency_questions):
+                if not self.values[key] in range(0, 4):
+                    errors.append('Flascher Wert im Feld {}'.format(key))
         return errors
 
     def write(self, user_id):
