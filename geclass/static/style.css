@@ -102,6 +102,10 @@ nav ul li a, nav ul li span, header .action {
   resize: vertical;
 }
 
+.contact {
+  font-weight: bold;
+}
+
 input.danger {
   color: #cc2f2e;
 }
@@ -168,4 +172,17 @@ input.invalid {
 
 .tab {
   display: none;
+}
+
+#container{
+  text-align: center;
+}
+
+#prevBtn, #nextBtn {
+  font-size: 16px;
+  width: 120px;
+  height: 30px;
+  display: inline-block;
+  float: left;
+  margin-top: 10px;
 }

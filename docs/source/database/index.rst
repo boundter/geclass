@@ -27,16 +27,47 @@ There are two tables:
   * traditional_id
   * equipment_id
   * experience_id
+  * university_type_id
   * university_id
   * notes_id
   * number_students - expected total number of students
   * students_per_instructor - average of students per instructor
   * lab_per_lecture - ratio of lab time to lecture time
+  * horus_per_lab - length of one lab in hours
+  * number_labs - number of total labs
   * number_experiments - number of experiments
   * number_projects - number of projects
+  * week_guided - how many weeks are guided
   * start_date_pre - start date of pre questionaire
   * start_date_post - start date of post questionaire
   * name - name of the course
+  * frequency_phys_principle - frequency of verifying known physical principles
+  * frequency_known_principle - frequency of finding known physical principles
+  * frequency_unknown_principle - frequency of finding unknown physical principles
+  * students_questions - student agency in posing question
+  * students_plan - student agency in planing experiment
+  * students_design - student agency in designing the experiment
+  * students_apparatus - student agency in building the apparatus
+  * students_analysis - student agency in analysis of results
+  * students_troubleshoot - student agency in troubleshooting the experiment
+  * students_groups - student agency of working in groups
+  * modeling_mathematics - student agency in mathematical modeling of the system
+  * modeling_model - student agency in conecptually modeling the system
+  * modeling_tools - student agency in modeling the tools
+  * modeling_measurement - student agency in modeling the measurement system
+  * modeling_predictions - student agency in making predictions from models
+  * modeling_uncertainty - student agency in reducing the uncertainty
+  * modeling_calibrate - student agency in calibrating the tools
+  * analysis_uncertainty - analysis by calculating the uncertainty
+  * analysis_calculate - analysis by calculating error propagation
+  * analysis_computer - analysis by using the computer
+  * analysis_control - analysis by controling the tools with a computer
+  * communication_oral - communicate results with an oral presentation
+  * communication_written - communicate results with a written presentation
+  * communication_lab - communication with a labbook
+  * communication_journal - communication with a journal article
+  * communication_test - communication preparation with anoral exam
+
 
 * program
 
@@ -77,3 +108,9 @@ There are two tables:
 
   * id - the primary key (autoincrement)
   * notes_text - notes about the course
+
+* university_type
+
+  * id - the primary key (autoincrement)
+  * university_type_name - the type of university (eg. Hochschule,
+    Fachhochschule)

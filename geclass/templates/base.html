@@ -7,10 +7,12 @@
     {% if g.user %}
     <li><a href="{{ url_for('auth.change_data') }}">{{ g.user['email'] }}</a>
       <li><a href="{{ url_for('auth.logout') }}">Ausloggen</a>
-        <li><a href="{{ url_for('course.add_course') }}">Neuen Kurs anlegen</a>
+      <li><a href="{{ url_for('course.add_course') }}">Neuen Kurs anlegen</a>
+      <li><a href="{{ url_for('contact.contact') }}">Kontakt</a>
     {% else %}
       <li><a href="{{ url_for('auth.register') }}">Registrieren</a>
       <li><a href="{{ url_for('auth.login') }}">Einloggen</a>
+      <li><a href="{{ url_for('contact.contact') }}">Kontakt</a>
     {% endif %}
   </ul>
 </nav>

@@ -11,9 +11,10 @@
     {{ question|safe }}
   {% endfor %}
 
-  <!--  <input type="submit" value="Kurs anlegen"> -->
-  <button type="button" id="prevBtn" onclick="nextPrev(-1)">Zurück</button>
-  <button type="button" id="nextBtn" onclick="nextPrev(1)">Weiter</button>
+	<div id="container">
+  	<button type="button" id="prevBtn" onclick="nextPrev(-1)">Zurück</button>
+  	<button type="button" id="nextBtn" onclick="nextPrev(1)">Weiter</button>
+	</div>
   </form>
 
 <script type="text/javascript">
@@ -29,9 +30,9 @@ function showTab(n) {
     document.getElementById("prevBtn").style.display = "inline";
   }
   if (n == (x.length - 1)) {
-    document.getElementById("nextBtn").innerHTML = "Submit";
+    document.getElementById("nextBtn").innerHTML = "Abschicken";
   } else {
-    document.getElementById("nextBtn").innerHTML = "Next";
+    document.getElementById("nextBtn").innerHTML = "Weiter";
   }
 }
 
@@ -55,6 +56,7 @@ function validateForm() {
     if (!y[i].checkValidity()) {
       y[i].className += "invalid";
       valid = false;
+			y[i].scrollIntoView(false);
     }
   }
   return valid;

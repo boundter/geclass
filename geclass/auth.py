@@ -43,6 +43,7 @@ def register():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        password_re = request.form['password_re']
         error = None
         user_db = UserDB()
 
@@ -52,6 +53,8 @@ def register():
             error = 'Die E-Mail Adresse scheint nicht korrekt zu sein.'
         elif not password:
             error = 'Ein Passwort wird benötigt.'
+        elif password != password_re:
+            error = 'Passwörter stimmen nicht überein.'
         elif user_db.select_user(email=email) is not None:
             error = 'Die E-Mail Adresse {} ist schon registriert.'.format(email)
 
@@ -90,7 +93,7 @@ def login():
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('auth.register'))
+    return redirect(url_for('auth.login'))
 
 
 @bp.before_app_request
