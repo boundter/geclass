@@ -114,3 +114,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Sensitive Data
+scripts/config.py
+scripts/data.zip
