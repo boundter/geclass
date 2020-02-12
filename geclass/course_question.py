@@ -502,7 +502,7 @@ class HandleCourseQuestions:
                 'communication_*']
         for key in self.values:
             if any(re.match(expr, key) for expr in frequency_questions):
-                if not self.values[key] in range(0, 4):
+                if not (int(self.values[key]) in [0, 1, 2, 3]):
                     errors.append('Flascher Wert im Feld {}'.format(key))
         return errors
 
