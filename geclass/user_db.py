@@ -59,8 +59,8 @@ class UserDB(DBConnection):
         log.info('Added a new user %s', email)
         geclass.send_email.SendEmail(
             email,
-            'Registrierung für die GEClass',
-            """Vielen Dank, dass Sie sich für die GECLass registriert haben.
+            'Registrierung für die GEclass',
+            """Vielen Dank, dass Sie sich für die GEclass registriert haben.
             Für Fragen zu dem Projekt wenden Sie sich bitte an:
                 ge-class@uni-potsdam.de""",
                 )
