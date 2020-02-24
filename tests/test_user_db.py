@@ -1,4 +1,16 @@
+import pytest
+
 from geclass.user_db import UserDB
+
+
+@pytest.fixture(autouse=True)
+def MonkeyEmail(monkeypatch):
+    import geclass.send_email
+
+    def EmailSent(recipient, subject, content):
+        return None
+
+    monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
 
 
 def test_select_user(app):

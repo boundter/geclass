@@ -20,6 +20,7 @@ CREATE TABLE user (
 
 CREATE TABLE course (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  identifier TEXT NOT NULL,
   user_id INTEGER NOT NULL,
   program_id INTEGER NOT NULL,
   course_type_id INTEGER NOT NULL,

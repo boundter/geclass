@@ -23,7 +23,7 @@ def overview():
     past_courses = []
     current_courses = []
     for course in courses:
-        course_post = datetime.strptime(course[6], '%d.%m.%Y').date()
+        course_post = datetime.strptime(course[7], '%d.%m.%Y').date()
         if course_post < date.today():
             past_courses.append(course)
         else:

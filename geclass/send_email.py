@@ -2,7 +2,7 @@ import smtplib
 from email.message import EmailMessage
 
 
-def SendMail(recipient, subject, content):
+def SendEmail(recipient, subject, content):
     server_ip = "172.17.0.1"  # ip of the smtp server
     sender_mail = "no-reply@geclass.physik.uni-potsdam.de"
     content += "\n\n-----------------------\n"

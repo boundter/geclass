@@ -1,5 +1,7 @@
 """A class to handle the course management."""
 import logging
+import secrets
+import string
 
 from geclass.db import DBConnection
 
@@ -50,7 +52,8 @@ class CourseDB(DBConnection):
 
         """
         log.info('Added new course %s for user %s', fields['name'], user_id)
-        columns, values = ['user_id'], [str(user_id)]
+        columns = ['user_id', 'identifier']
+        values = [str(user_id), self.generate_identifier()]
         for key in fields:
             columns.append(key)
             values.append(fields[key])
@@ -59,9 +62,26 @@ class CourseDB(DBConnection):
             columns=columns,
             values=values)
 
+
+    def generate_identifier(self):
+        length = 5
+        sql = 'SELECT identifier FROM course'
+        ids = self.execute(sql, ()).fetchall()
+        if len(ids) == 0:
+            ids.add('0'*length)
+        key = ids[0]
+        ids = set(ids)
+        while key in ids:
+            key = ''.join(
+                secrets.choice(string.ascii_lowercase) for _ in range(length))
+        log.info(key)
+        return key
+
+
     def get_overview(self, user_id):
         sql = """
             SELECT
+              course.identifier,
               course.name,
               university.university_name,
               program.program_name,

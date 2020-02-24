@@ -7,6 +7,16 @@ from geclass.user_db import UserDB
 from geclass.auth import check_valid_email
 
 
+@pytest.fixture(autouse=True)
+def MonkeyEmail(monkeypatch):
+    import geclass.send_email
+
+    def EmailSent(recipient, subject, content):
+        return None
+
+    monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
+
+
 def test_validate_email():
     assert not check_valid_email('a')
     assert not check_valid_email('ab@cd')

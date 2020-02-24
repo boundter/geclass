@@ -2,6 +2,7 @@
 import logging
 
 from geclass.db import DBConnection
+import geclass.send_email
 
 log = logging.getLogger(__name__)
 
@@ -56,6 +57,13 @@ class UserDB(DBConnection):
 
         """
         log.info('Added a new user %s', email)
+        geclass.send_email.SendEmail(
+            email,
+            'Registrierung für die GEClass',
+            """Vielen Dank, dass Sie sich für die GECLass registriert haben.
+            Für Fragen zu dem Projekt wenden Sie sich bitte an:
+                ge-class@uni-potsdam.de""",
+                )
         self.add(
             self.table, ('email', 'password'), (email, encrypted_password))
 

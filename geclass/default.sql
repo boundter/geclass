@@ -60,7 +60,7 @@ VALUES
   ('Andere');
 
 INSERT INTO course
-  (user_id, program_id, course_type_id, focus_id, traditional_id, equipment_id,
+  (identifier, user_id, program_id, course_type_id, focus_id, traditional_id, equipment_id,
    experience_id, university_id, university_type_id, number_students,
    students_per_instructor, hours_per_lab, lab_per_lecture, number_labs, number_experiments,
    number_projects, start_date_pre, start_date_post, name,
@@ -70,9 +70,9 @@ INSERT INTO course
   analysis_uncertainty, analysis_calculate, analysis_computer, analysis_control,
   communication_oral, communication_written, communication_lab, communication_journal, communication_test)
 VALUES
-  (2, 1, 1, 1, 1, 1, 1, 1, 1, 32, 8, 2.5, 0.5, 0, 10, 0, '123456789', '123456989',
+  ('abxce', 2, 1, 1, 1, 1, 1, 1, 1, 1, 32, 8, 2.5, 0.5, 0, 10, 0, '123456789', '123456989',
     'Bachelor Physiker', 0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-  (2, 2, 2, 2, 2, 2, 2, 2, 1, 16, 8, 1.5, 0.5, 5, 0, 2, '123456789', '123456989',
+  ('tryui', 2, 2, 2, 2, 2, 2, 2, 2, 1, 16, 8, 1.5, 0.5, 5, 0, 2, '123456789', '123456989',
     'Master Physiker Projekt', 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-  (3, 3, 1, 2, 2, 1, 2, 1, 2, 25, 3, 3.0, 0.5, 3, 5, 1, '123456889', '123456999',
+  ('oiuyt', 3, 3, 1, 2, 2, 1, 2, 1, 2, 25, 3, 3.0, 0.5, 3, 5, 1, '123456889', '123456999',
     'Nebenfach Grundpraktikum', 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
