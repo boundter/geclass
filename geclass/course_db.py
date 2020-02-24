@@ -1,9 +1,12 @@
 """A class to handle the course management."""
+from datetime import date
 import logging
 import secrets
 import string
 
 from geclass.db import DBConnection
+from geclass.user_db import UserDB
+import geclass.send_email
 
 log = logging.getLogger(__name__)
 
@@ -57,6 +60,21 @@ class CourseDB(DBConnection):
         for key in fields:
             columns.append(key)
             values.append(fields[key])
+        course_name = fields["name"]
+        pre_start_date = fields["start_date_pre"]
+        pre_start_date = date.fromtimestamp(int(fields['start_date_pre']))
+        user_db = UserDB()
+        email = user_db.get_email(user_id)
+        geclass.send_email.SendEmail(
+            email,
+            'Kurs Registrierung GEclass',
+            """Vielen Dank, dass Sie den Kurs {} bei der  GEclass registriert haben.
+            Die ID des Kurses lautet: {}.
+            Die Prä-Befragung startet am {}. Sie werden an diesem Tag auch eine Erinnerungsemail erhalten.
+
+            Vielen Dank für die Teilnahme an diesem Projekt.""".format(
+                course_name, values[1], pre_start_date.isoformat()),
+        )
         self.add(
             table='course',
             columns=columns,
@@ -74,7 +92,6 @@ class CourseDB(DBConnection):
         while key in ids:
             key = ''.join(
                 secrets.choice(string.ascii_lowercase) for _ in range(length))
-        log.info(key)
         return key
 
 

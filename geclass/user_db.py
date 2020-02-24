@@ -106,3 +106,8 @@ class UserDB(DBConnection):
             table=self.table,
             condition=('id', user_id),
             new_value=('password', new_password))
+
+
+    def get_email(self, user_id):
+       row = self.select_one(self.table, 'id', user_id)
+       return row['email']
