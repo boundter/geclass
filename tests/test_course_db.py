@@ -1,4 +1,16 @@
+import pytest
+
 from geclass.course_db import CourseDB
+
+
+@pytest.fixture(autouse=True)
+def MonkeyEmail(monkeypatch):
+    import geclass.send_email
+
+    def EmailSent(recipient, subject, content):
+        return None
+
+    monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
 
 
 def test_select_all_courses(app):
@@ -33,8 +45,8 @@ def test_add_course(app):
             'number_experiments': '5',
             'number_projects': '1',
             'week_guided': '1',
-            'start_date_pre': '2030-03-16',
-            'start_date_post': '2031-04-16',
+            'start_date_pre': '1899849600',
+            'start_date_post': '1934064000',
             'frequency_phys_principle': '3',
             'frequency_known_principle': '2',
             'frequency_unknown_principle': '0',
