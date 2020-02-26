@@ -94,6 +94,26 @@ class CourseDB(DBConnection):
                 secrets.choice(string.ascii_lowercase) for _ in range(length))
         return key
 
+    def get_surveys_today(self):
+        date_today = date.today()
+        timestamp_today = str(int(time.mktime(day.timetuple())))
+        sql_pre = """
+            SELECT
+                user_id,
+                name,
+                identifier
+            FROM course
+            WHERE course.start_date_pre = ?"""
+        sql_post = """
+            SELECT
+                user_id,
+                name,
+                identifier
+            FROM course
+            WHERE course.start_date_post = ?"""
+        pre_surveys = self.execute(sql_pre, (timestamp_today,)).fetchall()
+        post_surveys = self.execute(sql_post, (timestamp_today,)).fetchall()
+        return pre_survyes, post_surveys
 
     def get_overview(self, user_id):
         sql = """
