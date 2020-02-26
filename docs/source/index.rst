@@ -10,8 +10,10 @@ Welcome to GEclass's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   prep/index.rst
-   database/index.rst
+   prep/docker
+   prep/mailserver
+
+   database/index
    cli/index.rst
    module/db
    module/auth
