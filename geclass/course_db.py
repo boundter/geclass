@@ -3,6 +3,7 @@ from datetime import date
 import logging
 import secrets
 import string
+import time
 
 from geclass.db import DBConnection
 from geclass.user_db import UserDB
@@ -82,6 +83,7 @@ class CourseDB(DBConnection):
 
 
     def generate_identifier(self):
+        """Generate a random unique identifier of length 5 and return it."""
         length = 5
         sql = 'SELECT identifier FROM course'
         ids = self.execute(sql, ()).fetchall()
@@ -95,8 +97,9 @@ class CourseDB(DBConnection):
         return key
 
     def get_surveys_today(self):
+        """Return pre and post surveys that start today."""
         date_today = date.today()
-        timestamp_today = str(int(time.mktime(day.timetuple())))
+        timestamp_today = str(int(time.mktime(date_today.timetuple())))
         sql_pre = """
             SELECT
                 user_id,
@@ -113,7 +116,7 @@ class CourseDB(DBConnection):
             WHERE course.start_date_post = ?"""
         pre_surveys = self.execute(sql_pre, (timestamp_today,)).fetchall()
         post_surveys = self.execute(sql_post, (timestamp_today,)).fetchall()
-        return pre_survyes, post_surveys
+        return pre_surveys, post_surveys
 
     def get_overview(self, user_id):
         sql = """

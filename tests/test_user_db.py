@@ -48,3 +48,11 @@ def test_change_password(app):
         user_db.change_password(user_id=2, new_password=new_password)
         user = user_db.select_user(user_id=2)
         assert user['password'] == new_password
+
+
+def test_get_email(app):
+    with app.app_context():
+        user_db = UserDB()
+        user_id = 2
+        email = user_db.get_email(user_id)
+        assert email == 'test1@gmail.com'

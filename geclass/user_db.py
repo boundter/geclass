@@ -109,5 +109,6 @@ class UserDB(DBConnection):
 
 
     def get_email(self, user_id):
+       """Return the email for the user with the given id."""
        row = self.select_one(self.table, 'id', user_id)
        return row['email']
