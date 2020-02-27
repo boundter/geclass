@@ -73,3 +73,23 @@ def MonkeyEmail(monkeypatch):
 
     monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
     return EmailRecorder
+
+
+@pytest.fixture(autouse=True)
+def MonkeyEmailList(monkeypatch):
+    import geclass.send_email
+
+    class EmailRecorder(object):
+        called = []
+        recipient = []
+        subject = []
+        content = []
+
+    def EmailSent(recipient, subject, content):
+        EmailRecorder.called.append(True)
+        EmailRecorder.recipient.append(recipient)
+        EmailRecorder.subject.append(subject)
+        EmailRecorder.content.append(content)
+
+    monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
+    return EmailRecorder

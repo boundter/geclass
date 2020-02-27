@@ -2,12 +2,12 @@ import sys
 sys.path.append("..")
 
 import geclass.send_email
-from geclass.user_db import UserDB
-from geclass.course_db import CourseDB
+import geclass.user_db
+import geclass.course_db
 
 
 def SendReminder(course_information, survey_type):
-    user_db = UserDB()
+    user_db = geclass.user_db.UserDB()
     recipient = user_db.get_email(course_information['user_id'])
     message = """Gute Tag,
     heute beginnt die GEclass {}-Befragung für Ihren Kurs {}. Die Befragung
@@ -22,8 +22,8 @@ def SendReminder(course_information, survey_type):
     geclass.send_email.SendEmail(recipient, "Erinnerung GEclass", message)
 
 
-def FindSurveysStartingToday()
-    course_db = CourseDB()
+def FindSurveysStartingToday():
+    course_db = geclass.course_db.CourseDB()
     pre, post = course_db.get_surveys_today()
     return pre, post
 
