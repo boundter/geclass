@@ -3,16 +3,6 @@ import pytest
 from geclass.course_db import CourseDB
 
 
-@pytest.fixture(autouse=True)
-def MonkeyEmail(monkeypatch):
-    import geclass.send_email
-
-    def EmailSent(recipient, subject, content):
-        return None
-
-    monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
-
-
 def test_select_all_courses(app):
     with app.app_context():
         course_db = CourseDB()
@@ -21,7 +11,7 @@ def test_select_all_courses(app):
         assert courses[1]['name'] == 'Master Physiker Projekt'
 
 
-def test_add_course(app):
+def test_add_course(app, MonkeyEmail):
     with app.app_context():
         course_db = CourseDB()
         courses = course_db.get_courses(user_id=2)
@@ -78,3 +68,7 @@ def test_add_course(app):
         courses = course_db.get_courses(user_id=2)
         assert len(courses) == 3
         assert courses[-1]['name'] == course_name
+        assert MonkeyEmail.called
+        assert MonkeyEmail.recipient == 'test1@gmail.com'
+        assert MonkeyEmail.subject == 'Kurs Registrierung GEclass'
+        assert course_name in MonkeyEmail.content

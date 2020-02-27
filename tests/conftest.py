@@ -53,3 +53,23 @@ class AuthActions():
 @pytest.fixture
 def auth(client):
     return AuthActions(client)
+
+
+@pytest.fixture(autouse=True)
+def MonkeyEmail(monkeypatch):
+    import geclass.send_email
+
+    class EmailRecorder(object):
+        called = False
+        recipient = None
+        subject = None
+        content = None
+
+    def EmailSent(recipient, subject, content):
+        EmailRecorder.called = True
+        EmailRecorder.recipient = recipient
+        EmailRecorder.subject = subject
+        EmailRecorder.content = content
+
+    monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
+    return EmailRecorder

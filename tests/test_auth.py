@@ -7,16 +7,6 @@ from geclass.user_db import UserDB
 from geclass.auth import check_valid_email
 
 
-@pytest.fixture(autouse=True)
-def MonkeyEmail(monkeypatch):
-    import geclass.send_email
-
-    def EmailSent(recipient, subject, content):
-        return None
-
-    monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
-
-
 def test_validate_email():
     assert not check_valid_email('a')
     assert not check_valid_email('ab@cd')
@@ -25,19 +15,25 @@ def test_validate_email():
     assert check_valid_email('ab@cd.de')
 
 
-def test_register(client, app):
+def test_register(client, app, MonkeyEmail):
+    username = 'abc@def.gh'
     # register is available
     assert client.get('/auth/register').status_code == 200
     response = client.post(
         '/auth/register',
-        data={'email': 'abc@def.gh', 'password': 'a', 'password_re': 'a'}
+        data={'email': username, 'password': 'a', 'password_re': 'a'}
     )
     # after successful register reroute to login
     assert response.headers['Location'] == 'http://localhost/auth/login'
 
     with app.app_context():
         user_db = UserDB()
-        assert user_db.select_user(email="abc@def.gh") is not None
+        assert user_db.select_user(email=username) is not None
+
+    assert MonkeyEmail.called
+    assert MonkeyEmail.recipient == username
+    assert MonkeyEmail.subject == 'Registrierung für die GEclass'
+    assert 'registriert haben' in MonkeyEmail.content
 
 
 @pytest.mark.parametrize(('email', 'password', 'password_re', 'message'), (

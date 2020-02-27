@@ -3,16 +3,6 @@ import pytest
 from geclass.course_db import CourseDB
 
 
-@pytest.fixture(autouse=True)
-def MonkeyEmail(monkeypatch):
-    import geclass.send_email
-
-    def EmailSent(recipient, subject, content):
-        return None
-
-    monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
-
-
 def test_only_registered(client, auth):
     # non logged in user redirected to log in
     response = client.get('/')
@@ -29,7 +19,7 @@ def test_only_registered(client, auth):
     assert b'Nebenfach Grundpraktikum' not in response.data
 
 
-def test_add_new_course(client, app, auth):
+def test_add_new_course(client, app, auth, MonkeyEmail):
     # non logged in user redirected to log in
     response = client.get('/add_course')
     assert response.headers['Location'] == 'http://localhost/auth/login'
@@ -94,6 +84,11 @@ def test_add_new_course(client, app, auth):
     with app.app_context():
         course_db = CourseDB()
         assert 'phys_test' in course_db.get_courses(user_id=2)[2]
+
+    assert MonkeyEmail.called
+    assert MonkeyEmail.recipient == 'test1@gmail.com'
+    assert MonkeyEmail.subject == 'Kurs Registrierung GEclass'
+    assert 'phys_test' in MonkeyEmail.content
 
 
 @pytest.mark.parametrize(

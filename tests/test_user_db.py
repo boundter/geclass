@@ -3,16 +3,6 @@ import pytest
 from geclass.user_db import UserDB
 
 
-@pytest.fixture(autouse=True)
-def MonkeyEmail(monkeypatch):
-    import geclass.send_email
-
-    def EmailSent(recipient, subject, content):
-        return None
-
-    monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
-
-
 def test_select_user(app):
     with app.app_context():
         user_db = UserDB()
@@ -24,7 +14,7 @@ def test_select_user(app):
         assert no_entry is None
 
 
-def test_add_user(app):
+def test_add_user(app, MonkeyEmail):
     with app.app_context():
         user_db = UserDB()
         email = 'gp@uni-potsdam.de'
@@ -32,6 +22,10 @@ def test_add_user(app):
         user_db.add_user(email=email, encrypted_password=password)
         user_id = user_db.select_user(email='gp@uni-potsdam.de')
         assert user_id is not None
+        assert MonkeyEmail.called
+        assert MonkeyEmail.recipient == email
+        assert MonkeyEmail.subject == 'Registrierung für die GEclass'
+        assert 'registriert haben' in MonkeyEmail.content
 
 
 def test_change_email(app):
