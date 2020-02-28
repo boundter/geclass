@@ -1,3 +1,4 @@
+import os
 import sys
 
 from bs4 import BeautifulSoup
@@ -17,6 +18,8 @@ def GetCSRFToken(html):
 
 
 def main():
+    username = os.environ['QUAMP_USER']
+    password = os.environ['QUAMP_PASSWD']
     # TODO: Delte after download
     with requests.Session() as session:
         homepage = session.get(landing_page)

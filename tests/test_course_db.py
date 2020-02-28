@@ -76,7 +76,7 @@ def test_add_course(app, MonkeyEmail):
         assert course_name in MonkeyEmail.content
 
 
-def test_get_surveys_today(app):
+def test_get_surveys_today(app, MonkeyEmail):
     with app.app_context():
         timestamp_today = str(int(time.mktime(date.today().timetuple())))
         fields_pre = {

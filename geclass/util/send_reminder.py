@@ -1,5 +1,5 @@
-import sys
-sys.path.append("..")
+import click
+from flask.cli import with_appcontext
 
 import geclass.send_email
 import geclass.user_db
@@ -28,7 +28,7 @@ def FindSurveysStartingToday():
     return pre, post
 
 
-def main():
+def SendAllReminders():
     pre, post = FindSurveysStartingToday()
     for row in pre:
         SendReminder(row, "Prä")
@@ -36,5 +36,12 @@ def main():
         SendReminder(row, "Post")
 
 
-if __name__ == "__main__":
-    main()
+@click.command('send-reminder')
+@with_appcontext
+def ReminderCommand():
+    SendAllReminders()
+
+
+def init_app(app):
+    """Create connection to the factory."""
+    app.cli.add_command(ReminderCommand)

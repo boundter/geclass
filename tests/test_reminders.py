@@ -2,7 +2,7 @@ import sqlite3
 
 import pytest
 
-import scripts.send_reminder
+import geclass.util.send_reminder
 
 
 class MonkeyCourseDB:
@@ -47,7 +47,7 @@ def test_main(monkeypatch, MonkeyEmailList):
     monkeypatch.setattr(geclass.course_db, "CourseDB", MonkeyCourseDB)
     monkeypatch.setattr(geclass.user_db, "UserDB", MonkeyUserDB)
 
-    scripts.send_reminder.main()
+    geclass.util.send_reminder.SendAllReminders()
     assert MonkeyEmailList.called == [True, True, True, True]
     assert MonkeyEmailList.recipient == [1, 2, 2, 1]
     assert MonkeyEmailList.subject == ['Erinnerung GEclass', 'Erinnerung GEclass', 'Erinnerung GEclass', 'Erinnerung GEclass']

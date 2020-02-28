@@ -1,0 +1,7 @@
+SHELL=/bin/bash
+PATH=/usr/local/bin
+FLASK_APP=geclass
+PYTHONPATH=/app
+
+0 4 * * * cd /app && flask send-reminder
+0 1 * * 0 mv /var/log/geclass/geclass.log /var/log/geclass/geclass.log.old && mv /var/log/geclass/uswgi.log /var/log/geclass/uswgi.log.old

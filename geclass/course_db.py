@@ -88,7 +88,7 @@ class CourseDB(DBConnection):
         sql = 'SELECT identifier FROM course'
         ids = self.execute(sql, ()).fetchall()
         if len(ids) == 0:
-            ids.add('0'*length)
+            ids.append('0'*length)
         key = ids[0]
         ids = set(ids)
         while key in ids:

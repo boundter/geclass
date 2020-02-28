@@ -1,11 +1,14 @@
 """Handlers for the flask tests."""
 import os
+import sys
 import tempfile
+import logging
 
+from flask import current_app
 import pytest
 
 from geclass import create_app
-from geclass.db import DBConnection, init_db
+from geclass.db import DBConnection, init_db, DBConnection
 
 
 @pytest.fixture
@@ -19,6 +22,9 @@ def app():
 
     with app.app_context():
         init_db()
+        _db = DBConnection()
+        with current_app.open_resource('../tests/data.sql') as f:
+            _db().executescript(f.read().decode('utf8'))
 
     yield app
 
@@ -55,7 +61,7 @@ def auth(client):
     return AuthActions(client)
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def MonkeyEmail(monkeypatch):
     import geclass.send_email
 
@@ -75,7 +81,7 @@ def MonkeyEmail(monkeypatch):
     return EmailRecorder
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def MonkeyEmailList(monkeypatch):
     import geclass.send_email
 
@@ -93,3 +99,12 @@ def MonkeyEmailList(monkeypatch):
 
     monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
     return EmailRecorder
+
+
+@pytest.fixture(autouse=True)
+def NoLogging(caplog):
+    caplog.set_level(logging.DEBUG)
+
+    yield
+
+    caplog.clear()

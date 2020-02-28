@@ -4,13 +4,17 @@ import logging
 
 from flask import Flask
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(filename='/var/log/geclass/geclass.log', level=logging.INFO)
 
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
+    if 'FLASK_KEY' in os.environ and os.environ['FLASK_KEY'] != '':
+        key = os.environ['FLASK_KEY']
+    else:
+        key = 'dev'
     app.config.from_mapping(
-        SECRET_KEY='dev',
+        SECRET_KEY=key,
         DATABASE=os.path.join(app.instance_path, 'geclass.sqlite')
     )
     if test_config is None:
@@ -36,5 +40,8 @@ def create_app(test_config=None):
 
     from . import contact
     app.register_blueprint(contact.bp)
+
+    from .util import send_reminder
+    send_reminder.init_app(app)
 
     return app
