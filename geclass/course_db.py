@@ -70,10 +70,10 @@ class CourseDB(DBConnection):
             email,
             'Kurs Registrierung GEclass',
             """Vielen Dank, dass Sie den Kurs {} bei der  GEclass registriert haben.
-            Die ID des Kurses lautet: {}.
-            Die Prä-Befragung startet am {}. Sie werden an diesem Tag auch eine Erinnerungsemail erhalten.
+Die ID des Kurses lautet: {}.
+Die Prä-Befragung startet am {}. Sie werden an diesem Tag auch eine Erinnerungsemail erhalten.
 
-            Vielen Dank für die Teilnahme an diesem Projekt.""".format(
+Vielen Dank für die Teilnahme an diesem Projekt.""".format(
                 course_name, values[1], pre_start_date.isoformat()),
         )
         self.add(

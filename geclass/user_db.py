@@ -61,8 +61,8 @@ class UserDB(DBConnection):
             email,
             'Registrierung für die GEclass',
             """Vielen Dank, dass Sie sich für die GEclass registriert haben.
-            Für Fragen zu dem Projekt wenden Sie sich bitte an:
-                ge-class@uni-potsdam.de""",
+Für Fragen zu dem Projekt wenden Sie sich bitte an:
+    ge-class@uni-potsdam.de""",
                 )
         self.add(
             self.table, ('email', 'password'), (email, encrypted_password))
