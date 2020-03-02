@@ -22,6 +22,14 @@ Vielen Dank für die Teilnahme an diesem Projekt!""".format(
     geclass.send_email.SendEmail(recipient, "Erinnerung GEclass", message)
 
 
+def SendOverview(pre, post):
+    recipient = "ge-class@uni-potsdam.de"
+    subject = "GEclass: Täglicher Report"
+    message = """Heute finden {} Prä- und {} Post-Surveys statt.""".format(
+            len(pre), len(post))
+    geclass.send_email.SendEmail(recipient, subject, message)
+
+
 def FindSurveysStartingToday():
     course_db = geclass.course_db.CourseDB()
     pre, post = course_db.get_surveys_today()
@@ -34,6 +42,8 @@ def SendAllReminders():
         SendReminder(row, "Prä")
     for row in post:
         SendReminder(row, "Post")
+    SendOverview(pre, post)
+
 
 
 @click.command('send-reminder')

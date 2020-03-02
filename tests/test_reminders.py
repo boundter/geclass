@@ -48,9 +48,9 @@ def test_main(monkeypatch, MonkeyEmailList):
     monkeypatch.setattr(geclass.user_db, "UserDB", MonkeyUserDB)
 
     geclass.util.send_reminder.SendAllReminders()
-    assert MonkeyEmailList.called == [True, True, True, True]
-    assert MonkeyEmailList.recipient == [1, 2, 2, 1]
-    assert MonkeyEmailList.subject == ['Erinnerung GEclass', 'Erinnerung GEclass', 'Erinnerung GEclass', 'Erinnerung GEclass']
+    assert MonkeyEmailList.called == [True, True, True, True, True]
+    assert MonkeyEmailList.recipient == [1, 2, 2, 1, 'ge-class@uni-potsdam.de']
+    assert MonkeyEmailList.subject == ['Erinnerung GEclass', 'Erinnerung GEclass', 'Erinnerung GEclass', 'Erinnerung GEclass', 'GEclass: Täglicher Report']
     assert 'Prä' in MonkeyEmailList.content[0]
     assert '12345' in MonkeyEmailList.content[0]
     assert 'Prä' in MonkeyEmailList.content[1]
@@ -59,3 +59,5 @@ def test_main(monkeypatch, MonkeyEmailList):
     assert '123ab' in MonkeyEmailList.content[2]
     assert 'Post' in MonkeyEmailList.content[3]
     assert 'abc12' in MonkeyEmailList.content[3]
+    assert '2 Prä' in MonkeyEmailList.content[4]
+    assert '2 Post' in MonkeyEmailList.content[4]
