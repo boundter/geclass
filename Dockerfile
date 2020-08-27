@@ -6,7 +6,9 @@ RUN pip install \
   pytest \
   sphinx \
   requests \
-  beautifulsoup4
+  beautifulsoup4 \
+  numpy \
+  pandas
 
 ENV FLASK_APP="geclass"
 ENV STATIC_PATH="/app/geclass/static"
