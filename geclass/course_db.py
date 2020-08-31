@@ -136,6 +136,18 @@ Vielen Dank für die Teilnahme an diesem Projekt.""".format(
               AND experience.id = course.experience_id"""
         return self.execute(sql, (user_id,)).fetchall()
 
+    def get_course_questionnaire_dates(self, course_identifier):
+        sql = """
+            SELECT
+              start_date_pre
+              start_date_post
+            FROM course
+            WHERE course.identifier = ?"""
+        times = self.execute(sql, (course_identifier,)).fetchall()
+        if len(times) != 1:
+            return None
+        return {"pre": times[0][0], "post": times[0][1]}
+
     def _add_and_get_new_id(self, table, column, value):
         """Add a new entry to the given table.
 

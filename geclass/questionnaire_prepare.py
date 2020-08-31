@@ -1,4 +1,7 @@
 import pandas as pd
+import datetime
+
+from geclass.course_db import CourseDB
 
 def RemoveUnneededCols(df):
     to_remove = [
@@ -43,11 +46,26 @@ def CheckValidityControlRow(row):
     return row.qcontrol == 4
 
 
+def CheckValidityTimeRow(row, course_db):
+    course_times = course_db.get_course_questionnaire_dates(row["course_id"])
+    if row["pre_post"] == 1:
+        min_time = datetime.date.fromtimestamp(int(course_times["pre"]))
+        max_time = min_time + datetime.timedelta(days=14)
+        return row["end"] >= min_time and row["end"] <= max_time
+    elif row["pre_post"] == 2:
+        min_time = datetime.date.fromtimestamp(int(course_times["post"]))
+        max_time = min_time + datetime.timedelta(days=14)
+        return row["end"] >= min_time and row["end"] <= max_time
+    return False
+
+
 def AddValidity(df):
     df["valid_control"] = df.apply(
             lambda row: CheckValidityControlRow(row), axis=1)
     df = df.drop(["qcontrol"], axis=1)
-    #TODO: Check end time
+    course_db = CourseDB()
+    df["valid_time"] = df.apply(
+            lambda row: CheckValidityTimeRow(row, course_db), axis=1)
     return df
 
 

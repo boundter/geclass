@@ -3,6 +3,8 @@ import os
 import sys
 import tempfile
 import logging
+import datetime
+import time
 
 from flask import current_app
 import pytest
@@ -99,6 +101,25 @@ def MonkeyEmailList(monkeypatch):
 
     monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
     return EmailRecorder
+
+@pytest.fixture
+def MonkeyDBDates(monkeypatch):
+    import geclass.db
+
+    class DatesContainer(object):
+        start_date_pre = str(int(
+            time.mktime(datetime.date(2001, 1, 5).timetuple())))
+        start_date_post = str(int(
+            time.mktime(datetime.date(2002, 1, 20).timetuple())))
+
+        def fetchall(self):
+            return [(self.start_date_pre, self.start_date_post)]
+
+    def MockExec(obj, query, identifier):
+        return DatesContainer()
+
+    monkeypatch.setattr(geclass.DBConnection, 'execute', MockExec)
+    return DatesContainer
 
 
 @pytest.fixture(autouse=True)

@@ -1,4 +1,5 @@
 import pytest
+import datetime
 from datetime import date
 import time
 
@@ -148,3 +149,15 @@ def test_get_surveys_today(app, MonkeyEmail):
         assert [1, 'test_post_1', '12345'] in post_list
         assert [2, 'test_post_2', '12345'] in post_list
 
+
+def test_get_course_dates(app, MonkeyDBDates):
+    with app.app_context():
+        course_db = CourseDB()
+        times = course_db.get_course_questionnaire_dates(1)
+        # dummy values from conftest.py
+        start_date_pre = str(int(
+            time.mktime(datetime.date(2001, 1, 5).timetuple())))
+        start_date_post = str(int(
+            time.mktime(datetime.date(2002, 1, 20).timetuple())))
+        assert times["pre"] == start_date_pre
+        assert times["post"] == start_date_post
