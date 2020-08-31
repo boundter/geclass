@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS questionnaire_post;
 DROP TABLE IF EXISTS student_pre;
 DROP TABLE IF EXISTS student_post;
 
-PRAGME encoding='UTF-8';
+PRAGMA encoding='UTF-8';
 
 CREATE TABLE student (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,6 +19,13 @@ CREATE TABLE student_course (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   student_id INTEGER NOT NULL,
   course_id INTEGER NOT NULL,
+  FOREIGN KEY (student_id) REFERENCES student (id)
+);
+
+CREATE TABLE student_unknown_course (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  student_id INTEGER NOT NULL,
+  course_code TEXT,
   FOREIGN KEY (student_id) REFERENCES student (id)
 );
 
@@ -142,7 +149,7 @@ CREATE TABLE student_pre (
   start_time INTEGER,
   end_time INTEGER,
   valid_control INTEGER NOT NULL,
-  in_time INTEGER NOT NULL,
+  valid_time INTEGER NOT NULL,
   FOREIGN KEY (student_id) REFERENCES student (id),
   FOREIGN KEY (questionnaire_pre_id) REFERENCES questionnaire_pre (id)
 );
@@ -154,7 +161,7 @@ CREATE TABLE student_post (
   start_time INTEGER,
   end_time INTEGER,
   valid_control INTEGER NOT NULL,
-  in_time INTEGER NOT NULL,
+  valid_time INTEGER NOT NULL,
   FOREIGN KEY (student_id) REFERENCES student (id),
   FOREIGN KEY (questionnaire_post_id) REFERENCES questionnaire_post (id)
 );

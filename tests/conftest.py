@@ -11,19 +11,24 @@ import pytest
 
 from geclass import create_app
 from geclass.db import DBConnection, init_db, DBConnection
+from geclass.questionnaire_db import init_questionnaire_db, QuestionnaireDB
+from geclass.course_db import CourseDB
 
 
 @pytest.fixture
 def app():
     """Create a temporary database."""
     db_fd, db_path = tempfile.mkstemp()
+    questionnaire_db_fd, questionnaire_db_path = tempfile.mkstemp()
     app = create_app({
         'TESTING': True,
-        'DATABASE': db_path
+        'DATABASE': db_path,
+        'QUESTIONNAIRE_DB': questionnaire_db_path
     })
 
     with app.app_context():
         init_db()
+        init_questionnaire_db()
         _db = DBConnection()
         with current_app.open_resource('../tests/data.sql') as f:
             _db().executescript(f.read().decode('utf8'))
@@ -32,6 +37,8 @@ def app():
 
     os.close(db_fd)
     os.unlink(db_path)
+    os.close(questionnaire_db_fd)
+    os.unlink(questionnaire_db_path)
 
 
 @pytest.fixture
@@ -102,6 +109,7 @@ def MonkeyEmailList(monkeypatch):
     monkeypatch.setattr(geclass.send_email, 'SendEmail', EmailSent)
     return EmailRecorder
 
+
 @pytest.fixture
 def MonkeyDBDates(monkeypatch):
     import geclass.db
@@ -120,6 +128,18 @@ def MonkeyDBDates(monkeypatch):
 
     monkeypatch.setattr(geclass.DBConnection, 'execute', MockExec)
     return DatesContainer
+
+
+@pytest.fixture
+def MonkeyCourseDBCourses(monkeypatch):
+    import geclass.course_db
+
+    def MockID(obj, value):
+        if value == 0:
+            return []
+        return [value]
+
+    monkeypatch.setattr(geclass.course_db.CourseDB, 'get_course_id', MockID)
 
 
 @pytest.fixture(autouse=True)

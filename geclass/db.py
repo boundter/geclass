@@ -182,6 +182,33 @@ class DBConnection:
         self.execute(sql, values)
         self.db.commit()
 
+
+    def add_and_get_id(self, table, columns, values):
+        """Add a new row to the database.
+
+        Careful: The inputs `table` and `columns` are not sanitized.
+
+        Args:
+            table (str): The table to add the row to.
+            columns (list(str)): The columns in which to add data.
+            values (list(str or int or float)): The values to add in the
+                                            fields.
+
+        >>> select_one('user', 'email', 'gp@uni-potsdam.de')
+        None
+        >>> add('user', ('email', 'password'), ('gp@uni-potsdam.de', 'a'))
+        >>> select_one('user', 'email', 'gp@uni-potsdam.de')
+        (3, 'gp@uni-potsdam.de', 'a')
+
+        """
+        value_string = ', '.join(['?'] * len(values))
+        column_string = ', '.join(columns)
+        sql = 'INSERT INTO {} ({}) VALUES ({})'\
+            ''.format(table, column_string, value_string)
+        last_id = self.execute(sql, values).lastrowid
+        self.db.commit()
+        return last_id
+
     def update_one(self, table, condition, new_value):
         """Update fields in the database.
 

@@ -118,6 +118,11 @@ Vielen Dank für die Teilnahme an diesem Projekt.""".format(
         post_surveys = self.execute(sql_post, (timestamp_today,)).fetchall()
         return pre_surveys, post_surveys
 
+    def get_course_id(self, identifier):
+        # TODO: Test
+        sql = "SELECT id FROM course WHERE identifier = ?"
+        return self.execute(sql, (identifier,)).fetchall()
+
     def get_overview(self, user_id):
         sql = """
             SELECT
