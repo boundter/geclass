@@ -8,7 +8,8 @@ RUN pip install \
   requests \
   beautifulsoup4 \
   numpy \
-  pandas
+  pandas \
+  xlrd
 
 ENV FLASK_APP="geclass"
 ENV STATIC_PATH="/app/geclass/static"

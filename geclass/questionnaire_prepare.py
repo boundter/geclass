@@ -31,6 +31,12 @@ def RemoveMissingStudentAndCourse(df):
     return df[~(df.personal_code.isna()) | ~(df.course_id.isna())]
 
 
+def ChangeStartAndEndToDatetime(df):
+    df.start = pd.to_datetime(df.start)
+    df.end = pd.to_datetime(df.end)
+    return df
+
+
 def CleanData(df):
     rows_before = df.shape[0]
     df = (df
@@ -48,11 +54,11 @@ def CheckValidityControlRow(row):
 
 def CheckValidityTimeRow(row, course_db):
     course_times = course_db.get_course_questionnaire_dates(row["course_id"])
-    if row["pre_post"] == 1:
+    if row["pre_post"] == 1 and course_times is not None:
         min_time = datetime.date.fromtimestamp(int(course_times["pre"]))
         max_time = min_time + datetime.timedelta(days=14)
         return row["end"] >= min_time and row["end"] <= max_time
-    elif row["pre_post"] == 2:
+    elif row["pre_post"] == 2 and course_times is not None:
         min_time = datetime.date.fromtimestamp(int(course_times["post"]))
         max_time = min_time + datetime.timedelta(days=14)
         return row["end"] >= min_time and row["end"] <= max_time
@@ -72,6 +78,7 @@ def AddValidity(df):
 def PrepareData(df):
     df = (df
         .pipe(CleanData)
+        .pipe(ChangeStartAndEndToDatetime)
         .pipe(AddValidity)
     )
     return df

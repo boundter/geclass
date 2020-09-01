@@ -48,4 +48,7 @@ def create_app(test_config=None):
     from .util import send_reminder
     send_reminder.init_app(app)
 
+    from . import get_questionnaire_data
+    get_questionnaire_data.init_app(app)
+
     return app
