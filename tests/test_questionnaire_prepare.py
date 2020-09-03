@@ -120,9 +120,10 @@ def test_validity(app, MonkeyDBDates):
     assert df.equals(result)
 
 
-def test_pipeline():
+def test_pipeline(app):
     x = {
         "data_id": [1, 1, 1, 1, 1, 1],
+        "pre_post": [1, 1, 1, 2, 2, 2],
         "survey_key": [1, 1, 1, 1, 1, 1],
         "is_test": [1, 1, 1, 1, 1, 1],
         "last_position": [1, 1, 1, 1, 1, 1],
@@ -134,20 +135,24 @@ def test_pipeline():
         "user_agent": [1, 1, 1, 1, 1, 1],
         "start": [1, 1, 1, 1, 1, 1],
         "privacy": [0, 1, 1, 1, 1, 1],
-        "end": [1, np.nan, 1, 1, 1, 1],
+        "end": [2, np.nan, 2, 2, 2, 2],
         "personal_code": [1, 1, np.nan, 1, np.nan, 1],
         "course_id": [1, 1, 1, np.nan, np.nan, 1],
         "qcontrol": [1, 2, 3, 4, 3, 4]
     }
     result = {
+        "pre_post": [1, 2, 2],
         "start": [1, 1, 1],
-        "end": [1., 1., 1.],
+        "end": [2, 2, 2],
         "personal_code": [np.nan, 1, 1],
         "course_id": [1, np.nan, 1],
-        "valid_control": [False, True, True]
+        "valid_control": [False, True, True],
+        "valid_time": [False, False, False]
     }
     df = pd.DataFrame(data=x)
-    #result = pd.DataFrame(data=result, index=[2, 3, 5])
-    #df = PrepareData(df)
-    #assert df.equals(result)
-    assert True
+    result = pd.DataFrame(data=result, index=[2, 3, 5])
+    result.start = pd.to_datetime(result.start)
+    result.end = pd.to_datetime(result.end)
+    with app.app_context():
+        df = PrepareData(df)
+    assert df.equals(result)
