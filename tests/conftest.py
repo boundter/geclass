@@ -11,7 +11,7 @@ import pytest
 
 from geclass import create_app
 from geclass.db import DBConnection, init_db, DBConnection
-from geclass.questionnaire_db import init_questionnaire_db, QuestionnaireDB
+from geclass.util.questionnaire_db import init_questionnaire_db, QuestionnaireDB
 from geclass.course_db import CourseDB
 
 

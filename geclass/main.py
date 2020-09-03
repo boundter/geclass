@@ -31,9 +31,6 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
 
-    from . import questionnaire_db
-    questionnaire_db.init_app(app)
-
     from . import auth
     app.register_blueprint(auth.bp)
     auth.change_pwd(app)
@@ -48,7 +45,10 @@ def create_app(test_config=None):
     from .util import send_reminder
     send_reminder.init_app(app)
 
-    from . import get_questionnaire_data
+    from .util import questionnaire_db
+    questionnaire_db.init_app(app)
+
+    from .util import get_questionnaire_data
     get_questionnaire_data.init_app(app)
 
     return app

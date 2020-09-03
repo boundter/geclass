@@ -111,7 +111,7 @@ class QuestionnaireDB(DBConnection):
 
 def init_questionnaire_db():
     db = QuestionnaireDB()
-    with current_app.open_resource('schema_questionnaire.sql') as f:
+    with current_app.open_resource('util/schema_questionnaire.sql') as f:
         db().executescript(f.read().decode('utf8'))
 
 

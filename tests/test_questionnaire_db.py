@@ -7,7 +7,7 @@ import pandas as pd
 import datetime
 import time
 
-from geclass.questionnaire_db import QuestionnaireDB
+from geclass.util.questionnaire_db import QuestionnaireDB
 
 
 def test_get_close_db(app):
@@ -26,7 +26,7 @@ def test_init_db_command(runner, monkeypatch):
     def fake_init_db():
         init['called'] = True
 
-    monkeypatch.setattr('geclass.questionnaire_db.init_questionnaire_db', fake_init_db)
+    monkeypatch.setattr('geclass.util.questionnaire_db.init_questionnaire_db', fake_init_db)
     result = runner.invoke(args=['init-questionnaire-db'])
     assert 'Initialized' in result.output
     assert init['called']

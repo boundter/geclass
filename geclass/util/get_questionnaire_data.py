@@ -3,8 +3,8 @@ import click
 
 from flask.cli import with_appcontext
 
-from geclass.questionnaire_prepare import PrepareData
-from geclass.questionnaire_db import QuestionnaireDB
+from geclass.util.questionnaire_prepare import PrepareData
+from geclass.util.questionnaire_db import QuestionnaireDB
 
 @click.command('load-questionnaire-data')
 @click.argument('file_location')

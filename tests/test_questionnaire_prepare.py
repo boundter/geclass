@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import datetime
 
-from geclass.questionnaire_prepare import RemoveUnneededCols, \
+from geclass.util.questionnaire_prepare import RemoveUnneededCols, \
         RemoveUnfinished, RemoveMissingStudentAndCourse, \
         CleanData, AddValidity, PrepareData
 
