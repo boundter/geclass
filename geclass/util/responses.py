@@ -63,3 +63,16 @@ class QuestionnaireResponses:
         for response in responses:
             aggregate.append(getattr(response, attr))
         return ResponseAggregate(aggregate)
+
+    def size(self):
+        return len(self.q_mark.responses)
+
+    def _append_responses(self, responses, attr):
+        return np.append(getattr(self, attr).responses, getattr(responses, attr).responses, axis=0)
+
+    def append(self, responses):
+        self.q_mark.responses = self._append_responses(responses, 'q_mark')
+        self.q_you_pre.responses = self._append_responses(responses, 'q_you_pre')
+        self.q_you_post.responses = self._append_responses(responses, 'q_you_post')
+        self.q_expert_pre.responses = self._append_responses(responses, 'q_expert_pre')
+        self.q_expert_post.responses = self._append_responses(responses, 'q_expert_post')
