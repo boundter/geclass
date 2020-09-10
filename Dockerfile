@@ -9,7 +9,8 @@ RUN pip install \
   beautifulsoup4 \
   numpy \
   pandas \
-  xlrd
+  xlrd \
+  matplotlib
 
 ENV FLASK_APP="geclass"
 ENV STATIC_PATH="/app/geclass/static"
