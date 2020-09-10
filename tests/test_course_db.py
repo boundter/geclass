@@ -161,3 +161,38 @@ def test_get_course_dates(app, MonkeyDBDates):
             time.mktime(datetime.date(2002, 1, 20).timetuple())))
         assert times["pre"] == start_date_pre
         assert times["post"] == start_date_post
+
+
+def test_get_course_id(app):
+    with app.app_context():
+        identifiers = {'abxce': 1, 'tryui': 2, 'oiuyt': 3, 'ertyu': 4}
+        course_db = CourseDB()
+        for key in identifiers:
+            course_id = course_db.get_course_id(key)
+            assert course_id[0] == identifiers[key]
+
+
+def test_get_similar_course(app):
+    with app.app_context():
+        similar = {1: [4], 2: [None], 3: [None], 4: [1]}
+        course_db = CourseDB()
+        for key in similar:
+            similar_ids = course_db.get_similar_course_ids(key)
+            for indx, val in enumerate(similar_ids):
+                assert val[0] == similar[key][indx]
+
+
+def test_course_report_info(app):
+    with app.app_context():
+        results = {
+            1: ['Bachelor Physiker', 32],
+            2: ['Master Physiker Projekt', 16],
+            3: ['Nebenfach Grundpraktikum', 25],
+            4: ['Bachelor Physiker 2', 25],
+        }
+        course_db = CourseDB()
+        for key in results:
+            info = course_db.get_course_report_info(key)
+            assert info[0] == results[key][0]
+            assert info[1] == results[key][1]
+

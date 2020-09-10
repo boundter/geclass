@@ -118,10 +118,50 @@ Vielen Dank für die Teilnahme an diesem Projekt.""".format(
         post_surveys = self.execute(sql_post, (timestamp_today,)).fetchall()
         return pre_surveys, post_surveys
 
-    def get_course_id(self, identifier):
+    def get_postsurveys_starting_before(self, timediff):
         # TODO: Test
+        """Return post surveys ending today - timediff."""
+        date_ending = date.today() - timediff
+        timestamp_ending = str(int(time.mktime(date_ending.timetuple())))
+        sql = """
+            SELECT
+                id,
+                identifier
+            FROM course
+            WHERE start_date_post <= ?"""
+        return self.execute(sql, (timestamp_ending,)).fetchall()
+
+    def get_course_id(self, identifier):
         sql = "SELECT id FROM course WHERE identifier = ?"
-        return self.execute(sql, (identifier,)).fetchall()
+        return self.execute(sql, (identifier,)).fetchone()
+
+    def get_similar_course_ids(self, course_id):
+        sql_course = """
+            SELECT
+                experience_id,
+                program_id,
+                id
+            FROM course
+            WHERE id = ?"""
+        info = self.execute(sql_course, (course_id,)).fetchone()
+        sql_similar = """
+            SELECT id
+            FROM course
+            WHERE
+                experience_id = ?
+            AND program_id = ?
+            AND id != ?"""
+        return self.execute(sql_similar, info).fetchall()
+
+    def get_course_report_info(self, course_id):
+        sql = """
+            SELECT
+                name,
+                number_students
+            FROM
+                course
+            WHERE id = ?"""
+        return self.execute(sql, (course_id,)).fetchone()
 
     def get_overview(self, user_id):
         sql = """
@@ -144,7 +184,7 @@ Vielen Dank für die Teilnahme an diesem Projekt.""".format(
     def get_course_questionnaire_dates(self, course_identifier):
         sql = """
             SELECT
-              start_date_pre
+              start_date_pre,
               start_date_post
             FROM course
             WHERE course.identifier = ?"""
