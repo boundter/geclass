@@ -5,9 +5,16 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from statistics import aggregate_mean, aggregate_stderr, \
+from geclass.util.statistics import aggregate_mean, aggregate_stderr, \
                        aggregate_mean_colwise, aggregate_confidence_colwise
-from questions import questions, q_marks
+from geclass.util.questions import questions, q_marks
+
+plt.rcParams['pgf.texsystem'] = 'pdflatex'
+plt.rcParams['font.family'] = 'serif'
+plt.rcParams['text.usetex'] = True
+plt.rcParams['pgf.rcfonts'] = False
+plt.rcParams['pgf.preamble'] = '\\usepackage[utf8x]{inputenc}'
+plt.rcParams['savefig.format'] = 'pgf'
 
 def _get_total_fraction_expertlike(responses):
     mean = (
@@ -101,7 +108,7 @@ def question_overview_plot(responses_1, responses_2, plot_type, outfile=None):
                 responses_1, "you")
         mean_2, d_mean_2, confidence_2 = _response_statistics(
                 responses_2, "you")
-        sorted_indx = np.argsort(mean_1)
+        sorted_indx = np.argsort(mean_2)
         question_labels = [
             "Q{:d}: {}".format(i+1, q)
             for i, q in zip(sorted_indx, np.array(questions)[sorted_indx])
@@ -115,7 +122,7 @@ def question_overview_plot(responses_1, responses_2, plot_type, outfile=None):
                 responses_1, "expert")
         mean_2, d_mean_2, confidence_2 = _response_statistics(
                 responses_2, "expert")
-        sorted_indx = np.argsort(mean_1)
+        sorted_indx = np.argsort(mean_2)
         question_labels = [
             "Q{:d}: {}".format(i+1, q)
             for i, q in zip(sorted_indx, np.array(questions)[sorted_indx])
@@ -143,7 +150,7 @@ def question_overview_plot(responses_1, responses_2, plot_type, outfile=None):
         d_mean_1 = np.zeros_like(mean_1)
         mean_2, confidence_2 = _mark_statistics(responses_2)
         d_mean_2 = np.zeros_like(mean_2)
-        sorted_indx = np.argsort(mean_1)
+        sorted_indx = np.argsort(mean_2)
         question_labels = [
             "Q{:d}: {}".format(i+1, q)
             for i, q in zip(sorted_indx, np.array(q_marks)[sorted_indx])
@@ -235,31 +242,17 @@ def question_overview_plot(responses_1, responses_2, plot_type, outfile=None):
         fig.savefig(outfile)
 
 
-
-if __name__ == "__main__":
-    from responses import Responses, QuestionnaireResponses
-    import numpy as np
-
-    possible_responses = [1, 2, 3, 4, 5, -998]
-    course_data = [Responses(*[np.random.choice(possible_responses, 30),
-                    np.random.choice(possible_responses, 30),
-                    np.random.choice(possible_responses, 30),
-                    np.random.choice(possible_responses, 30),
-                    np.random.choice(possible_responses, 23)
-                   ]) for _ in range(30)
-                  ]
-    similar_data = [Responses(*[np.random.choice(possible_responses, 30),
-                     np.random.choice(possible_responses, 30),
-                     np.random.choice(possible_responses, 30),
-                     np.random.choice(possible_responses, 30),
-                     np.random.choice(possible_responses, 23)
-                    ]) for _ in range(210)
-                   ]
-    responses_course = QuestionnaireResponses(course_data)
-    responses_similar = QuestionnaireResponses(similar_data)
-    #overall_score_plot(responses_course, responses_similar)
-    #question_overview_plot(responses_course, responses_similar, OverviewPlotTypes.YOU_SIMILAR)
-    #question_overview_plot(responses_course, responses_similar, OverviewPlotTypes.EXPERT_SIMILAR)
-    #question_overview_plot(responses_course, responses_course, OverviewPlotTypes.YOU_EXPERT)
-    question_overview_plot(responses_course, responses_similar, OverviewPlotTypes.MARK)
-
+def generate_plots(responses_course, responses_similar):
+    overall_score_plot(responses_course, responses_similar, 'overall_score')
+    question_overview_plot(
+            responses_course, responses_similar, OverviewPlotTypes.YOU_SIMILAR,
+            'overview_you')
+    question_overview_plot(
+            responses_course, responses_similar,
+            OverviewPlotTypes.EXPERT_SIMILAR, 'overview_expert')
+    question_overview_plot(
+            responses_course, responses_course, OverviewPlotTypes.YOU_EXPERT,
+            'overview_you_expert')
+    question_overview_plot(
+            responses_course, responses_similar, OverviewPlotTypes.MARK,
+            'overview_mark')
