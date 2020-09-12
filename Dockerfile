@@ -1,6 +1,42 @@
-FROM tiangolo/uwsgi-nginx-flask:python3.7
+FROM tiangolo/uwsgi-nginx-flask:python3.8
 
 RUN apt update && apt -y install cron
+
+RUN apt -y install \
+  libcups2 \
+  imagemagick
+
+RUN apt --no-install-recommends -y install \
+  texlive-base \
+  texlive-extra-utils \
+  texlive-generic-recommended \
+  texlive-fonts-recommended \
+  texlive-font-utils \
+  texlive-latex-base \
+  texlive-latex-recommended \
+  texlive-latex-extra \
+  #texlive-math-extra \
+  texlive-pictures \
+  texlive-pstricks \
+  texlive-science \
+  perl-tk \
+  purifyeps \
+  chktex \
+  latexmk \
+  dvipng \
+  dvidvi \
+  fragmaster \
+  lacheck \
+  latexdiff \
+  libfile-which-perl \
+  dot2tex \
+  tipa \
+  cm-super \
+  #latex-xcolor \
+  prosper
+  #pgf
+
+RUN apt -y install texlive-lang-german
 
 RUN pip install \
   pytest \
@@ -10,7 +46,8 @@ RUN pip install \
   numpy \
   pandas \
   xlrd \
-  matplotlib
+  matplotlib \
+  scipy
 
 ENV FLASK_APP="geclass"
 ENV STATIC_PATH="/app/geclass/static"
