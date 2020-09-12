@@ -11,6 +11,28 @@ from geclass.util.questionnaire_db import QuestionnaireDB
 from geclass.util.plots import generate_plots
 
 
+def sanitize_name(course_name):
+    replacements = {
+        '\\': '\\textbackslash{}',
+        '{': '\{',
+        '}': '\}',
+        '$': '\$',
+        '&': '\&',
+        '#': '\#',
+        '^': '\\textasciicircum{}',
+        '_': '\_',
+        '~': '\\textasciitilde{}',
+        '%': '\%'
+    }
+    sanitized_name = ''
+    for i in course_name:
+        if i in replacements:
+            sanitized_name += replacements[i]
+        else:
+            sanitized_name += i
+    return sanitized_name
+
+
 @click.command('create-reports')
 @with_appcontext
 def create_reports():
@@ -28,7 +50,6 @@ def create_reports():
         for (similar_id,) in similar_courses:
             matched = questionnaire_db.get_matched_responses(similar_id)
             similar_responses.append(matched)
-        # TODO: Test figsize
         print('Plot', course_identifier)
         os.mkdir(report_dir)
         os.chdir(report_dir)
@@ -37,7 +58,7 @@ def create_reports():
         name, count_students = course_db.get_course_report_info(course_id)
         with current_app.open_resource('util/report_template.txt', 'r') as f:
             content = f.read().format(
-                course_name=name,
+                course_name=sanitize_name(name),
                 course_pre=count_pre,
                 course_post=count_post,
                 course_matched=matched_responses.size(),

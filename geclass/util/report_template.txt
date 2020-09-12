@@ -5,6 +5,7 @@
 \usepackage[utf8x]{{inputenc}}
 \usepackage{{float}}
 \usepackage[section]{{placeins}}
+\usepackage{{textcomp}}
 
 \title{{Ergebnisse der GEclass Befragung für den Kurs {course_name}}}
 \setkomafont{{title}}{{\rmfamily\bfseries}}
