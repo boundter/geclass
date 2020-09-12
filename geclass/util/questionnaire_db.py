@@ -1,12 +1,14 @@
 import sqlite3
-
-import click
 import time
 
+import click
 from flask import current_app, g
 from flask.cli import with_appcontext
+import numpy as np
+
 from geclass.db import DBConnection
 from geclass.course_db import CourseDB
+from geclass.util.responses import Responses, QuestionnaireResponses
 
 
 class QuestionnaireDB(DBConnection):
@@ -35,6 +37,93 @@ class QuestionnaireDB(DBConnection):
             elif row["pre_post"] == 2:
                 questionnaire_id = self._add_post_questionnaire(row)
                 self._add_student_prepost(row, student_id, questionnaire_id, "post")
+
+    def get_matched_responses(self, course_id):
+        # TODO: Test
+        sql_select_students = """
+            SELECT student_id
+            FROM student_course
+            WHERE course_id = ?"""
+        students = self.execute(sql_select_students, (course_id,)).fetchall()
+        sql_matched_questionnaires = """
+            SELECT
+                student_pre.questionnaire_pre_id,
+                student_post.questionnaire_post_id
+            FROM
+                student_pre, student_post
+            WHERE
+                student_pre.student_id = ?
+            AND student_pre.valid_control = 1
+            AND student_pre.valid_time = 1
+            AND student_post.student_id = ?
+            AND student_post.valid_control = 1
+            AND student_post.valid_time = 1
+            GROUP BY
+                student_pre.student_id, student_post.student_id
+            HAVING
+                COUNT(*) = 1"""
+        matched_questionnaires = []
+        for student in students:
+            print('student:', student[0])
+            res = self.execute(
+                    sql_matched_questionnaires, (student[0],)*2).fetchone()
+            if res is None:
+                continue
+            matched_questionnaires.append(res)
+
+        def get_questionnaire_result(questionnaire_id, you_expert_mark,
+                                     pre_post):
+            sql_questionnaire = """
+                SELECT *
+                FROM questionnaire_{0:}, questionnaire_{1:}
+                WHERE
+                    questionnaire_{1:}.id = ?
+                AND questionnaire_{0:}.id = questionnaire_{1:}.questionnaire_{0:}_id
+            """
+            q = self.execute(
+                    sql_questionnaire.format(you_expert_mark, pre_post),
+                    (questionnaire_id,)).fetchone()
+            return np.array(
+                    [i if i is not None else -998 for i in q[1:]],
+                    dtype=np.int16)
+
+        results = []
+        for questionnaire in matched_questionnaires:
+            print(questionnaire, course_id, matched_questionnaires)
+            q_you_pre = get_questionnaire_result(
+                    questionnaire[0], "you", "pre")
+            q_expert_pre = get_questionnaire_result(
+                    questionnaire[0], "expert", "pre")
+            q_you_post = get_questionnaire_result(
+                    questionnaire[1], "you", "post")
+            q_expert_post = get_questionnaire_result(
+                    questionnaire[1], "expert", "post")
+            q_mark = get_questionnaire_result(
+                    questionnaire[1], "mark", "post")
+            print(q_you_pre, q_expert_pre, q_you_post, q_expert_post, q_mark)
+            results.append(Responses(q_you_pre, q_you_post, q_expert_pre, q_expert_post, q_mark))
+        return QuestionnaireResponses(results)
+
+    def get_course_numbers(self, course_id):
+        # TODO: Test
+        sql_pre = """
+            SELECT
+                COUNT(student_pre.id),
+            FROM student_pre, student_course
+            WHERE
+                student_course.course_id = ?
+            AND student_pre.student_id = student_course.student_id"""
+        count_pre = self.execute(sql_pre, (course_id,)).fectchone()[0]
+        sql_post = """
+            SELECT
+                COUNT(student_post.id),
+            FROM student_post, student_course
+            WHERE
+                student_course.course_id = ?
+            AND student_post.student_id = student_course.student_id"""
+        count_post = self.execute(sql_post, (course_id,)).fectchone()[0]
+        return count_pre, count_post
+
 
     def _add_student(self, code, course_id=None):
         if course_id == None:
