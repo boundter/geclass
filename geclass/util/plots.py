@@ -35,7 +35,7 @@ def overall_score_plot(responses_course, responses_similar, outfile=None):
     color_you = "red"
     color_similar = "gray"
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(5.5, 5))
     ax.set_title('Gesamtergebnisse der GEclass für\ndie "Was denken Sie..."'
                  'Antworten')
     ax.set_xticks([1., 2.75])
@@ -144,7 +144,7 @@ def question_overview_plot(responses_1, responses_2, plot_type, outfile=None):
     elif plot_type == OverviewPlotTypes.MARK:
         title = "Wie wichtig für eine gute Note im Praktikum war ..."
         color_1 = color["you"]
-        color_2 = color["expert"]
+        color_2 = color["similar"]
         legend_text = ["Dieser Kurs", "Ähnliche Kurse"]
         mean_1, confidence_1 = _mark_statistics(responses_1)
         d_mean_1 = np.zeros_like(mean_1)
@@ -161,7 +161,7 @@ def question_overview_plot(responses_1, responses_2, plot_type, outfile=None):
     total_size = len(sorted_indx)
     half_size = total_size // 2
 
-    fig, ax = plt.subplots(ncols=2, sharex=True, figsize=(7, 9))
+    fig, ax = plt.subplots(ncols=2, sharex=True, figsize=(7, 7.5))
     fig.suptitle(title)
     np.vectorize(lambda x: x.set_xticks([0., 0.2, 0.4, 0.6, 0.8, 1.]))(ax)
     np.vectorize(lambda x: x.set_xlim(0., 1.))(ax)

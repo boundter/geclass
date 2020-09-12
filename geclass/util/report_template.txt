@@ -1,9 +1,10 @@
-\documentclass[12pt]{{scrartcl}}
+\documentclass[12pt, a4paper]{{scrartcl}}
 
 \usepackage{{pgf}}
 \usepackage[ngerman]{{babel}}
 \usepackage[utf8x]{{inputenc}}
 \usepackage{{float}}
+\usepackage[section]{{placeins}}
 
 \title{{Ergebnisse der GEclass Befragung für den Kurs {course_name}}}
 \setkomafont{{title}}{{\rmfamily\bfseries}}
@@ -22,10 +23,10 @@
   Teilnahme \textbf{{dieses Kurses}} and der Befragung:& {course_ratio:.2f} \\
   Antworten für \textbf{{ähnliche Kurse}}:& {similar_matched}
 \end{{tabular}}
-
-\begin{{figure}}[h]
+\newpage
+\begin{{figure}}[h!]
   \centering
-  \input{{overall_score}}
+  \input{{overall_score.pgf}}
   \caption{{Vergleich zwischen dem Gesamtergebniss der GEclass für die Prä- und
   Post-Befragung für diesen und ähnliche Kurse für Fragen der "Was denken SIE
   ..."-Art. Dieser Kurs (rot) wird mit ähnlichen Kursen (grau) derselben
@@ -37,9 +38,10 @@
 \newpage
 
 \section{{Änderung der Ansichten der Studenten}}
-\begin{{figure}}[h]
+\newpage
+\begin{{figure}}[h!]
   \centering
-  \input{{overview_you}}
+  \input{{overview_you.pgf}}
   \caption{{Änderung der Prä- und Post-Antworten der Studenten zu den "Was denken
   SIE..."-Fragen für diesen Kurs (rot) und ähnliche Kurse (grau). Die Kreise
   zeigen den Mittelwert der Prä-Befragung und die Pfeile die Änderung von Prä-
@@ -47,12 +49,12 @@
   von 95\%. Die Fragen sind nach dem Mittelwert der Prä-Befragung der ähnlichen
   Kurse sortiert. Ein Änderung des Mittelwertes nach rechts zeigt einen höheren
   Anteil an gleichen Ansichten, wie Experten.}}
-\end{{figure}}
+\end{{figure}}%
 \newpage
-
-\begin{{figure}}[h]
+%
+\begin{{figure}}[h!]
   \centering
-  \input{{overview_expert}}
+  \input{{overview_expert.pgf}}
   \caption{{Änderung der Prä- und Post-Antworten der Studenten zu den "Was denken
   Experten..."-Fragen für diesen Kurs (blau) und ähnliche Kurse (grau). Die Kreise
   zeigen den Mittelwert der Prä-Befragung und die Pfeile die Änderung von Prä-
@@ -60,12 +62,12 @@
   von 95\%. Die Fragen sind nach dem Mittelwert der Prä-Befragung der ähnlichen
   Kurse sortiert. Ein Änderung des Mittelwertes nach rechts zeigt einen höheren
   Anteil an gleichen Ansichten, wie Experten.}}
-\end{{figure}}
+\end{{figure}}%
 \newpage
-
-\begin{{figure}}[h]
+%
+\begin{{figure}}[h!]
   \centering
-  \input{{overview_you_expert}}
+  \input{{overview_you_expert.pgf}}
   \caption{{Vergleich der Änderung der Antworten auf "Was denken SIE..."- (rot)
   und "Was denken Experten..."-Fragen (blau) für die Prä- und Post-Befragung.
   Die Kreise zeigen den Mittelwert der Prä-Befragung und die Pfeile die Änderung
@@ -73,18 +75,19 @@
   Konfidenzintervall von 95\%. Die Fragen sind nach dem Mittelwert der "Was
   denken Experten..."-Fargen sortiert. Ein Änderung des Mittelwertes nach rechts
   zeigt einen höheren Anteil an gleichen Ansichten, wie Experten.}}
-\end{{figure}}
+\end{{figure}}%
 \newpage
-
+%
 \section{{Ansichten der Studenten über die Benotung}}
-\begin{{figure}}[h]
+\newpage
+\begin{{figure}}[h!]
   \centering
-  \input{{overview_mark}}
+  \input{{overview_mark.pgf}}
   \caption{{Darstellung der Ansichten der Studenten über die Wichtigkeit von
   verschiedenen Tätigkeiten für die Benotung in diesem Kurs (rot) und ähnlichen
   Kursen (grau). Die Kreise zeigen den Mittelwert und die schattierten Balken
   markieren ein Konfidenzintervall von 95\%. Die Fragen sind nach dem Mittelwert
   der Prä-Befragung der ähnlichen Kurse sortiert.}}
-\end{{figure}}
-
+\end{{figure}}%
+%
 \end{{document}}

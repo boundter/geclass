@@ -22,8 +22,6 @@ def create_reports():
         report_dir = os.path.join(current_app.instance_path, course_identifier)
         if os.path.exists(report_dir):
             continue
-        os.mkdir(report_dir)
-        os.chdir(report_dir)
         matched_responses = questionnaire_db.get_matched_responses(course_id)
         similar_courses = course_db.get_similar_course_ids(course_id)
         similar_responses = copy.deepcopy(matched_responses)
@@ -31,8 +29,9 @@ def create_reports():
             matched = questionnaire_db.get_matched_responses(similar_id)
             similar_responses.append(matched)
         # TODO: Test figsize
-        print(current_app.instance_path)
         print('Plot', course_identifier)
+        os.mkdir(report_dir)
+        os.chdir(report_dir)
         generate_plots(matched_responses, similar_responses)
         count_pre, count_post = questionnaire_db.get_course_numbers(course_id)
         name, count_students = course_db.get_course_report_info(course_id)
@@ -43,7 +42,7 @@ def create_reports():
                 course_post=count_post,
                 course_matched=matched_responses.size(),
                 course_reported=count_students,
-                course_ratio=count_students/matched_responses.size(),
+                course_ratio=matched_responses.size()/count_students,
                 similar_matched=similar_responses.size(),
             )
         with open(os.path.join(report_dir, 'report.tex'), 'w') as f:
