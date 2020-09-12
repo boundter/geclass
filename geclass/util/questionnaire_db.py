@@ -66,7 +66,6 @@ class QuestionnaireDB(DBConnection):
                 COUNT(*) = 1"""
         matched_questionnaires = []
         for student in students:
-            print('student:', student[0])
             res = self.execute(
                     sql_matched_questionnaires, (student[0],)*2).fetchone()
             if res is None:
@@ -81,17 +80,17 @@ class QuestionnaireDB(DBConnection):
                 WHERE
                     questionnaire_{1:}.id = ?
                 AND questionnaire_{0:}.id = questionnaire_{1:}.questionnaire_{0:}_id
-            """
+            """.format(you_expert_mark, pre_post)
             q = self.execute(
-                    sql_questionnaire.format(you_expert_mark, pre_post),
+                    sql_questionnaire,
                     (questionnaire_id,)).fetchone()
+            end = 31 if you_expert_mark != 'mark' else 24
             return np.array(
-                    [i if i is not None else -998 for i in q[1:]],
+                    [i if i is not None else -999 for i in q[1:end]],
                     dtype=np.int16)
 
         results = []
         for questionnaire in matched_questionnaires:
-            print(questionnaire, course_id, matched_questionnaires)
             q_you_pre = get_questionnaire_result(
                     questionnaire[0], "you", "pre")
             q_expert_pre = get_questionnaire_result(
@@ -102,7 +101,6 @@ class QuestionnaireDB(DBConnection):
                     questionnaire[1], "expert", "post")
             q_mark = get_questionnaire_result(
                     questionnaire[1], "mark", "post")
-            print(q_you_pre, q_expert_pre, q_you_post, q_expert_post, q_mark)
             results.append(Responses(q_you_pre, q_you_post, q_expert_pre, q_expert_post, q_mark))
         return QuestionnaireResponses(results)
 
@@ -110,20 +108,20 @@ class QuestionnaireDB(DBConnection):
         # TODO: Test
         sql_pre = """
             SELECT
-                COUNT(student_pre.id),
+                COUNT(student_pre.id)
             FROM student_pre, student_course
             WHERE
                 student_course.course_id = ?
             AND student_pre.student_id = student_course.student_id"""
-        count_pre = self.execute(sql_pre, (course_id,)).fectchone()[0]
+        count_pre = self.execute(sql_pre, (course_id,)).fetchone()[0]
         sql_post = """
             SELECT
-                COUNT(student_post.id),
+                COUNT(student_post.id)
             FROM student_post, student_course
             WHERE
                 student_course.course_id = ?
             AND student_post.student_id = student_course.student_id"""
-        count_post = self.execute(sql_post, (course_id,)).fectchone()[0]
+        count_post = self.execute(sql_post, (course_id,)).fetchone()[0]
         return count_pre, count_post
 
 
