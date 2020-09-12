@@ -48,6 +48,9 @@ class ResponseAggregate:
         count_invalid = (self.responses == -998).sum()
         return self.responses.size - count_invalid
 
+    def size(self):
+        return len(self.responses)
+
 
 class QuestionnaireResponses:
     """Aggregate of all responses."""
