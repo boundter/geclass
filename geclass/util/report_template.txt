@@ -1,0 +1,90 @@
+\documentclass[12pt]{{scrartcl}}
+
+\usepackage{{pgf}}
+\usepackage[ngerman]{{babel}}
+\usepackage[utf8x]{{inputenc}}
+\usepackage{{float}}
+
+\title{{Ergebnisse der GEclass Befragung für den Kurs {course_name}}}
+\setkomafont{{title}}{{\rmfamily\bfseries}}
+\addtokomafont{{section}}{{\rmfamily}}
+
+\begin{{document}}
+\maketitle
+
+\section{{Übersicht der Ergbenisse}}
+
+\begin{{tabular}}{{lc}}
+  Antworten für \textbf{{diesen Kurs}} in der Prä-Befragung:& {course_pre} \\
+  Antworten für \textbf{{disen Kurs}} in der Post-Befragung:& {course_post} \\
+  Zusammenhängende Prä- und Post-Antworten für \textbf{{diesen Kurs}}:& {course_matched} \\
+  Angegebene Anzahl an Studenten für \textbf{{diesen Kurs}}:& {course_reported} \\
+  Teilnahme \textbf{{dieses Kurses}} and der Befragung:& {course_ratio:.2f} \\
+  Antworten für \textbf{{ähnliche Kurse}}:& {similar_matched}
+\end{{tabular}}
+
+\begin{{figure}}[h]
+  \centering
+  \input{{overall_score}}
+  \caption{{Vergleich zwischen dem Gesamtergebniss der GEclass für die Prä- und
+  Post-Befragung für diesen und ähnliche Kurse für Fragen der "Was denken SIE
+  ..."-Art. Dieser Kurs (rot) wird mit ähnlichen Kursen (grau) derselben
+  Semester-Stufe und desselben Studeiengang verglichen. Das Ergebniss ist der
+  Mittelwert über alle Studenten und alle Fragen verglichen mit den Antworten
+  der Experten. \textbf{{Die Fehlerbalken markieren einen Standardfehler des
+  Mittelwertes.}}}}
+\end{{figure}}
+\newpage
+
+\section{{Änderung der Ansichten der Studenten}}
+\begin{{figure}}[h]
+  \centering
+  \input{{overview_you}}
+  \caption{{Änderung der Prä- und Post-Antworten der Studenten zu den "Was denken
+  SIE..."-Fragen für diesen Kurs (rot) und ähnliche Kurse (grau). Die Kreise
+  zeigen den Mittelwert der Prä-Befragung und die Pfeile die Änderung von Prä-
+  zu Post-Befragung. Die schattierten Balken markieren ein Konfidenzintervall
+  von 95\%. Die Fragen sind nach dem Mittelwert der Prä-Befragung der ähnlichen
+  Kurse sortiert. Ein Änderung des Mittelwertes nach rechts zeigt einen höheren
+  Anteil an gleichen Ansichten, wie Experten.}}
+\end{{figure}}
+\newpage
+
+\begin{{figure}}[h]
+  \centering
+  \input{{overview_expert}}
+  \caption{{Änderung der Prä- und Post-Antworten der Studenten zu den "Was denken
+  Experten..."-Fragen für diesen Kurs (blau) und ähnliche Kurse (grau). Die Kreise
+  zeigen den Mittelwert der Prä-Befragung und die Pfeile die Änderung von Prä-
+  zu Post-Befragung. Die schattierten Balken markieren ein Konfidenzintervall
+  von 95\%. Die Fragen sind nach dem Mittelwert der Prä-Befragung der ähnlichen
+  Kurse sortiert. Ein Änderung des Mittelwertes nach rechts zeigt einen höheren
+  Anteil an gleichen Ansichten, wie Experten.}}
+\end{{figure}}
+\newpage
+
+\begin{{figure}}[h]
+  \centering
+  \input{{overview_you_expert}}
+  \caption{{Vergleich der Änderung der Antworten auf "Was denken SIE..."- (rot)
+  und "Was denken Experten..."-Fragen (blau) für die Prä- und Post-Befragung.
+  Die Kreise zeigen den Mittelwert der Prä-Befragung und die Pfeile die Änderung
+  von Prä- zu Post-Befragung. Die schattierten Balken markieren ein
+  Konfidenzintervall von 95\%. Die Fragen sind nach dem Mittelwert der "Was
+  denken Experten..."-Fargen sortiert. Ein Änderung des Mittelwertes nach rechts
+  zeigt einen höheren Anteil an gleichen Ansichten, wie Experten.}}
+\end{{figure}}
+\newpage
+
+\section{{Ansichten der Studenten über die Benotung}}
+\begin{{figure}}[h]
+  \centering
+  \input{{overview_mark}}
+  \caption{{Darstellung der Ansichten der Studenten über die Wichtigkeit von
+  verschiedenen Tätigkeiten für die Benotung in diesem Kurs (rot) und ähnlichen
+  Kursen (grau). Die Kreise zeigen den Mittelwert und die schattierten Balken
+  markieren ein Konfidenzintervall von 95\%. Die Fragen sind nach dem Mittelwert
+  der Prä-Befragung der ähnlichen Kurse sortiert.}}
+\end{{figure}}
+
+\end{{document}}

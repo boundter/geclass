@@ -45,10 +45,10 @@ def create_app(test_config=None):
     from .util import send_reminder
     send_reminder.init_app(app)
 
+    from .util import report
+    report.init_app(app)
+
     from .util import questionnaire_db
     questionnaire_db.init_app(app)
-
-    from .util import get_questionnaire_data
-    get_questionnaire_data.init_app(app)
 
     return app
