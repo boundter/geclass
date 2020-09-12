@@ -5,10 +5,12 @@ import click
 from flask import current_app, g
 from flask.cli import with_appcontext
 import numpy as np
+import pandas as pd
 
 from geclass.db import DBConnection
 from geclass.course_db import CourseDB
 from geclass.util.responses import Responses, QuestionnaireResponses
+from geclass.util.questionnaire_prepare import PrepareData
 
 
 class QuestionnaireDB(DBConnection):
@@ -224,7 +226,19 @@ def close_questionnaire_db(e=None):
         db.close()
 
 
+@click.command('load-questionnaire-data')
+@click.argument('file_location')
+@with_appcontext
+def load_questionnaire_data(file_location):
+    data = pd.read_excel(file_location)
+    df = PrepareData(data)
+    questionnaire_db = QuestionnaireDB()
+    questionnaire_db.insert_data(df)
+    click.echo('Loaded questionnaire data')
+
+
 def init_app(app):
     """Create connection to the factory."""
     app.teardown_appcontext(close_questionnaire_db)
     app.cli.add_command(init_questionnaire_db_command)
+    app.cli.add_command(load_questionnaire_data)
