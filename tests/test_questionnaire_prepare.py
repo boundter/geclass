@@ -40,12 +40,12 @@ def test_removing_unfinished():
 
 def test_remove_missing():
     x = {
-        "personal_code": [1, 2, np.nan, np.nan],
-        "course_id": [np.nan, 1, 2, np.nan]
+        "personal_code": ['1', '2', np.nan, np.nan],
+        "course_id": [np.nan, '1', '2', np.nan]
     }
     result = {
-        "personal_code": [1, 2, np.nan],
-        "course_id": [np.nan, 1, 2]
+        "personal_code": ['1', '2', np.nan],
+        "course_id": [np.nan, '1', '2']
     }
     df = pd.DataFrame(data=x)
     result = pd.DataFrame(data=result, index=[0, 1, 2])
@@ -74,14 +74,14 @@ def test_clean_data():
         "start": [1, 1, 1, 1, 1, 1],
         "privacy": [0, 1, 1, 1, 1, 1],
         "end": [1, np.nan, 1, 1, 1, 1],
-        "personal_code": [1, 1, np.nan, 1, np.nan, 1],
-        "course_id": [1, 1, 1, np.nan, np.nan, 1]
+        "personal_code": ['1', '1', np.nan, 'A', np.nan, 'a'],
+        "course_id": ['1', '1', 'B', np.nan, np.nan, 'b']
     }
     result = {
         "start": [1, 1, 1],
         "end": [1., 1., 1.],
-        "personal_code": [np.nan, 1, 1],
-        "course_id": [1, np.nan, 1]
+        "personal_code": [np.nan, 'a', 'a'],
+        "course_id": ['b', np.nan, 'b']
     }
     df = pd.DataFrame(data=x)
     result = pd.DataFrame(data=result, index=[2, 3, 5])
@@ -136,16 +136,16 @@ def test_pipeline(app):
         "start": [1, 1, 1, 1, 1, 1],
         "privacy": [0, 1, 1, 1, 1, 1],
         "end": [2, np.nan, 2, 2, 2, 2],
-        "personal_code": [1, 1, np.nan, 1, np.nan, 1],
-        "course_id": [1, 1, 1, np.nan, np.nan, 1],
+        "personal_code": ['1', '1', np.nan, '1', np.nan, '1'],
+        "course_id": ['1', '1', '1', np.nan, np.nan, '1'],
         "qcontrol": [1, 2, 3, 4, 3, 4]
     }
     result = {
         "pre_post": [1, 2, 2],
         "start": [1, 1, 1],
         "end": [2, 2, 2],
-        "personal_code": [np.nan, 1, 1],
-        "course_id": [1, np.nan, 1],
+        "personal_code": [np.nan, '1', '1'],
+        "course_id": ['1', np.nan, '1'],
         "valid_control": [False, True, True],
         "valid_time": [False, False, False]
     }

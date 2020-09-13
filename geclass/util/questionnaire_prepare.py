@@ -37,12 +37,19 @@ def ChangeStartAndEndToDatetime(df):
     return df
 
 
+def LowercaseCodes(df):
+    df.personal_code = df.personal_code.str.lower()
+    df.course_id = df.course_id.str.lower()
+    return df
+
+
 def CleanData(df):
     rows_before = df.shape[0]
     df = (df
         .pipe(RemoveUnneededCols)
         .pipe(RemoveUnfinished)
         .pipe(RemoveMissingStudentAndCourse)
+        .pipe(LowercaseCodes)
     )
     return df
 
