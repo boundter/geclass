@@ -1,6 +1,7 @@
 import datetime
 import os
 import copy
+import subprocess
 
 from flask import current_app
 from flask.cli import with_appcontext
@@ -50,7 +51,6 @@ def create_reports():
         for (similar_id,) in similar_courses:
             matched = questionnaire_db.get_matched_responses(similar_id)
             similar_responses.append(matched)
-        print('Plot', course_identifier, 'with', matched_responses.size(), 'matched and', similar_responses.size(), 'similar.')
         os.mkdir(report_dir)
         os.chdir(report_dir)
         if matched_responses.size() == 0:
@@ -71,7 +71,12 @@ def create_reports():
             )
         with open(os.path.join(report_dir, 'report.tex'), 'w') as f:
             f.write(content)
-        # TODO: convert latex to pdf
+        latexmk_command = ['latexmk', '-pdf', '-quiet', '-f', 'report.tex']
+        latexmk_clean = ['latexmk', '-c', 'report.tex']
+        subprocess.call(latexmk_command)
+        subprocess.call(latexmk_clean)
+        # TODO: batchmode
+        # TODO: Log
         # TODO: Activate link on webpage
         click.echo('Generated Report for {} with {} matched responses'
                 .format(course_identifier, matched_responses.size()))
