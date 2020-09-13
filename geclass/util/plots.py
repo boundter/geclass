@@ -68,6 +68,7 @@ def overall_score_plot(responses_course, responses_similar, outfile=None):
         plt.show()
     else:
         fig.savefig(outfile)
+        plt.close()
 
 
 def _response_statistics(responses, you_expert):
@@ -136,7 +137,7 @@ def question_overview_plot(responses_1, responses_2, plot_type, outfile=None):
                 responses_1, "you")
         mean_2, d_mean_2, confidence_2 = _response_statistics(
                 responses_2, "expert")
-        sorted_indx = np.argsort(mean_1)
+        sorted_indx = np.argsort(mean_2)
         question_labels = [
             "Q{:d}: {}".format(i+1, q)
             for i, q in zip(sorted_indx, np.array(questions)[sorted_indx])
@@ -240,6 +241,7 @@ def question_overview_plot(responses_1, responses_2, plot_type, outfile=None):
         plt.show()
     else:
         fig.savefig(outfile)
+        plt.close()
 
 
 def generate_plots(responses_course, responses_similar):
