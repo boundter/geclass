@@ -73,6 +73,8 @@ class QuestionnaireResponses:
     def _append_responses(self, responses, attr):
         if getattr(self, attr).responses.size == 0:
             return np.copy(getattr(responses, attr).responses)
+        if getattr(responses, attr).responses.size == 0:
+            return getattr(self, attr).responses
         return np.append(getattr(self, attr).responses, getattr(responses, attr).responses, axis=0)
 
     def append(self, responses):
