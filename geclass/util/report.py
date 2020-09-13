@@ -50,9 +50,12 @@ def create_reports():
         for (similar_id,) in similar_courses:
             matched = questionnaire_db.get_matched_responses(similar_id)
             similar_responses.append(matched)
-        print('Plot', course_identifier)
+        print('Plot', course_identifier, 'with', matched_responses.size(), 'matched and', similar_responses.size(), 'similar.')
         os.mkdir(report_dir)
         os.chdir(report_dir)
+        if matched_responses.size() == 0:
+            # TODO: Handle no Responses
+            continue
         generate_plots(matched_responses, similar_responses)
         count_pre, count_post = questionnaire_db.get_course_numbers(course_id)
         name, count_students = course_db.get_course_report_info(course_id)
@@ -70,7 +73,8 @@ def create_reports():
             f.write(content)
         # TODO: convert latex to pdf
         # TODO: Activate link on webpage
-        click.echo('Generated Report for {}'.format(course_identifier))
+        click.echo('Generated Report for {} with {} matched responses'
+                .format(course_identifier, matched_responses.size()))
     click.echo('Finished Reports')
 
 
