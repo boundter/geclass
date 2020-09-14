@@ -51,4 +51,7 @@ def create_app(test_config=None):
     from .util import questionnaire_db
     questionnaire_db.init_app(app)
 
+    from .util import download_data
+    download_data.init_app(app)
+
     return app
