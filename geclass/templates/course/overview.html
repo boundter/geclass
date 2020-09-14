@@ -41,9 +41,19 @@
       </tr>
     {% for course in past_courses %}
       <tr>
-        {% for field in course %}
-          <td>{{ field }}</td>
-        {% endfor %}
+        {% if course|length == 8 %}
+          {% for field in course %}
+            <td>{{ field }}</td>
+          {% endfor %}
+        {% else %}
+          <td>{{course[0]}}</td>
+          <td>
+            <a href={{url_for('course.send_pdf', course_name=course[0])}}>{{course[1]}}</a>
+          </td>
+          {% for field in course[2:8] %}
+            <td>{{ field }}</td>
+          {% endfor %}
+        {% endif %}
       </tr>
     {% endfor %}
     </table>
