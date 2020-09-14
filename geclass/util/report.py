@@ -2,6 +2,7 @@ import datetime
 import os
 import copy
 import subprocess
+import logging
 
 from flask import current_app
 from flask.cli import with_appcontext
@@ -10,6 +11,9 @@ import click
 from geclass.course_db import CourseDB
 from geclass.util.questionnaire_db import QuestionnaireDB
 from geclass.util.plots import generate_plots
+from geclass.send_email import SendEmail
+
+log = logging.getLogger(__name__)
 
 
 def sanitize_name(course_name):
@@ -54,7 +58,16 @@ def create_reports():
         os.mkdir(report_dir)
         os.chdir(report_dir)
         if matched_responses.size() == 0:
-            # TODO: Handle no Responses
+            SendEmail(
+                'ge-class@uni-potsdam.de',
+                'Kurs {} hat keine gematched Antworten'
+                .format(course_identifier),
+                'Der Kurs {} mit id {} hat keine gematched Antworten. '
+                'Der Report konnte nicht erzeugt werden.'
+                .format(course_identifier, course_id)
+            )
+            log.warning('Course {} with id {}  has no matched responses'
+                        .format(course_identifier, course_id))
             continue
         generate_plots(matched_responses, similar_responses)
         count_pre, count_post = questionnaire_db.get_course_numbers(course_id)
@@ -73,11 +86,23 @@ def create_reports():
             f.write(content)
         latexmk_command = ['latexmk', '-pdf', '-quiet', '-f', 'report.tex']
         latexmk_clean = ['latexmk', '-c', 'report.tex']
-        subprocess.call(latexmk_command)
-        subprocess.call(latexmk_clean)
-        # TODO: batchmode
-        # TODO: Log
-        # TODO: Activate link on webpage
+        failure = subprocess.call(latexmk_command, stdout=subprocess.DEVNULL,
+                                  stderr=subprocess.DEVNULL)
+        if failure:
+            SendEmail(
+                'ge-class@uni-potsdam.de',
+                'Fehler bei Report für Kurs {}'
+                .format(course_identifier),
+                'Der Report für den Kurs {} mit id {} konnte nicht '
+                'erzeugt werden.'
+                .format(course_identifier, course_id)
+            )
+            log.error('Error while processing of the tex-file for course '
+                      '{} with id {}'.format(course_identifier, course_id))
+            # TODO: Send email
+            continue
+        subprocess.call(latexmk_clean, stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL)
         click.echo('Generated Report for {} with {} matched responses'
                 .format(course_identifier, matched_responses.size()))
     click.echo('Finished Reports')

@@ -6,6 +6,8 @@ import scipy.stats as stats
 
 def aggregate_mean(aggregate):
     """Calculate the mean over all the cols of a ResponseAggregate."""
+    if len(aggregate) == 0:
+        return 0
     total = 0
     for col in aggregate:
         total += sum(col)
@@ -17,6 +19,8 @@ def aggregate_stderr(aggregate, mean=None):
     ResponseAggregate."""
     if mean is None:
         mean = aggregate_mean(aggregate)
+    if len(aggregate) == 0:
+        return 0
     total = 0
     for col in aggregate:
         for point in col:

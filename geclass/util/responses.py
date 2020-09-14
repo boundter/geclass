@@ -17,7 +17,8 @@ class Responses:
         self.q_expert_post = self._compare_expert(q_expert_post, self.experts)
 
     def _likert_reduce(self, responses):
-        translation = {1 : -1, 2: -1, 3: 0, 4: 1, 5: 1, -999: -999}
+        translation = {1 : -1, 2: -1, 3: 0, 4: 1, 5: 1, -998: -998, -997: -998,
+                       -999: -998}
         likert = np.vectorize(translation.get)(responses)
         return likert
 
@@ -40,12 +41,12 @@ class ResponseAggregate:
     def __getitem__(self, k):
         aggregate = []
         for response in self.responses:
-            if response[k] != -999:
+            if response[k] != -998:
                 aggregate.append(response[k])
         return np.array(aggregate)
 
     def __len__(self):
-        count_invalid = (self.responses == -999).sum()
+        count_invalid = (self.responses == -998).sum()
         return self.responses.size - count_invalid
 
     def size(self):
