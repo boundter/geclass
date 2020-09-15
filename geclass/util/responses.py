@@ -1,8 +1,31 @@
+"""Containers to handle the responses to the questionnaire."""
+
 import numpy as np
 
 class Responses:
-    """Single response of one student as compared to expert.
-    1 is agreement, 0 is no agreement and -998 is no answer given."""
+    """Responses of a single student as compared to the experts.
+
+    1 is agreement, 0 is no agreement and -998 is no answer given.
+    Inputs are in Likert-Scale (1 - 5), internally they are converted to
+    agreement with experts (0 and 1).
+
+    Args:
+        q_you_pre (np.array): The answers to the you questions pre course.
+        q_you_post (np.array): The answers to the you questions post course.
+        q_expert_pre (np.array): The answers to the expert questions pre
+            course.
+        q_expert_post (np.array): The answers to the expert questions post
+            course.
+        q_mark (np.array): The answers to the mark questions post course.
+
+    Attributes:
+        q_you_pre (np.array): Agreement with experts for q_you_pre.
+        q_you_post (np.array): Agreement with experts for q_you_post.
+        q_expert_pre (np.array): Agreement with experts for q_expert_pre.
+        q_expert_post (np.array): Agreement with experts for q_expert_post.
+        q_mark (np.array): Agreement with experts for q_mark.
+
+    """
     experts = np.array([1, 1, -1, -1, 1, 1, -1, 1, 1, 1, 1, -1, 1, 1, 1, -1,
                         -1, 1, 1, 1, -1, 1, 1, 1, -1, 1, -1, -1, -1, 1])
     experts_marks = np.array([1, -1, -1, 1, 1, 1, 1, 1, 1, -1, 1, 1, -1, -1, 1,
@@ -17,12 +40,14 @@ class Responses:
         self.q_expert_post = self._compare_expert(q_expert_post, self.experts)
 
     def _likert_reduce(self, responses):
+        """Reduce Likert from 5 to 3 levels."""
         translation = {1 : -1, 2: -1, 3: 0, 4: 1, 5: 1, -998: -998, -997: -998,
                        -999: -998}
         likert = np.vectorize(translation.get)(responses)
         return likert
 
     def _compare_expert(self, q_student, a_expert):
+        """Compare responses of students to experts."""
         compared = []
         q_student = self._likert_reduce(q_student)
         for response_student, response_experts in zip(q_student, a_expert):
@@ -34,7 +59,29 @@ class Responses:
 
 
 class ResponseAggregate:
-    """Aggregate of multiple responses to one category, e.g. q_mark."""
+    """Aggregate of multiple students for one type of questions.
+
+    The length of a ResponseAggregate is the number of valid answers
+    (excluding answers not given). Access to one element returns a cut through
+    all answers at the given position, excluding answers not given.
+
+    Args:
+        responses (list): List of one type of answers (q_mark, q_you_pre, ...).
+
+    Attributes:
+        responses (np.array): All the responses.
+
+    >>> q_mark_1 = np.array([0, 1, -998, 1, 0])
+    >>> q_mark_2 = np.array([1, -998, 0, 0, -998])
+    >>> x = ResponseAggregate([q_mark_1, q_marks_2])
+    >>> x[0]
+    np.array([0, 1])
+    >>> x[1]
+    np.array([1])
+    >>> len(x)
+    7
+
+    """
     def __init__(self, responses):
         self.responses = np.array(responses)
 
@@ -50,11 +97,27 @@ class ResponseAggregate:
         return self.responses.size - count_invalid
 
     def size(self):
+        """Return the total number of students."""
         return len(self.responses)
 
 
 class QuestionnaireResponses:
-    """Aggregate of all responses."""
+    """Aggregate of all type of answers for multiple students.
+
+    Args:
+        responses (list): A list of Responses fro multiple students.
+
+    Attributes:
+        q_you_pre (ResponseAggregate): All answers for the q_you_pre questions.
+        q_you_post (ResponseAggregate): All answers for the q_you_post
+            questions.
+        q_expert_pre (ResponseAggregate): All answers for the q_expert_pre
+            questions.
+        q_expert_post (ResponseAggregate): All answers for the q_expert_post
+            questions.
+        q_mark (ResponseAggregate): All answers for the q_mark questions.
+
+    """
     def __init__(self, responses):
         self.q_mark = self._load_responses(responses, 'q_mark')
         self.q_you_pre = self._load_responses(responses, 'q_you_pre')
@@ -69,6 +132,7 @@ class QuestionnaireResponses:
         return ResponseAggregate(aggregate)
 
     def size(self):
+        """Return the total number of students."""
         return len(self.q_mark.responses)
 
     def _append_responses(self, responses, attr):
@@ -79,6 +143,7 @@ class QuestionnaireResponses:
         return np.append(getattr(self, attr).responses, getattr(responses, attr).responses, axis=0)
 
     def append(self, responses):
+        """Append two QuestionnaireResponses to another."""
         self.q_mark.responses = self._append_responses(responses, 'q_mark')
         self.q_you_pre.responses = self._append_responses(responses, 'q_you_pre')
         self.q_you_post.responses = self._append_responses(responses, 'q_you_post')
