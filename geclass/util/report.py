@@ -1,22 +1,32 @@
-import datetime
-import os
-import copy
-import subprocess
-import logging
+"""Utilities to create the reports for finished courses.
 
+All report for the finished courses will be placed in foldes named after the
+course identifier in /instance. They can be created with the command
+
+    $ flask create-reports
+
+"""
+
+import copy
+import datetime
+import logging
+import os
+import subprocess
+
+import click
 from flask import current_app
 from flask.cli import with_appcontext
-import click
 
 from geclass.course_db import CourseDB
+from geclass.send_email import SendEmail
 from geclass.util.questionnaire_db import QuestionnaireDB
 from geclass.util.plots import generate_plots
-from geclass.send_email import SendEmail
 
 log = logging.getLogger(__name__)
 
 
 def sanitize_name(course_name):
+    """Sanitize the name of a course for latex."""
     replacements = {
         '\\': '\\textbackslash{}',
         '{': '\{',
@@ -41,6 +51,7 @@ def sanitize_name(course_name):
 @click.command('create-reports')
 @with_appcontext
 def create_reports():
+    """Create the reports for all finished courses."""
     course_db = CourseDB()
     questionnaire_db = QuestionnaireDB()
     finished_courses = course_db.get_postsurveys_starting_before(
@@ -99,7 +110,6 @@ def create_reports():
             )
             log.error('Error while processing of the tex-file for course '
                       '{} with id {}'.format(course_identifier, course_id))
-            # TODO: Send email
             continue
         subprocess.call(latexmk_clean, stdout=subprocess.DEVNULL,
                         stderr=subprocess.DEVNULL)
@@ -109,4 +119,5 @@ def create_reports():
 
 
 def init_app(app):
+    """Create connection to the factory."""
     app.cli.add_command(create_reports)
