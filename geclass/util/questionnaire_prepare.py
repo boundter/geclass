@@ -1,5 +1,12 @@
-import pandas as pd
+"""Functions to clean the data from the questionnaire.
+
+The function PrepareData fully cleans the data and checks for validity.
+
+"""
+
 import datetime
+
+import pandas as pd
 
 from geclass.course_db import CourseDB
 
@@ -44,12 +51,21 @@ def LowercaseCodes(df):
 
 
 def CleanData(df):
-    rows_before = df.shape[0]
+    """Clean the data.
+
+    1. Remove unnecessary columns.
+    2. Remove unfinished rows (no end date or no privacy agreement).
+    3. Remove rows with missing student or course information.
+    4. Change personal codes and course id to lowercase for consitency.
+    5. Change start and entime cols to datetime.
+
+    """
     df = (df
         .pipe(RemoveUnneededCols)
         .pipe(RemoveUnfinished)
         .pipe(RemoveMissingStudentAndCourse)
         .pipe(LowercaseCodes)
+        .pipe(ChangeStartAndEndToDatetime)
     )
     return df
 
@@ -73,6 +89,13 @@ def CheckValidityTimeRow(row, course_db):
 
 
 def AddValidity(df):
+    """Check validity of row.
+
+    valid_control tests for the correct answer of the control question and
+    valid_time tests for if the end date is within 14 days of the begin of the
+    post test.
+
+    """
     df["valid_control"] = df.apply(
             lambda row: CheckValidityControlRow(row), axis=1)
     df = df.drop(["qcontrol"], axis=1)
@@ -83,9 +106,9 @@ def AddValidity(df):
 
 
 def PrepareData(df):
+    """Fully clean the data."""
     df = (df
         .pipe(CleanData)
-        .pipe(ChangeStartAndEndToDatetime)
         .pipe(AddValidity)
     )
     return df

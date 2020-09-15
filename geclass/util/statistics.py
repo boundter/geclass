@@ -1,3 +1,5 @@
+"""Functions to measure statistic values."""
+
 import math
 
 import numpy as np
