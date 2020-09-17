@@ -26,7 +26,8 @@ bitte unter ge-class@uni-potsdam.de
 
 \section{{Übersicht der Ergebnisse}}
 
-\begin{{tabular}}{{lc}}
+\begin{{table}}[h]
+\begin{{tabular}}{{p{{12cm}}c}}
   Anzahl der Antworten für \textbf{{diesen Kurs}} in der Prä-Befragung:& {course_pre} \\
   Anzahl der Antworten für \textbf{{disen Kurs}} in der Post-Befragung:& {course_post} \\
   Anzahl der gültigen zusammenhängenden Prä- und Post-Antworten für \textbf{{diesen Kurs}}:& {course_matched} \\
@@ -34,12 +35,14 @@ bitte unter ge-class@uni-potsdam.de
   Teilnahme \textbf{{dieses Kurses}} und der Befragung:& {course_ratio:.2f} \\
   Anzahl der Antworten für \textbf{{ähnliche Kurse}} zum Vergleich:& {similar_matched}
 \end{{tabular}}
+\end{{table}}
 
-\textbf{Ähnliche Kurse} sind Kurse desselben Jahrgangs (1./2. Semester, oder 3.
+\textbf{{Ähnliche Kurse}} sind Kurse desselben Jahrgangs (1./2. Semester, oder 3.
 Semester und später) und desselben Studiengangs (Mono Bachelor Physik, oder
-Bachelor Nebenfach, etc.).
+Bachelor Nebenfach, etc.). Die Antworten \textbf{{dieses Kurses}} werden dabei
+mit betrachtet.
 
-Als gültige und zusammenhängende Antworten für \textbf{diesen Kurs} gelten
+Als gültige und zusammenhängende Antworten für \textbf{{diesen Kurs}} gelten
 Antworten, die innerhalb von 14 Tagen nach Beginn der Prä- und Post-Befragung
 abgegeben wurden, bei denen die Kontrollfrage (Frage 22: Bitte wählen Sie
 "`stimme zu"' aus) richtig beantwortet wurde, und bei denen durch den
