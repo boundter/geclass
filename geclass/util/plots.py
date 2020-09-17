@@ -62,7 +62,7 @@ def overall_score_plot(responses_course, responses_similar, outfile=None):
     color_similar = 'gray'
 
     fig, ax = plt.subplots(figsize=(5.5, 5))
-    ax.set_title('Gesamtergebnisse der GEclass für\ndie "Was denken Sie..."'
+    ax.set_title('Gesamtergebnisse der GEclass für\ndie "`Was denken Sie..."\''
                  'Antworten')
     ax.set_xticks([1., 2.75])
     ax.set_xticklabels(['Prä', 'Post'])
