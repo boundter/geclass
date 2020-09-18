@@ -85,6 +85,8 @@ def test_clean_data():
     }
     df = pd.DataFrame(data=x)
     result = pd.DataFrame(data=result, index=[2, 3, 5])
+    result.start = pd.to_datetime(result.start)
+    result.end = pd.to_datetime(result.end)
     df = CleanData(df)
     assert df.equals(result)
 

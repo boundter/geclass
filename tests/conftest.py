@@ -136,7 +136,7 @@ def MonkeyCourseDBCourses(monkeypatch):
 
     def MockID(obj, value):
         if value == 0:
-            return []
+            return None
         return [value]
 
     monkeypatch.setattr(geclass.course_db.CourseDB, 'get_course_id', MockID)
