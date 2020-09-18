@@ -33,7 +33,7 @@ def aggregate_stderr(aggregate, mean=None):
 def aggregate_mean_colwise(aggregate, significance=0.05):
     """Calculate the colwise mean of a ResponseAggregate."""
     mean = []
-    n_likert = 2  # agree or disagree with experts
+    n_likert = 4  # agree or disagree with experts
     B = stats.chi2.ppf(1 - significance / n_likert, 2)
     for col in aggregate:
         mean.append((sum(col) + B / 2.) / (aggregate.size() + B))
@@ -43,7 +43,7 @@ def aggregate_mean_colwise(aggregate, significance=0.05):
 def aggregate_confidence_colwise(aggregate, significance=0.05):
     """Calculate the colwise confidence of a ResponseAggregate."""
     confidence = []
-    n_likert = 2  # agree or disagree with experts
+    n_likert = 4  # agree or disagree with experts
     B = stats.chi2.ppf(1 - significance / n_likert, 2)
     for col in aggregate:
         n = sum(col)
