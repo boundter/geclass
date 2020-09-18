@@ -14,40 +14,48 @@ from geclass.util.questionnaire_prepare import PrepareData
 
 
 class QuestionnaireDB(DBConnection):
+    """Connection and management of the questionnaire database."""
 
     def __init__(self):
-        if "questionnaire_db" not in g:
+        if 'questionnaire_db' not in g:
             g.questionnaire_db = sqlite3.connect(
-                database=current_app.config["QUESTIONNAIRE_DB"],
+                database=current_app.config['QUESTIONNAIRE_DB'],
                 detect_types=sqlite3.PARSE_DECLTYPES
             )
             g.questionnaire_db.row_factory = sqlite3.Row
         self.db = g.questionnaire_db
 
     def insert_data(self, df):
+        """Insert new data into the database.
+
+
+        """
         course_db = CourseDB()
         for _, row in df.iterrows():
-            course_id = course_db.get_course_id(row["course_id"])
-            if len(course_id) == 1:
-                student_id = self._add_student(row["personal_code"], course_id[0])
+            course_id = course_db.get_course_id(row['course_id'])
+            if course_id is not None:
+                student_id = self._add_student(
+                        row['personal_code'], course_id[0])
             else:
-                student_id = self._add_student(row["personal_code"])
-                self._add_student_unknown_course(student_id, row["course_id"])
-            if row["pre_post"] == 1:
+                student_id = self._add_student(row['personal_code'])
+                self._add_student_unknown_course(student_id, row['course_id'])
+            if row['pre_post'] == 1:
                 questionnaire_id = self._add_pre_questionnaire(row)
-                self._add_student_prepost(row, student_id, questionnaire_id, "pre")
-            elif row["pre_post"] == 2:
+                self._add_student_prepost(
+                        row, student_id, questionnaire_id, 'pre')
+            elif row['pre_post'] == 2:
                 questionnaire_id = self._add_post_questionnaire(row)
-                self._add_student_prepost(row, student_id, questionnaire_id, "post")
+                self._add_student_prepost(
+                        row, student_id, questionnaire_id, 'post')
 
     def get_matched_responses(self, course_id):
         # TODO: Test
-        sql_select_students = """
+        sql_select_students = '''
             SELECT student_id
             FROM student_course
-            WHERE course_id = ?"""
+            WHERE course_id = ?'''
         students = self.execute(sql_select_students, (course_id,)).fetchall()
-        sql_matched_questionnaires = """
+        sql_matched_questionnaires = '''
             SELECT
                 student_pre.questionnaire_pre_id,
                 student_post.questionnaire_post_id
@@ -63,7 +71,7 @@ class QuestionnaireDB(DBConnection):
             GROUP BY
                 student_pre.student_id, student_post.student_id
             HAVING
-                COUNT(*) = 1"""
+                COUNT(*) = 1'''
         matched_questionnaires = []
         for student in students:
             res = self.execute(
@@ -74,13 +82,13 @@ class QuestionnaireDB(DBConnection):
 
         def get_questionnaire_result(questionnaire_id, you_expert_mark,
                                      pre_post):
-            sql_questionnaire = """
+            sql_questionnaire = '''
                 SELECT *
                 FROM questionnaire_{0:}, questionnaire_{1:}
                 WHERE
                     questionnaire_{1:}.id = ?
                 AND questionnaire_{0:}.id = questionnaire_{1:}.questionnaire_{0:}_id
-            """.format(you_expert_mark, pre_post)
+            '''.format(you_expert_mark, pre_post)
             q = self.execute(
                     sql_questionnaire,
                     (questionnaire_id,)).fetchone()
@@ -92,35 +100,35 @@ class QuestionnaireDB(DBConnection):
         results = []
         for questionnaire in matched_questionnaires:
             q_you_pre = get_questionnaire_result(
-                    questionnaire[0], "you", "pre")
+                    questionnaire[0], 'you', 'pre')
             q_expert_pre = get_questionnaire_result(
-                    questionnaire[0], "expert", "pre")
+                    questionnaire[0], 'expert', 'pre')
             q_you_post = get_questionnaire_result(
-                    questionnaire[1], "you", "post")
+                    questionnaire[1], 'you', 'post')
             q_expert_post = get_questionnaire_result(
-                    questionnaire[1], "expert", "post")
+                    questionnaire[1], 'expert', 'post')
             q_mark = get_questionnaire_result(
-                    questionnaire[1], "mark", "post")
+                    questionnaire[1], 'mark', 'post')
             results.append(Responses(q_you_pre, q_you_post, q_expert_pre, q_expert_post, q_mark))
         return QuestionnaireResponses(results)
 
     def get_course_numbers(self, course_id):
         # TODO: Test
-        sql_pre = """
+        sql_pre = '''
             SELECT
                 COUNT(student_pre.id)
             FROM student_pre, student_course
             WHERE
                 student_course.course_id = ?
-            AND student_pre.student_id = student_course.student_id"""
+            AND student_pre.student_id = student_course.student_id'''
         count_pre = self.execute(sql_pre, (course_id,)).fetchone()[0]
-        sql_post = """
+        sql_post = '''
             SELECT
                 COUNT(student_post.id)
             FROM student_post, student_course
             WHERE
                 student_course.course_id = ?
-            AND student_post.student_id = student_course.student_id"""
+            AND student_post.student_id = student_course.student_id'''
         count_post = self.execute(sql_post, (course_id,)).fetchone()[0]
         return count_pre, count_post
 
@@ -128,13 +136,13 @@ class QuestionnaireDB(DBConnection):
     def _add_student(self, code, course_id=None):
         if course_id == None:
             return self.add_and_get_id('student', ('code',), (code,))
-        sql = """
+        sql = '''
             SELECT student.id
             FROM student, student_course
             WHERE
                 student_course.course_id = ?
             AND student.id = student_course.student_id
-            AND student.code = ?"""
+            AND student.code = ?'''
         rows = self.execute(sql, (course_id, code)).fetchall()
         if len(rows) == 1:
             return rows[0][0]
@@ -143,59 +151,60 @@ class QuestionnaireDB(DBConnection):
         return student_id
 
     def _add_student_course(self, student_id, course_id):
-        columns = ["student_id", "course_id"]
+        columns = ['student_id', 'course_id']
         values = [student_id, course_id]
-        self.add(table="student_course", columns=columns, values=values)
+        self.add(table='student_course', columns=columns, values=values)
 
     def _add_student_unknown_course(self, student_id, course_code):
-        columns = ["student_id", "course_code"]
+        columns = ['student_id', 'course_code']
         values = [student_id, course_code]
-        self.add(table="student_unknown_course", columns=columns,
+        self.add(table='student_unknown_course', columns=columns,
                  values=values)
 
     def _add_questionnaire(self, row, you_expert):
-        columns = ["q{:d}".format(i) for i in range(1, 31)]
+        columns = ['q{:d}'.format(i) for i in range(1, 31)]
         values = [
-                row["q{:d}_{:d}".format(i, 1 if you_expert == "you" else 2)]
+                row['q{:d}_{:d}'.format(i, 1 if you_expert == 'you' else 2)]
                 for i in range(1, 31)
         ]
-        last_id = self.add_and_get_id("questionnaire_{}".format(you_expert),
+        last_id = self.add_and_get_id('questionnaire_{}'.format(you_expert),
                                       columns=columns, values=values)
         return last_id
 
     def _add_questionnaire_mark(self, row):
-        columns = ["q{:d}".format(i) for i in range(1, 24)]
-        values = [row["post_{:d}".format(i)] for i in range(1, 24)]
-        last_id = self.add_and_get_id("questionnaire_mark",
+        columns = ['q{:d}'.format(i) for i in range(1, 24)]
+        values = [row['post_{:d}'.format(i)] for i in range(1, 24)]
+        last_id = self.add_and_get_id('questionnaire_mark',
                                       columns=columns, values=values)
         return last_id
 
     def _add_pre_questionnaire(self, row):
-        columns = ["questionnaire_you_id", "questionnaire_expert_id"]
-        you_id = self._add_questionnaire(row, "you")
-        expert_id = self._add_questionnaire(row, "expert")
+        columns = ['questionnaire_you_id', 'questionnaire_expert_id']
+        you_id = self._add_questionnaire(row, 'you')
+        expert_id = self._add_questionnaire(row, 'expert')
         values = [you_id, expert_id]
-        last_id = self.add_and_get_id("questionnaire_pre", columns=columns,
+        last_id = self.add_and_get_id('questionnaire_pre', columns=columns,
                 values=values)
         return last_id
 
     def _add_post_questionnaire(self, row):
-        columns = ["questionnaire_you_id", "questionnaire_expert_id",
-                "questionnaire_mark_id"]
-        you_id = self._add_questionnaire(row, "you")
-        expert_id = self._add_questionnaire(row, "expert")
+        columns = ['questionnaire_you_id', 'questionnaire_expert_id',
+                'questionnaire_mark_id']
+        you_id = self._add_questionnaire(row, 'you')
+        expert_id = self._add_questionnaire(row, 'expert')
         mark_id = self._add_questionnaire_mark(row)
         values = [you_id, expert_id, mark_id]
-        last_id = self.add_and_get_id("questionnaire_post", columns=columns,
+        last_id = self.add_and_get_id('questionnaire_post', columns=columns,
                 values=values)
         return last_id
 
     def _add_student_prepost(self, row, student_id, questionnaire_id, pre_post):
-        start = int(time.mktime(row["start"].timetuple()))
-        end = int(time.mktime(row["end"].timetuple()))
-        columns = ["student_id", "questionnaire_{}_id".format(pre_post), "start_time", "end_time", "valid_control", "valid_time"]
-        values = [student_id, questionnaire_id, start, end, int(row["valid_control"]), int(row["valid_time"])]
-        self.add("student_{}".format(pre_post), columns=columns, values=values)
+        # TODO: Check if student does not already in the table
+        start = int(time.mktime(row['start'].timetuple()))
+        end = int(time.mktime(row['end'].timetuple()))
+        columns = ['student_id', 'questionnaire_{}_id'.format(pre_post), 'start_time', 'end_time', 'valid_control', 'valid_time']
+        values = [student_id, questionnaire_id, start, end, int(row['valid_control']), int(row['valid_time'])]
+        self.add('student_{}'.format(pre_post), columns=columns, values=values)
 
 
 def init_questionnaire_db():

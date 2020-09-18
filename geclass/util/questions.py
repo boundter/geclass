@@ -1,3 +1,5 @@
+"""The text of the questions from the questionnaire."""
+
 q_marks = (
     'es zu verstehen, wie der experimentelle Aufbau funktioniert?',
     'das Nachdenken über systematische Fehlerquellen?',
