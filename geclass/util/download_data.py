@@ -58,7 +58,7 @@ def main():
             )
             log.error('Could not download data from QUAMP')
             return
-        with open("data.xlsx", "wb") as data_file:
+        with open("/app/instance/data.xlsx", "wb") as data_file:
             data_file.write(data.content)
 
 
