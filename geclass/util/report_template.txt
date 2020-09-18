@@ -7,16 +7,16 @@
 \usepackage[section]{{placeins}}
 \usepackage{{textcomp}}
 
-\title{{Ergebnisse der GEclass Befragung für den Kurs {course_name}}}
+\title{{Ergebnisse der GE-CLASS Befragung für den Kurs {course_name}}}
 \setkomafont{{title}}{{\rmfamily\bfseries}}
 \addtokomafont{{section}}{{\rmfamily}}
 
 \begin{{document}}
 \maketitle
 
-Vielen Dank für Ihre Teilnahme an der GEclass. Wir hoffen, dass Sie aus dem
-nachfolgenden Report hilfreiche Schlüsse über das Physikverständnis Ihrer
-Studenten gewinnen können. Die GEclass ist eine Adaption der Eclass von
+Vielen Dank für Ihre Teilnahme an der GE-CLASS. Wir hoffen, dass Sie aus dem
+nachfolgenden Report hilfreiche Schlüsse über das Verständnis der Experimentalphysik Ihrer
+Studenten gewinnen können. Die GE-CLASS ist eine Adaption der E-CLASS von
 Lewandowski et al. von der Univeristy of Colorado für den deutschen Sprachraum.
 In den folgenden Grafiken finden Sie einen Vergleich der Antworten Ihrer
 Studenten mit den Antworten von Studenten aus ähnlichen Kursen.
