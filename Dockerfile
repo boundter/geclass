@@ -64,3 +64,9 @@ COPY uwsgi.ini .
 COPY geclass geclass
 COPY scripts scripts
 COPY tests tests
+
+COPY entrypoint.sh /entrypoint_new.sh
+RUN chmod +x /entrypoint_new.sh
+ENTRYPOINT ["/entrypoint_new.sh"]
+
+CMD ["/start.sh"]
