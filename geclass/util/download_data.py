@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 landing_page = "https://survey.uni-potsdam.de/admin.html"
 data_page = "https://survey.uni-potsdam.de/admin/export/data/c21d6139/excel/0/0.html"
+deletion_page = "https://survey.uni-potsdam.de/admin/delete-data/c21d6139.html"
 
 
 def GetCSRFToken(html):
@@ -27,8 +28,8 @@ def GetCSRFToken(html):
 def main():
     username = os.environ['QUAMP_USER']
     password = os.environ['QUAMP_PASSWD']
-    # TODO: Delte after download
     with requests.Session() as session:
+        log.info('Download data')
         homepage = session.get(landing_page)
         token = GetCSRFToken(homepage.text)
         response = session.post(
@@ -60,6 +61,8 @@ def main():
             return
         with open("/app/instance/data.xlsx", "wb") as data_file:
             data_file.write(data.content)
+        log.info('Delete data on QUAMP Server')
+        delete = session.get(deletion_page, allow_redirects=True)
 
 
 def init_app(app):
