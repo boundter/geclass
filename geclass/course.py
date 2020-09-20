@@ -4,7 +4,7 @@ import logging
 import os
 
 from flask import (
-    Blueprint, flash, redirect, render_template, request, session, url_for, current_app, send_from_directory
+    Blueprint, flash, redirect, render_template, request, session, url_for, current_app, send_from_directory, send_file
 )
 
 from geclass.auth import login_required
@@ -20,7 +20,8 @@ bp = Blueprint(name='course', import_name=__name__)
 @login_required
 def send_pdf(course_name):
     report_dir = os.path.join(current_app.instance_path, course_name)
-    return send_from_directory(report_dir, 'report.pdf')
+    #return send_from_directory(report_dir, 'report.pdf')
+    return send_file(os.path.join(report_dir, 'report.pdf'))
 
 
 @bp.route('/')

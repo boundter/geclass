@@ -65,6 +65,7 @@ COPY geclass geclass
 COPY scripts scripts
 COPY tests tests
 
+COPY supervisor.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint_new.sh
 RUN chmod +x /entrypoint_new.sh
 ENTRYPOINT ["/entrypoint_new.sh"]
