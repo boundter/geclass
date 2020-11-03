@@ -10,7 +10,7 @@ def SendEmail(recipient, subject, content):
     message = EmailMessage()
     message.set_content(content)
     message["Subject"] = subject
-    message["From"] = "GEClass <no-reply@geclass.physik.uni-potsdam.de>"
+    message["From"] = "GE-CLASS <no-reply@geclass.physik.uni-potsdam.de>"
     message["To"] = recipient
     with smtplib.SMTP(server_ip) as server:
         server.send_message(message)
