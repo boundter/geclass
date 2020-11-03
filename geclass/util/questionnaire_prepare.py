@@ -72,7 +72,7 @@ def CleanData(df):
 
 def CheckValidityControlRow(row):
     # control question needs to be answered "stimme eher zu" = 4
-    return row.qcontrol == 4
+    return row.qcontrol == 4 and row.qcontrol2 == 4
 
 
 def CheckValidityTimeRow(row, course_db):
@@ -98,7 +98,7 @@ def AddValidity(df):
     """
     df["valid_control"] = df.apply(
             lambda row: CheckValidityControlRow(row), axis=1)
-    df = df.drop(["qcontrol"], axis=1)
+    df = df.drop(["qcontrol", "qcontrol2"], axis=1)
     course_db = CourseDB()
     df["valid_time"] = df.apply(
             lambda row: CheckValidityTimeRow(row, course_db), axis=1)

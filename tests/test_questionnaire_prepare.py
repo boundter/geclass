@@ -96,6 +96,7 @@ def test_validity(app, MonkeyDBDates):
         "course_id": [0, 0, 0, 0, 0],  # dummy
         "pre_post": [1, 1, 2, 2, 0],
         "qcontrol": [4, 4, 3, 3, 3],
+        "qcontrol2": [4, 3, 4, 4, 4],
         "end": [
                 datetime.date(2001, 1, 6), # valid
                 datetime.date(2001, 1, 20), # invalid
@@ -114,7 +115,7 @@ def test_validity(app, MonkeyDBDates):
                 datetime.date(2002, 1, 20),
                 datetime.date(2002, 1, 20),
         ],
-        "valid_control": [True, True, False, False, False],
+        "valid_control": [True, False, False, False, False],
         "valid_time": [True, False, False, True, False]
     })
     with app.app_context():
@@ -140,7 +141,8 @@ def test_pipeline(app):
         "end": [2, np.nan, 2, 2, 2, 2],
         "personal_code": ['1', '1', np.nan, '1', np.nan, '1'],
         "course_id": ['1', '1', '1', np.nan, np.nan, '1'],
-        "qcontrol": [1, 2, 3, 4, 3, 4]
+        "qcontrol": [1, 2, 3, 4, 3, 4],
+        "qcontrol2": [1, 2, 3, 3, 3, 4]
     }
     result = {
         "pre_post": [1, 2, 2],
@@ -148,7 +150,7 @@ def test_pipeline(app):
         "end": [2, 2, 2],
         "personal_code": [np.nan, '1', '1'],
         "course_id": ['1', np.nan, '1'],
-        "valid_control": [False, True, True],
+        "valid_control": [False, False, True],
         "valid_time": [False, False, False]
     }
     df = pd.DataFrame(data=x)
