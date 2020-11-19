@@ -9,7 +9,9 @@ is not a huge amount of users, this should be enough. If there should be a
 time when it will not be enough, then the transition to e.g. MySQL should be
 rather painless.
 
-There are two tables:
+This is the structure:
+
+.. image:: geclass_schema.jpg
 
 * user
 
@@ -114,3 +116,29 @@ There are two tables:
   * id - the primary key (autoincrement)
   * university_type_name - the type of university (eg. Hochschule,
     Fachhochschule)
+
+
+Questionnaire
+=============
+
+The results of the questionnaire are also stored in an SQLite database. It is
+called `questionnaire.sqlite`.
+
+.. image:: questionnaire_schema.jpg
+
+The tables `questionnaire_you`, `questionnaire_expert` and `questionnaire_mark`
+contain the answers given by one student on one occasion. They are combined in
+the `questionnaire_pre` and `questionnaire_post` tables to represent one
+questionnaire response by one student.
+
+In `student` every single student is represented by a row, but the field `code`
+is not unique. In the processing before the insertion students will be
+identified by their code and their course. The corresponding course for a
+student can be found by cross referencing the `course_id` field in the
+`student_course` table. Should the given course be unknown, i.e., a wrong course
+code has been given, then the students id and the course code are saved in
+`student_unknown_course` to allow for a manual post processing of the responses.
+
+Finally the questionnaire responses and some meta data, such as the validity of
+the results, and the student who gave the answers is saved in `student_pre` and
+`student_post`.
