@@ -70,7 +70,7 @@ class CourseQuestion:
             A tuple of the name of the column in the table course as
             well as its value.
 
-        >>> parse(form) // for the field "name"
+        >>> parse(form) # for the field "name"
         ("name", "a new course name")
 
         """

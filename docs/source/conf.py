@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- Project information -----------------------------------------------------
 
 project = 'GEclass'
-copyright = '2019, Erik Teichmann'
+copyright = '2019-2020, Erik Teichmann'
 author = 'Erik Teichmann'
 
 # The short X.Y version

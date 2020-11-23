@@ -171,7 +171,12 @@ def change_pwd_command(email, new_password):
     """Create CLI to change the password of a user.
 
     Sometime a user may loose their password. It can be set to a given
-    value by calling `flask change-pwd email new_password`.
+    value by calling
+
+    ::
+
+        $ flask change-pwd test_user@up.de new_password
+
 
     """
     user_db = UserDB()

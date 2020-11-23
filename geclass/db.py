@@ -257,6 +257,11 @@ def init_db_command():
     **Careful: This will overwite the current one and all data will
     be lost.**
 
+    ::
+
+        $ flask init-db
+
+
     """
     init_db()
     click.echo('Initialized the database')

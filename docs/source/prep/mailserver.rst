@@ -38,3 +38,8 @@ through the firewall. This is done by ::
 
 where `172.17.0.2` is the bridge ip of the container.
 
+Emails can then be send with the `SendEmail` function. It sets all the necessary
+met data
+
+.. currentmodule:: geclass.send_email
+.. autofunction:: SendEmail(recipient, subject, content)

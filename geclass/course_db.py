@@ -132,10 +132,16 @@ Vielen Dank für die Teilnahme an diesem Projekt.""".format(
         return self.execute(sql, (timestamp_ending,)).fetchall()
 
     def get_course_id(self, identifier):
+        """Return the id of a course with the given identifier."""
         sql = "SELECT id FROM course WHERE identifier = ?"
         return self.execute(sql, (identifier,)).fetchone()
 
     def get_similar_course_ids(self, course_id):
+        """Return the id of similar courses
+
+        Similar courses have the same experience_id and program_id.
+
+        """
         sql_course = """
             SELECT
                 experience_id,
@@ -154,6 +160,12 @@ Vielen Dank für die Teilnahme an diesem Projekt.""".format(
         return self.execute(sql_similar, info).fetchall()
 
     def get_course_report_info(self, course_id):
+        """Return information necessary for the report.
+
+        Necessary information include the course name and the number of
+        students.
+
+        """
         sql = """
             SELECT
                 name,
@@ -164,6 +176,13 @@ Vielen Dank für die Teilnahme an diesem Projekt.""".format(
         return self.execute(sql, (course_id,)).fetchone()
 
     def get_overview(self, user_id):
+        """Return information for the overview page.
+
+        Information include the course identifier, name, univeristy name,
+        program name, experience level, number of students and start and
+        end time.
+
+        """
         sql = """
             SELECT
               course.identifier,
@@ -182,6 +201,7 @@ Vielen Dank für die Teilnahme an diesem Projekt.""".format(
         return self.execute(sql, (user_id,)).fetchall()
 
     def get_course_questionnaire_dates(self, course_identifier):
+        """Return the dates for the pre and post questionnaire."""
         sql = """
             SELECT
               start_date_pre,

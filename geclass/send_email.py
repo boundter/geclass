@@ -3,6 +3,14 @@ from email.message import EmailMessage
 
 
 def SendEmail(recipient, subject, content):
+    """Send an email.
+
+    Args:
+        recipient (str): The recipient of the email.
+        subject (str): The subject line.
+        content (str): The body of the email.
+
+    """
     server_ip = "172.17.0.1"  # ip of the smtp server
     sender_mail = "no-reply@geclass.physik.uni-potsdam.de"
     content += "\n\n-----------------------\n"
