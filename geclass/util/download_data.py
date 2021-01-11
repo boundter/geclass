@@ -17,6 +17,7 @@ deletion_page = "https://survey.uni-potsdam.de/admin/delete-data/c21d6139.html"
 
 
 def GetCSRFToken(html):
+    """Get the CSRF-Token from the webpage by reading the login__csrf_token."""
     field_id = "login__csrf_token"
     soup = BeautifulSoup(html, "html.parser")
     token = soup.find(id=field_id)["value"]
@@ -26,6 +27,17 @@ def GetCSRFToken(html):
 @click.command('download-data')
 @with_appcontext
 def main():
+    """Download the Questionnaire Data from QUAMP.
+
+    First a user, given by the environment variables `QUAMP_USER` and
+    `QUAMP_PASSWD`, is logged in. If the user could not be logged in an email
+    will be send to the `ge-class@uni-potsdam.de` address (this may also happen,
+    if the cookie is not invalidated between two login attempts and the user is
+    still logged in). Then the data will be downloaded to
+    `/app/instance/data.xlsx`, again sending and error message if there were
+    problems. After everything was downloaded successfully the data will be
+    deleted on the server.
+    """
     username = os.environ['QUAMP_USER']
     password = os.environ['QUAMP_PASSWD']
     with requests.Session() as session:

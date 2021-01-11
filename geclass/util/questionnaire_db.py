@@ -26,10 +26,7 @@ class QuestionnaireDB(DBConnection):
         self.db = g.questionnaire_db
 
     def insert_data(self, df):
-        """Insert new data into the database.
-
-
-        """
+        """Insert new data into the database."""
         course_db = CourseDB()
         for _, row in df.iterrows():
             course_id = course_db.get_course_id(row['course_id'])
@@ -49,7 +46,7 @@ class QuestionnaireDB(DBConnection):
                         row, student_id, questionnaire_id, 'post')
 
     def get_matched_responses(self, course_id):
-        # TODO: Test
+        """Return the valid matched responses for one course."""
         sql_select_students = '''
             SELECT student_id
             FROM student_course
@@ -82,6 +79,7 @@ class QuestionnaireDB(DBConnection):
 
         def get_questionnaire_result(questionnaire_id, you_expert_mark,
                                      pre_post):
+            """Get the answers from a questionnaire."""
             sql_questionnaire = '''
                 SELECT *
                 FROM questionnaire_{0:}, questionnaire_{1:}
@@ -113,6 +111,7 @@ class QuestionnaireDB(DBConnection):
         return QuestionnaireResponses(results)
 
     def get_course_numbers(self, course_id):
+        """Return the number of students in pre and post questionnaire."""
         # TODO: Test
         sql_pre = '''
             SELECT
@@ -208,6 +207,7 @@ class QuestionnaireDB(DBConnection):
 
 
 def init_questionnaire_db():
+    """Create a new questionnaire database."""
     db = QuestionnaireDB()
     with current_app.open_resource('util/schema_questionnaire.sql') as f:
         db().executescript(f.read().decode('utf8'))
@@ -237,6 +237,7 @@ def close_questionnaire_db(e=None):
 @click.argument('file_location')
 @with_appcontext
 def load_questionnaire_data(file_location):
+    """Load the questionnaire data from a file into the database."""
     data = pd.read_excel(file_location)
     df = PrepareData(data)
     questionnaire_db = QuestionnaireDB()

@@ -1,7 +1,7 @@
 docker run \
-  -itd \
+  -it \
   --rm \
-  -v geclass_instance:/app/instance \
+  -v $PWD:/app \
   -v geclass_log:/var/log/geclass\
   -p 80:80 \
   -e FLASK_KEY=${FLASK_KEY} \

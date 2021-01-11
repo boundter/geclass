@@ -161,6 +161,14 @@ class QuestionFrequency():
 
 
 class QuestionNote(QuestionText):
+    """Create a question with a note field.
+
+    Args:
+        name (str): The html identifier for the input.
+        title (str): The header of the question.
+        text (str): The label of the input, it acts as an
+            explanation.
+    """
 
     def _input(self):
         inp = ('<textarea rows="5" cols="51" name="{}" onchange="{}.submit()">'
@@ -486,6 +494,12 @@ class HandleCourseQuestions:
         return errors
 
     def _sanity_check(self):
+        """Check the sanity of the data.
+
+        1. Check if both start-dates are in the future.
+        2. Post is after Pre Date
+        3. All frequency questions have int values between 0 and 3
+        """
         errors = []
         # all dates in future
         if not (
