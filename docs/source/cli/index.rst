@@ -13,5 +13,85 @@ The following command initializes the databse.
 
 Sometimes a user may forget his password. A new password can be set by calling
 ::
+   $ flask change-pwd $email $new_password
 
-   $ flask change-pwd email new_password
+Here `$email` has to be replaced by the Email adress of the user and
+`$new_password` the new password.
+
+Questionnaire Database
+======================
+
+To initialize a new Questionnaire database simply execute
+::
+  $ flask init-questionnaire-db
+
+**Take Care: This will delete the current database.**
+
+The following command downloads the data from the survey page and saves it to
+the /app/instance directory.
+::
+  $ flask download-data
+
+To then load the data into the datbase just execute
+::
+  $ flask load-questionnaire-data $data_file
+
+where `$data_file` has to be replaced by the location of the downloaded file.
+
+Reports are generated with the following command. Created reports are saved to
+`/app/instance/$course_id`. If, for some reason, no report can be created then
+an empty directory will be generated.
+::
+  $ flask create-reports
+
+It checks for all finished courses. If a directory in `/app/instance` already
+has the name of the course identifier nothing will be done.
+
+Reminders
+=========
+
+The following command sends reminders to all users about the start of their pre
+and post questionnaires.
+::
+  $ flask send_reminder
+
+
+Cron
+****
+Cron is a tool to execute commands at specific times, such as daily at a certin
+hour, or weekly or such (note that the docker container is in the GMT timezone).
+The cronfile which contains these informations is located in the root folder
+called `reminder_cron`.
+
+As it stands now the following rules are included:
+
+- Every day at 01:00 the daily logs are moved
+- Every day at 03:00 the survey data is downloaded and deleted from the server
+- Every day at 04:00 reminders are sent out
+- Every day at 05:00 the reports are created
+
+Please note that the cron service has to be started manually when creating a
+new docker container. This is done automatically in the `server.sh` script.
+
+Running the Server
+******************
+
+Assuming the docker image was build, as explained in the Docker section, the
+server can be easily started. In the root directiry there exist two scripts
+`server_dev.sh` and `server.sh`.
+
+The `server.sh` script starts a container automatically and starts the cron job.
+The environment variables `FLASK_KEY`, `QUAMP_USER`, and `QUAMP_PASSWD` have to
+best. The quamp variables are needed to login to the quamp server and the
+flask_key is a simple encryption key for the cookies. The key may change between
+server start, but this will log out all users. This server is self contained, so
+changes in the source files will not be reflected in the container. As an
+example:
+::
+  $ export FLASK_KEY=1234; export QUAMP_USER=test_user; export QUAMP_PASSWD=test_passwd; ./server.sh
+
+The `server_dev.sh` script works similarly, but does not need the key variable.
+Here changes in the local files will be reflected so that it can be used for the
+development.
+
+All servers are exposed on the port 80, which is also forwarded.
