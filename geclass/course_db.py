@@ -33,6 +33,10 @@ class CourseDB(DBConnection):
         """
         return self.select_all(table='course', column='user_id', value=user_id)
 
+    def get_all_course_data(self):
+        """Fetch all course ids."""
+        return self.select_all_entries(table='course')
+
     def add_course(self, user_id, fields):
         """Add a new course to the database.
 
