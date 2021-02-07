@@ -60,4 +60,7 @@ def create_app(test_config=None):
     from .util import validate
     validate.init_app(app)
 
+    from .util import unmatched_responses
+    unmatched_responses.init_app(app)
+
     return app
