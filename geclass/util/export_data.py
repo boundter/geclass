@@ -33,7 +33,7 @@ def export():
                 "experience_id", "program_id", "course_type_id",
                 "traditional_id")
         metadata = [course[name] for name in metadata_name]
-        matched = questionnaire_db.get_matched_responses(course_id)
+        matched = questionnaire_db.get_matched_responses(course_id, disagreement=True)
         for i in range(matched.size()):
             data["course_id"].append(course_id)
             for indx, col in enumerate(metadata_name):

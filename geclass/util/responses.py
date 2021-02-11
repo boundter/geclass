@@ -17,6 +17,9 @@ class Responses:
         q_expert_post (np.array): The answers to the expert questions post
             course.
         q_mark (np.array): The answers to the mark questions post course.
+        disagreement (bool): Determines if the Likert scale is redued to binary,
+            i.e., 1 and 0 for agreement with experts or to 1, 0, -1 to include
+            disagreement.
 
     Attributes:
         q_you_pre (np.array): Agreement with experts for q_you_pre.
@@ -32,12 +35,12 @@ class Responses:
                               1, -1, 1, 1, -1, 1, -1, -1])
 
     def __init__(self, q_you_pre, q_you_post, q_expert_pre, q_expert_post,
-                 q_mark):
-        self.q_mark = self._compare_expert(q_mark, self.experts_marks)
-        self.q_you_pre = self._compare_expert(q_you_pre, self.experts)
-        self.q_you_post = self._compare_expert(q_you_post, self.experts)
-        self.q_expert_pre = self._compare_expert(q_expert_pre, self.experts)
-        self.q_expert_post = self._compare_expert(q_expert_post, self.experts)
+                 q_mark, disagreement=False):
+        self.q_mark = self._compare_expert(q_mark, self.experts_marks, disagreement)
+        self.q_you_pre = self._compare_expert(q_you_pre, self.experts, disagreement)
+        self.q_you_post = self._compare_expert(q_you_post, self.experts, disagreement)
+        self.q_expert_pre = self._compare_expert(q_expert_pre, self.experts, disagreement)
+        self.q_expert_post = self._compare_expert(q_expert_post, self.experts, disagreement)
 
     def _likert_reduce(self, responses):
         """Reduce Likert from 5 to 3 levels."""
@@ -46,7 +49,7 @@ class Responses:
         likert = np.vectorize(translation.get)(responses)
         return likert
 
-    def _compare_expert(self, q_student, a_expert):
+    def _compare_expert(self, q_student, a_expert, disagreement):
         """Compare responses of students to experts."""
         compared = []
         q_student = self._likert_reduce(q_student)
@@ -54,7 +57,10 @@ class Responses:
             if response_student == -998:
                 compared.append(-998)
             else:
-                compared.append(int(response_student == response_experts))
+                if disagreement:
+                    compared.append(int(response_student * response_experts))
+                else:
+                    compared.append(int(response_student == response_experts))
         return np.array(compared)
 
 

@@ -45,8 +45,14 @@ class QuestionnaireDB(DBConnection):
                 self._add_student_prepost(
                         row, student_id, questionnaire_id, 'post')
 
-    def get_matched_responses(self, course_id):
-        """Return the valid matched responses for one course."""
+    def get_matched_responses(self, course_id, disagreement=False):
+        """Return the valid matched responses for one course.
+
+        Args:
+            disagreement (bool): Determines if the Likert scale is redued to
+                binary, i.e., 1 and 0 for agreement with experts or to 1, 0,
+                -1 to include disagreement.
+        """
         sql_select_students = '''
             SELECT student_id
             FROM student_course
@@ -107,7 +113,7 @@ class QuestionnaireDB(DBConnection):
                     questionnaire[1], 'expert', 'post')
             q_mark = get_questionnaire_result(
                     questionnaire[1], 'mark', 'post')
-            results.append(Responses(q_you_pre, q_you_post, q_expert_pre, q_expert_post, q_mark))
+            results.append(Responses(q_you_pre, q_you_post, q_expert_pre, q_expert_post, q_mark, disagreement))
         return QuestionnaireResponses(results)
 
     def get_course_numbers(self, course_id):
