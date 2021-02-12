@@ -63,6 +63,7 @@ def get_unmatched_students():
 @click.command('get_unknown_courses')
 @with_appcontext
 def get_unknown_courses():
+    """Get all course codes that could not be matched."""
     course_db = CourseDB()
     course_data = list(course_db.get_all_course_data())
     data = pd.DataFrame(columns=["known_courses", "unknown_courses"])
