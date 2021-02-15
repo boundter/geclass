@@ -19,7 +19,7 @@ def export():
             *["q_you_post_" + str(i) for i in range(1, 31)],
             *["q_expert_pre_" + str(i) for i in range(1, 31)],
             *["q_expert_post_" + str(i) for i in range(1, 31)],
-            *["q_mark_" + str(i) for i in range(1, 23)],
+            *["q_mark_" + str(i) for i in range(1, 24)],
     ]
     data = {}
     for col in cols:
