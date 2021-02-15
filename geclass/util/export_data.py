@@ -51,7 +51,7 @@ def export():
                 data["q_expert_post_" + str(indx)].append(
                     matched.q_expert_post.responses[i][indx-1]
                 )
-            for indx in range(1, 23):
+            for indx in range(1, 24):
                 data["q_mark_" + str(indx)].append(
                     matched.q_mark.responses[i][indx-1]
                 )
