@@ -24,6 +24,12 @@ def send_pdf(course_name):
     return send_file(os.path.join(report_dir, 'report.pdf'))
 
 
+@bp.route('/report/example.pdf')
+def send_example():
+    example_report = os.path.join(current_app.instance_path, "example.pdf")
+    return send_file(example_report)
+
+
 @bp.route('/')
 @login_required
 def overview():
