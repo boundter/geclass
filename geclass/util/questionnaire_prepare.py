@@ -50,6 +50,10 @@ def LowercaseCodes(df):
     return df
 
 
+def RenameCourseId(df):
+    return df.rename(columns={"course_code": "course_id"})
+
+
 def CleanData(df):
     """Clean the data.
 
@@ -61,6 +65,7 @@ def CleanData(df):
 
     """
     df = (df
+        .pipe(RenameCourseId)
         .pipe(RemoveUnneededCols)
         .pipe(RemoveUnfinished)
         .pipe(RemoveMissingStudentAndCourse)
