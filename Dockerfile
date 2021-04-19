@@ -55,6 +55,8 @@ ENV STATIC_PATH="/app/geclass/static"
 RUN rm /app/main.py
 RUN rm /app/prestart.sh
 
+COPY backup_data.sh /app/backup_data.sh
+RUN chmod +x /app/backup_data.sh
 COPY reminder_cron /etc/cron.d/
 RUN chmod 0644 /etc/cron.d/reminder_cron
 RUN crontab /etc/cron.d/reminder_cron
@@ -69,5 +71,4 @@ COPY supervisor.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint_new.sh
 RUN chmod +x /entrypoint_new.sh
 ENTRYPOINT ["/entrypoint_new.sh"]
-
 CMD ["/start.sh"]
