@@ -5,5 +5,5 @@ PYTHONPATH=/app
 
 0 4 * * * cd /app && flask send-reminder
 0 1 * * 0 mv /var/log/geclass/geclass.log /var/log/geclass/geclass.log.old && mv /var/log/geclass/uswgi.log /var/log/geclass/uswgi.log.old
-0 3 * * * flask download-data && flask load-questionnaire-data /app/instance/data.xlsx && /app/backup_data.sh
-0 5 * * * flask create-reports
+0 3 * * * cd/app && flask download-data &>> /var/log/geclass/download.log && flask load-questionnaire-data /app/instance/data.xlsx && /app/backup_data.sh
+0 5 * * * cd /app && flask create-reports &>> /var/log/geclass/download.log
