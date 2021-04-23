@@ -1,9 +1,9 @@
 SHELL=/bin/bash
-PATH=/usr/local/bin
+PATH=/usr/local/bin:/usr/bin:/bin:$PATH
 FLASK_APP=geclass
 PYTHONPATH=/app
 
 0 4 * * * cd /app && flask send-reminder
-0 1 * * 0 mv /var/log/geclass/geclass.log /var/log/geclass/geclass.log.old && mv /var/log/geclass/uswgi.log /var/log/geclass/uswgi.log.old
+0 1 * * 0 mv /var/log/geclass/geclass.log /var/log/geclass/geclass.log.old && mv /var/log/geclass/uswgi.log /var/log/geclass/uswgi.log.old && mv /var/log/geclass/download.log /var/log/geclass/doenload.log.old
 0 3 * * * cd /app && flask download-data &>> /var/log/geclass/download.log && flask load-questionnaire-data /app/instance/data.xlsx && /app/backup_data.sh
 0 5 * * * cd /app && flask create-reports &>> /var/log/geclass/download.log
