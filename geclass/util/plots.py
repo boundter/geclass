@@ -225,6 +225,16 @@ def question_overview_plot(responses_1, responses_2, plot_type, outfile=None):
     half_size = total_size // 2
 
     fig, ax = plt.subplots(ncols=2, sharex=True, figsize=(7, 7.5))
+    fig = plt.figure(figsize=(7., 7.5))
+    a = fig.add_subplot(111)
+    ax = [fig.add_subplot(121), fig.add_subplot(122)]
+    a.spines['top'].set_color('none')
+    a.spines['bottom'].set_color('none')
+    a.spines['left'].set_color('none')
+    a.spines['right'].set_color('none')
+    a.tick_params(labelcolor='w', top=False, bottom=False, left=False, right=False)
+    a.set_xlabel("Anteil mit Experten-Ansicht")
+
     fig.suptitle(title)
     np.vectorize(lambda x: x.set_xticks([0., 0.2, 0.4, 0.6, 0.8, 1.]))(ax)
     np.vectorize(lambda x: x.set_xlim(0., 1.))(ax)
